@@ -1,0 +1,181 @@
+@startuml Meritus - Diagrama de Classes (Core)
+
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #FEFEFE
+skinparam class {
+  BackgroundColor<<Entity>> #FFFACD
+  BackgroundColor<<UseCase>> #E8F5E9
+  BackgroundColor<<Service>> #FFF3E0
+  BorderColor #666666
+  ArrowColor #666666
+}
+
+' Entidades do Domínio
+class UserEntity <<Entity>> {
+  + id: uuid
+  + email: string
+  + password: string
+  + name: string
+  + role: RolesEnum
+  + address: string
+  + comparePassword(password): boolean
+}
+
+class StudentEntity <<Entity>> {
+  + id: uuid
+  + cpf: string
+  + rg: string
+  + course: string
+  + balance: decimal
+  + institutionId: uuid
+  + userId: uuid
+}
+
+class TeacherEntity <<Entity>> {
+  + id: uuid
+  + cpf: string
+  + department: string
+  + balance: decimal
+  + lastCreditDate: timestamp
+  + institutionId: uuid
+  + userId: uuid
+}
+
+class CompanyEntity <<Entity>> {
+  + id: uuid
+  + cnpj: string
+  + description: text
+  + userId: uuid
+}
+
+class InstitutionEntity <<Entity>> {
+  + id: uuid
+  + name: string
+  + address: string
+  + email: string
+  + phone: string
+}
+
+class BenefitEntity <<Entity>> {
+  + id: uuid
+  + name: string
+  + description: text
+  + cost: decimal
+  + active: boolean
+  + companyId: uuid
+}
+
+class TransactionEntity <<Entity>> {
+  + id: uuid
+  + type: TransactionTypeEnum
+  + amount: decimal
+  + message: text
+  + voucherCode: string
+  + studentId: uuid
+  + teacherId: uuid
+  + benefitId: uuid
+  + createdAt: timestamp
+}
+
+enum RolesEnum {
+  ADMIN
+  STUDENT
+  TEACHER
+  COMPANY
+}
+
+enum TransactionTypeEnum {
+  TRANSFER
+  REDEMPTION
+  CREDIT
+}
+
+' UseCases principais
+class SignInUseCase <<UseCase>> {
+  + execute(email, password): SignInResponseDto
+}
+
+class TransferCoinsUseCase <<UseCase>> {
+  + execute(userId, dto): TransactionEntity
+  - validateBalances()
+  - updateBalances()
+  - createTransaction()
+  - sendNotification()
+}
+
+class RedeemBenefitUseCase <<UseCase>> {
+  + execute(userId, dto): TransactionEntity
+  - validateBalance()
+  - debitStudent()
+  - generateVoucher()
+  - createTransaction()
+  - sendNotifications()
+}
+
+class CreditSemesterCoinsUseCase <<UseCase>> {
+  + execute(userId): TeacherEntity
+  - validateLastCredit()
+  - creditTeacher()
+  - createTransaction()
+}
+
+' Serviço auxiliar
+class MailService <<Service>> {
+  + sendCoinReceivedEmail(data): void
+  + sendVoucherToStudent(data): void
+  + sendVoucherToCompany(data): void
+}
+
+' Relacionamentos entre Entidades
+UserEntity "1" -- "0..1" StudentEntity
+UserEntity "1" -- "0..1" TeacherEntity
+UserEntity "1" -- "0..1" CompanyEntity
+InstitutionEntity "1" -- "0..*" StudentEntity
+InstitutionEntity "1" -- "0..*" TeacherEntity
+CompanyEntity "1" -- "0..*" BenefitEntity
+StudentEntity "1" -- "0..*" TransactionEntity
+TeacherEntity "1" -- "0..*" TransactionEntity
+BenefitEntity "1" -- "0..*" TransactionEntity
+
+' Enums
+UserEntity --> RolesEnum
+TransactionEntity --> TransactionTypeEnum
+
+' UseCases e suas dependências
+SignInUseCase ..> UserEntity : uses
+TransferCoinsUseCase ..> TeacherEntity : uses
+TransferCoinsUseCase ..> StudentEntity : uses
+TransferCoinsUseCase ..> TransactionEntity : creates
+TransferCoinsUseCase ..> MailService : notifies
+RedeemBenefitUseCase ..> StudentEntity : uses
+RedeemBenefitUseCase ..> BenefitEntity : uses
+RedeemBenefitUseCase ..> TransactionEntity : creates
+RedeemBenefitUseCase ..> MailService : notifies
+CreditSemesterCoinsUseCase ..> TeacherEntity : uses
+CreditSemesterCoinsUseCase ..> TransactionEntity : creates
+
+note bottom of TransferCoinsUseCase
+  Operação atômica:
+  - Debita saldo do professor
+  - Credita saldo do aluno
+  - Cria registro de transação
+  - Notifica aluno por email
+end note
+
+note bottom of RedeemBenefitUseCase
+  Operação atômica:
+  - Valida saldo do aluno
+  - Debita custo da vantagem
+  - Gera código de voucher único
+  - Cria transação de resgate
+  - Notifica aluno e empresa
+end note
+
+note right of CreditSemesterCoinsUseCase
+  Credita moedas semestrais
+  ao professor (1000 moedas).
+  Valida se já recebeu no
+  semestre atual.
+end note
+
+@enduml

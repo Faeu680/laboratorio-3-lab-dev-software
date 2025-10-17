@@ -1,0 +1,112 @@
+@startuml Meritus - Diagrama Entidade Relacionamento
+
+!define PRIMARY_KEY(x) <b><u>x</u></b>
+!define FOREIGN_KEY(x) <i>x</i>
+
+skinparam linetype ortho
+skinparam backgroundColor #FEFEFE
+skinparam class {
+  BackgroundColor #FFFACD
+  BorderColor #A0522D
+  ArrowColor #A0522D
+}
+
+entity "UserEntity" as user {
+  PRIMARY_KEY(id) : uuid
+  --
+  email : string
+  password : string
+  name : string
+  role : enum(ADMIN, STUDENT, TEACHER, COMPANY)
+  address : string
+}
+
+entity "StudentEntity" as student {
+  PRIMARY_KEY(id) : uuid
+  --
+  cpf : string
+  rg : string
+  course : string
+  balance : decimal(10,2)
+  FOREIGN_KEY(user_id) : uuid
+  FOREIGN_KEY(institution_id) : uuid
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "TeacherEntity" as teacher {
+  PRIMARY_KEY(id) : uuid
+  --
+  cpf : string
+  department : string
+  balance : decimal(10,2)
+  last_credit_date : timestamp
+  FOREIGN_KEY(user_id) : uuid
+  FOREIGN_KEY(institution_id) : uuid
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "CompanyEntity" as company {
+  PRIMARY_KEY(id) : uuid
+  --
+  cnpj : string
+  description : text
+  FOREIGN_KEY(user_id) : uuid
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "InstitutionEntity" as institution {
+  PRIMARY_KEY(id) : uuid
+  --
+  name : string
+  address : string
+  email : string
+  phone : string
+}
+
+entity "BenefitEntity" as benefit {
+  PRIMARY_KEY(id) : uuid
+  --
+  name : string
+  description : text
+  photo : string
+  cost : decimal(10,2)
+  active : boolean
+  FOREIGN_KEY(company_id) : uuid
+  created_at : timestamp
+  updated_at : timestamp
+}
+
+entity "TransactionEntity" as transaction {
+  PRIMARY_KEY(id) : uuid
+  --
+  type : enum(TRANSFER, REDEMPTION, CREDIT)
+  amount : decimal(10,2)
+  message : text
+  voucher_code : string
+  FOREIGN_KEY(student_id) : uuid [nullable]
+  FOREIGN_KEY(teacher_id) : uuid [nullable]
+  FOREIGN_KEY(benefit_id) : uuid [nullable]
+  created_at : timestamp
+}
+
+' Relacionamentos User -> Profiles
+user ||--o| student : "1:1"
+user ||--o| teacher : "1:1"
+user ||--o| company : "1:1"
+
+' Relacionamentos Institution
+institution ||--o{ student : "1:N\nbelongs to"
+institution ||--o{ teacher : "1:N\nbelongs to"
+
+' Relacionamentos Company -> Benefits
+company ||--o{ benefit : "1:N\ncreates"
+
+' Relacionamentos Transactions
+student ||--o{ transaction : "1:N\nparticipates in"
+teacher ||--o{ transaction : "1:N\ninitiates"
+benefit ||--o{ transaction : "1:N\nredeemed in"
+
+@enduml
