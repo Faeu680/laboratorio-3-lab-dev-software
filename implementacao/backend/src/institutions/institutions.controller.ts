@@ -17,7 +17,8 @@ export class InstitutionsController {
   @ApiWrappedResponse({
     status: 200,
     description: 'Lista de instituições retornada com sucesso',
-    type: [InstitutionResponseDto],
+    type: InstitutionResponseDto,
+    isArray: true,
   })
   async list(): Promise<InstitutionResponseDto[]> {
     return this.listInstitutionsUseCase.execute();
