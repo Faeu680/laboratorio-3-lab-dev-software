@@ -1,0 +1,28 @@
+//
+//  DomainDependencyInjection.swift
+//  Domain
+//
+//  Created by Arthur Porto on 17/10/25.
+//
+
+import Foundation
+import DependencyInjection
+import Commons
+
+public struct DomainDependencyInjection: DependencyModule {
+    
+    // MARK: - Public Methods
+    
+    public static func register(in container: Container) {
+        registerUseCases(in: container)
+    }
+    
+    // MARK: - Private Methods
+    
+    private static func registerUseCases(in container: Container) {
+        container.register(SignInUseCaseProtocol.self) { resolver in
+            let service = resolver.resolveUnwrapping(AuthServiceProtocol.self)
+            return SignInUseCase(service: service)
+        }
+    }
+}

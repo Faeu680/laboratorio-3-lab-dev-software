@@ -6,12 +6,44 @@
 //
 
 import SwiftUI
+import DependencyInjection
+import Obsidian
+import Networking
+import Services
+import Domain
 
 @main
 struct MeritusApp: App {
+    init() {
+        setupDependencies()
+        setupUI()
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationStack {
+                RouteFactory().makeLogin()
+            }
         }
+    }
+}
+
+extension MeritusApp {
+    private func setupDependencies() {
+        let modules: [any DependencyModule.Type] = [
+            NetworkingDependencyModule.self,
+            ServicesDependencyInjection.self,
+            DomainDependencyInjection.self
+        ]
+        
+        AppDependencies.setupAll(
+            modules: modules
+        )
+    }
+}
+
+extension MeritusApp {
+    private func setupUI() {
+        ObsidianFont.registerFonts()
     }
 }
