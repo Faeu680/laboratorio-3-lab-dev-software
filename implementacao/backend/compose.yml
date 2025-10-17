@@ -1,0 +1,55 @@
+services:
+  api:
+    build:
+      context: ./
+      target: dependencies
+    env_file:
+      - ./.env
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+    ports:
+      - 9000:9000
+    command: npm run start:dev
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: meritus
+      POSTGRES_PASSWORD: meritus
+      POSTGRES_DB: meritus
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+    ports:
+      - 5432:5432
+
+  redis:
+    image: redis
+    networks:
+      - app-network
+
+  redis-commander:
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: "no"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8082:8081"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  pgdata:
