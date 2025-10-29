@@ -15,11 +15,15 @@ final class AuthService: AuthServiceProtocol {
         self.network = network
     }
 
-    func signIn(email: String, password: String) async throws -> String {
-        let endpoint = SigninRequest(email: email, password: password)
-        let response: NetworkResponse<SigninResponse> = try await network.request(endpoint)
-        let accessToken = response.data.accessToken
+    func signIn(email: String, password: String) async throws(ServiceError) -> String {
+        do {
+            let endpoint = SigninRequest(email: email, password: password)
+            let response: NetworkResponse<SigninResponse> = try await network.request(endpoint)
+            let accessToken = response.data.accessToken
 
-        return accessToken
+            return accessToken
+        } catch {
+            throw ServiceError(from: error)
+        }
     }
 }

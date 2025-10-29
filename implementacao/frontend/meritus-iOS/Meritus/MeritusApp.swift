@@ -9,6 +9,7 @@ import SwiftUI
 import DependencyInjection
 import Obsidian
 import Networking
+import Session
 import Services
 import Domain
 
@@ -32,6 +33,7 @@ extension MeritusApp {
     private func setupDependencies() {
         let modules: [any DependencyModule.Type] = [
             NetworkingDependencyModule.self,
+            SessionDependencyInjection.self,
             ServicesDependencyInjection.self,
             DomainDependencyInjection.self
         ]

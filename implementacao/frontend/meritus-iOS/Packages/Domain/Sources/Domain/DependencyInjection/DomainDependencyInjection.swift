@@ -8,6 +8,7 @@
 import Foundation
 import DependencyInjection
 import Commons
+import Session
 
 public struct DomainDependencyInjection: DependencyModule {
     
@@ -22,7 +23,8 @@ public struct DomainDependencyInjection: DependencyModule {
     private static func registerUseCases(in container: Container) {
         container.register(SignInUseCaseProtocol.self) { resolver in
             let service = resolver.resolveUnwrapping(AuthServiceProtocol.self)
-            return SignInUseCase(service: service)
+            let session = resolver.resolveUnwrapping(SessionProtocol.self)
+            return SignInUseCase(service: service, session: session)
         }
     }
 }

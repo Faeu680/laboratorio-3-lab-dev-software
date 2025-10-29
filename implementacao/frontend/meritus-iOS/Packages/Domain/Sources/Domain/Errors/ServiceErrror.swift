@@ -1,13 +1,11 @@
 //
-//  NetworkError.swift
-//  Networking
+//  ServiceErrror.swift
+//  Domain
 //
-//  Created by Arthur Porto on 17/10/25.
+//  Created by Arthur Porto on 29/10/25.
 //
 
-import Foundation
-
-public enum NetworkError: LocalizedError, Sendable {
+public enum ServiceError: Error, Sendable {
     case invalidURL
     case invalidResponse
     case unauthorized(message: String?)
@@ -16,8 +14,4 @@ public enum NetworkError: LocalizedError, Sendable {
     case serverError(Int, message: String?)
     case noData
     case noInternetConnection
-    case decodingError(Error)
-    case encodingError(Error)
-    case networkError(Error)
-    case unknown
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7628388C2EB1CB23005E07C6 /* Session in Frameworks */ = {isa = PBXBuildFile; productRef = 7628388B2EB1CB23005E07C6 /* Session */; };
 		7645A11D2EA2163800AA72C4 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 7645A11C2EA2163800AA72C4 /* Domain */; };
 		7645A11F2EA2163B00AA72C4 /* Services in Frameworks */ = {isa = PBXBuildFile; productRef = 7645A11E2EA2163B00AA72C4 /* Services */; };
 		764AB5FD2EA05AED0014A0BD /* Obsidian in Frameworks */ = {isa = PBXBuildFile; productRef = 764AB5FC2EA05AED0014A0BD /* Obsidian */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7628388A2EB1C9BB005E07C6 /* Session */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Session; sourceTree = "<group>"; };
 		7645A1192EA212FA00AA72C4 /* Domain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Domain; sourceTree = "<group>"; };
 		7645A11A2EA214F600AA72C4 /* Services */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Services; sourceTree = "<group>"; };
 		7645A1212EA21F4700AA72C4 /* Commons */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Commons; sourceTree = "<group>"; };
@@ -43,6 +45,7 @@
 				764AB5FD2EA05AED0014A0BD /* Obsidian in Frameworks */,
 				769570F72EA22169002C72E2 /* Commons in Frameworks */,
 				7645A11D2EA2163800AA72C4 /* Domain in Frameworks */,
+				7628388C2EB1CB23005E07C6 /* Session in Frameworks */,
 				76DA3FB12EA1F06F00699659 /* DependencyInjection in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -53,6 +56,7 @@
 		7674A4122E9CEE430071CF0F /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				7628388A2EB1C9BB005E07C6 /* Session */,
 				7645A1212EA21F4700AA72C4 /* Commons */,
 				7645A11A2EA214F600AA72C4 /* Services */,
 				7645A1192EA212FA00AA72C4 /* Domain */,
@@ -63,20 +67,12 @@
 			path = Packages;
 			sourceTree = "<group>";
 		};
-		769570F52EA22169002C72E2 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		76C565582E9CEB7D00B90630 = {
 			isa = PBXGroup;
 			children = (
 				76C565632E9CEB7D00B90630 /* Meritus */,
 				76C565622E9CEB7D00B90630 /* Products */,
 				7674A4122E9CEE430071CF0F /* Packages */,
-				769570F52EA22169002C72E2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -114,6 +110,7 @@
 				7645A11C2EA2163800AA72C4 /* Domain */,
 				7645A11E2EA2163B00AA72C4 /* Services */,
 				769570F62EA22169002C72E2 /* Commons */,
+				7628388B2EB1CB23005E07C6 /* Session */,
 			);
 			productName = Meritus;
 			productReference = 76C565612E9CEB7D00B90630 /* Meritus.app */;
@@ -393,6 +390,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		7628388B2EB1CB23005E07C6 /* Session */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Session;
+		};
 		7645A11C2EA2163800AA72C4 /* Domain */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Domain;

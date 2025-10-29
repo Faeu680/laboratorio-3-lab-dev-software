@@ -21,4 +21,16 @@ struct SigninRequest: Request {
         self.email = email
         self.password = password
     }
+    
+    var body: (any Encodable)? {
+        return Body(
+            email: email,
+            password: password
+        )
+    }
+    
+    private struct Body: Encodable {
+        let email: String
+        let password: String
+    }
 }

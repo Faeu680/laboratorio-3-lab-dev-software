@@ -15,12 +15,34 @@ final class LoginScreenViewModel: ObservableObject {
     
     @Published var email: String = ""
     @Published var password: String = ""
+    @Published var isLoading: Bool = false
+    
+    var onLoginSuccess: (() -> Void)?
+    var onLoginFailure: ((SignInUseCaseError) -> Void)?
     
     init(signInUseCase: SignInUseCaseProtocol) {
         self.signInUseCase = signInUseCase
     }
     
     func didTapSignIn() async {
-        try? await signInUseCase.execute(email: email, password: password)
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            try await signInUseCase.execute(email: email, password: password)
+            onLoginSuccess?()
+            clearForm()
+        } catch {
+            handleError(error)
+        }
+    }
+    
+    private func clearForm() {
+        email = ""
+        password = ""
+    }
+    
+    private func handleError(_ error: SignInUseCaseError) {
+        
     }
 }

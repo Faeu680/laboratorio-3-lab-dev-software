@@ -43,6 +43,21 @@ struct LoginScreenView: View {
                 .padding(.bottom, .size24)
         }
         .padding(.horizontal, .size16)
+        .onViewDidLoad {
+            bindActions()
+        }
+    }
+}
+
+extension LoginScreenView {
+    private func bindActions() {
+        viewModel.onLoginSuccess = {
+            print("Navigate")
+        }
+        
+        viewModel.onLoginFailure = { error in
+            // TODO: Show Error
+        }
     }
 }
 
@@ -81,7 +96,11 @@ extension LoginScreenView {
 
 extension LoginScreenView {
     private func signInButtonView() -> some View {
-        ObsidianButton("Entrar", style: .primary) {
+        ObsidianButton(
+            "Entrar",
+            style: .primary,
+            isLoading: $viewModel.isLoading
+        ) {
             Task {
                 await viewModel.didTapSignIn()
             }
@@ -91,7 +110,10 @@ extension LoginScreenView {
 
 extension LoginScreenView {
     private func signUpButtonView() -> some View {
-        ObsidianButton("Cadastro", style: .secondary) {
+        ObsidianButton(
+            "Cadastro",
+            style: .secondary
+        ) {
             print("Primary tapped")
         }
     }

@@ -17,12 +17,15 @@ public struct ObsidianButton: View {
         case outline
     }
     
-    // MARK: Properties
+    // MARK: Binding Properties
+    
+    @Binding private var isLoading: Bool
+    @Binding private var isDisabled: Bool
+    
+    // MARK: Private Properties
     
     private let title: String
     private let style: Style
-    private let isLoading: Bool
-    private let isDisabled: Bool
     private let action: () -> Void
     
     // MARK: Initialization
@@ -30,14 +33,38 @@ public struct ObsidianButton: View {
     public init(
         _ title: String,
         style: Style = .primary,
-        isLoading: Bool = false,
-        isDisabled: Bool = false,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.style = style
-        self.isLoading = isLoading
-        self.isDisabled = isDisabled
+        self._isLoading = .constant(false)
+        self._isDisabled = .constant(false)
+        self.action = action
+    }
+    
+    public init(
+        _ title: String,
+        style: Style = .primary,
+        isLoading: Binding<Bool> = .constant(false),
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.style = style
+        self._isLoading = isLoading
+        self._isDisabled = .constant(false)
+        self.action = action
+    }
+    
+    public init(
+        _ title: String,
+        style: Style = .primary,
+        isDisabled: Binding<Bool> = .constant(false),
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.style = style
+        self._isLoading = .constant(false)
+        self._isDisabled = isDisabled
         self.action = action
     }
     
@@ -131,12 +158,12 @@ public struct ObsidianButton: View {
                 .padding(.vertical)
             
             // Loading states
-            ObsidianButton("LOADING", style: .primary, isLoading: true) {
+            ObsidianButton("LOADING", style: .primary, isLoading: .constant(true)) {
                 print("Loading")
             }
             
             // Disabled
-            ObsidianButton("DISABLED", style: .primary, isDisabled: true) {
+            ObsidianButton("DISABLED", style: .primary, isDisabled: .constant(true)) {
                 print("Disabled")
             }
         }

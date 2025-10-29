@@ -19,4 +19,10 @@ final class RouteFactory {
         let view = LoginScreenView(viewModel: viewModel)
         return view
     }
+    
+    func makeHome() -> HomeScreenView {
+        let viewModel = HomeScreenViewModel()
+        let view = HomeScreenView(viewModel: viewModel)
+        return view
+    }
 }

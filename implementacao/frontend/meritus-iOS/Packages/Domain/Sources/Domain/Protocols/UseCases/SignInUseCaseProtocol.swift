@@ -6,5 +6,5 @@
 //
 
 public protocol SignInUseCaseProtocol: Sendable {
-    func execute(email: String, password: String) async throws
+    func execute(email: String, password: String) async throws(SignInUseCaseError)
 }

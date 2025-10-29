@@ -13,7 +13,7 @@ public final class KeychainManager: Sendable {
     
     private init() {}
     
-    public func save(_ value: String, for key: String) throws {
+    public func save(_ value: String, for key: String) throws(KeychainError) {
         guard let data = value.data(using: .utf8) else {
             throw KeychainError.encodingError
         }
@@ -33,7 +33,7 @@ public final class KeychainManager: Sendable {
         }
     }
     
-    public func read(for key: String) throws -> String? {
+    public func read(for key: String) throws(KeychainError) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key,
@@ -57,7 +57,7 @@ public final class KeychainManager: Sendable {
         return string
     }
     
-    public func delete(for key: String) throws {
+    public func delete(for key: String) throws(KeychainError) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key
