@@ -14,5 +14,7 @@ public protocol SessionProtocol: Actor {
     
     func refresh(token: String) throws(SessionError)
     
+    func isExpired() -> Bool
+    
     func destroy()
 }

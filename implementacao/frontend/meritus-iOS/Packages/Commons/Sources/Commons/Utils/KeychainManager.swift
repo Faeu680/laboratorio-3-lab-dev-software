@@ -9,11 +9,11 @@ import Security
 
 public final class KeychainManager: Sendable {
     
-    public static let shared: KeychainManager = KeychainManager()
+    public static let shared = KeychainManager()
     
     private init() {}
     
-    public func save(_ value: String, for key: String) throws(KeychainError) {
+    public func save(_ value: String, for key: KeychainKey) throws(KeychainError) {
         guard let data = value.data(using: .utf8) else {
             throw KeychainError.encodingError
         }
@@ -22,7 +22,7 @@ public final class KeychainManager: Sendable {
         
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
+            kSecAttrAccount as String: key.rawValue,
             kSecValueData as String: data
         ]
         
@@ -33,10 +33,10 @@ public final class KeychainManager: Sendable {
         }
     }
     
-    public func read(for key: String) throws(KeychainError) -> String? {
+    public func read(for key: KeychainKey) throws(KeychainError) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key,
+            kSecAttrAccount as String: key.rawValue,
             kSecMatchLimit as String: kSecMatchLimitOne,
             kSecReturnData as String: true
         ]
@@ -57,10 +57,10 @@ public final class KeychainManager: Sendable {
         return string
     }
     
-    public func delete(for key: String) throws(KeychainError) {
+    public func delete(for key: KeychainKey) throws(KeychainError) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: key
+            kSecAttrAccount as String: key.rawValue
         ]
         
         let status = SecItemDelete(query as CFDictionary)

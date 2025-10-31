@@ -5,14 +5,12 @@
 //  Created by Arthur Porto on 17/10/25.
 //
 
-import Commons
 import Networking
 import Session
 
 final class SignInUseCase: SignInUseCaseProtocol {
     private let service: AuthServiceProtocol
     private let session: SessionProtocol
-    private let keychain = KeychainManager.shared
 
     init(
         service: AuthServiceProtocol,
@@ -26,7 +24,6 @@ final class SignInUseCase: SignInUseCaseProtocol {
         do {
             let token = try await service.signIn(email: email, password: password)
             try await session.refresh(token: token)
-            try keychain.save(token, for: "authToken")
         } catch {
             throw mapError(error)
         }
@@ -39,12 +36,12 @@ final class SignInUseCase: SignInUseCaseProtocol {
             return .invalidData
         }
         
-        if error is SessionError {
+        if let error = error as? SessionError {
+            if error == .keychainError {
+                return .keychainError
+            }
+            
             return .initSessionError
-        }
-        
-        if error is KeychainError {
-            return .keychainError
         }
         
         return .unknown

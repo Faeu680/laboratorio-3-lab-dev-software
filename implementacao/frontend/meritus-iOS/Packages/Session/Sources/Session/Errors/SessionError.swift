@@ -9,4 +9,5 @@ public enum SessionError: Error {
     case invalidToken
     case decodingError
     case missingField
+    case keychainError
 }

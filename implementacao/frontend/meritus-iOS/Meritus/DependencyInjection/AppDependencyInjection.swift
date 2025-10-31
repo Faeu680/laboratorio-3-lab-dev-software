@@ -23,10 +23,7 @@ public struct AppDependencyInjection: DependencyModule {
             return RouteFactory(resolver: resolver)
         }
         
-        container.register(
-            AppRouteRegister.self,
-            name: AppDependencyKey.RouteRegister.app.rawValue
-        ) { resolver in
+        container.register(AppRouteRegister.self) { resolver in
             let factory = resolver.resolveUnwrapping(RouteFactoryProtocol.self)
             return AppRouteRegister(factory: factory)
         }

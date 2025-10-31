@@ -30,17 +30,13 @@ struct MeritusApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationContainer(
-                registers: [
-                    resolver.resolveUnwrapping(AppRouteRegister.self, name: AppDependencyKey.RouteRegister.app.rawValue)
-                ]
+                registers: makeRegisters()
             ) {
-                SplashScreenView()
+                makeInitialScreen()
             }
         }
     }
-}
-
-extension MeritusApp {
+    
     private func setupDependencies() {
         let modules: [any DependencyModule.Type] = [
             NetworkingDependencyModule.self,
@@ -54,9 +50,22 @@ extension MeritusApp {
             modules: modules
         )
     }
-}
-
-extension MeritusApp {
+    
+    private func makeRegisters() -> [some RouteRegisterProtocol] {
+        [
+            resolver.resolveUnwrapping(AppRouteRegister.self)
+        ]
+    }
+    
+    private func makeInitialScreen() -> some View {
+        let bootsrapUseCase = resolver.resolveUnwrapping(BootstrapSessionUseCaseProtocol.self)
+        let viewModel = SplashScreenViewModel(
+            bootsrapUseCase: bootsrapUseCase
+        )
+        
+        return SplashScreenView(viewModel: viewModel)
+    }
+    
     private func setupUI() {
         ObsidianFont.registerFonts()
     }

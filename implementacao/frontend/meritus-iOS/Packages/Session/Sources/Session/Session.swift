@@ -6,11 +6,24 @@
 //
 
 import Foundation
+import Commons
 
 final actor Session: SessionProtocol {
+    private let keychain = KeychainManager.shared
     private var userId: String?
     private var email: String?
     private var role: UserRole?
+    private var expiration: Date?
+    
+    init() {
+        guard let token = try? keychain.read(for: .authToken) else {
+            return
+        }
+        
+        Task(priority: .userInitiated) {
+            try? await refresh(token: token)
+        }
+    }
     
     func getUserId() -> String? {
         userId
@@ -29,20 +42,43 @@ final actor Session: SessionProtocol {
         
         guard let userId = payload["sub"] as? String,
               let email = payload["email"] as? String,
-              let roleString = payload["role"] as? String,
-              let role = UserRole(rawValue: roleString)  else {
+              let role = payload["role"] as? String,
+              let expiration = payload["exp"] as? TimeInterval else {
             throw .missingField
         }
         
         self.userId = userId
         self.email = email
-        self.role = role
+        self.role = UserRole(rawValue: role)
+        self.expiration = Date(timeIntervalSince1970: expiration)
+        
+        do {
+            try keychain.save(token, for: .authToken)
+        } catch {
+            throw .keychainError
+        }
     }
     
     func destroy() {
         self.userId = nil
         self.email = nil
         self.role = nil
+        self.expiration = nil
+        
+        try? keychain.delete(for: .authToken)
+    }
+    
+    func isExpired() -> Bool {
+        guard let expiration = expiration else {
+            return true
+        }
+        
+        let isExpired = Date() >= expiration
+        if isExpired {
+            destroy()
+        }
+        
+        return isExpired
     }
     
     private static func decodeToken(_ token: String) throws(SessionError) -> [String: Any] {
