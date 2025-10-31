@@ -8,11 +8,15 @@
 import DependencyInjection
 import Domain
 
-@MainActor
-final class RouteFactory {
+final class RouteFactory: RouteFactoryProtocol {
     
-    private let resolver = AppDependencies.resolver
+    private let resolver: Resolver
     
+    init(resolver: Resolver) {
+        self.resolver = resolver
+    }
+    
+    @MainActor
     func makeLogin() -> LoginScreenView {
         let signInUseCase = resolver.resolveUnwrapping(SignInUseCaseProtocol.self)
         let viewModel = LoginScreenViewModel(signInUseCase: signInUseCase)
@@ -20,6 +24,7 @@ final class RouteFactory {
         return view
     }
     
+    @MainActor
     func makeHome() -> HomeScreenView {
         let viewModel = HomeScreenViewModel()
         let view = HomeScreenView(viewModel: viewModel)

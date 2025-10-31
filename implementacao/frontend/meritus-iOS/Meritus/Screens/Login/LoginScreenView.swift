@@ -7,8 +7,11 @@
 
 import SwiftUI
 import Obsidian
+import Navigation
 
 struct LoginScreenView: View {
+    
+    @Environment(\.navigator) private var navigator: NavigatorProtocol
     
     @StateObject private var viewModel: LoginScreenViewModel
     
@@ -52,7 +55,7 @@ struct LoginScreenView: View {
 extension LoginScreenView {
     private func bindActions() {
         viewModel.onLoginSuccess = {
-            print("Navigate")
+            navigator.navigate(to: AppRoutes.home)
         }
         
         viewModel.onLoginFailure = { error in

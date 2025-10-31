@@ -5,11 +5,7 @@
 //  Created by Arthur Porto on 17/10/25.
 //
 
-@preconcurrency import Swinject
-
-public typealias Container = Swinject.Container
-public typealias Resolver = Swinject.Resolver
-public typealias ObjectScope = Swinject.ObjectScope
+@preconcurrency @_exported import Swinject
 
 public final class AppDependencies {
     

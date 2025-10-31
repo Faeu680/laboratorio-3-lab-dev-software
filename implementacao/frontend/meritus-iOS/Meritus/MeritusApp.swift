@@ -12,9 +12,16 @@ import Networking
 import Session
 import Services
 import Domain
+import Navigation
 
 @main
 struct MeritusApp: App {
+    private let appDependencies = AppDependencies.self
+    
+    private var resolver: Resolver {
+        appDependencies.resolver
+    }
+    
     init() {
         setupDependencies()
         setupUI()
@@ -22,8 +29,12 @@ struct MeritusApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                RouteFactory().makeLogin()
+            NavigationContainer(
+                registers: [
+                    resolver.resolveUnwrapping(AppRouteRegister.self, name: AppDependencyKey.RouteRegister.app.rawValue)
+                ]
+            ) {
+                SplashScreenView()
             }
         }
     }
@@ -35,10 +46,11 @@ extension MeritusApp {
             NetworkingDependencyModule.self,
             SessionDependencyInjection.self,
             ServicesDependencyInjection.self,
-            DomainDependencyInjection.self
+            DomainDependencyInjection.self,
+            AppDependencyInjection.self
         ]
         
-        AppDependencies.setupAll(
+        appDependencies.setupAll(
             modules: modules
         )
     }
