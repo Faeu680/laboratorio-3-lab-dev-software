@@ -25,6 +25,13 @@ final class RouteFactory: RouteFactoryProtocol {
     }
     
     @MainActor
+    func makeSignUp() -> SignUpScreenView {
+        let viewModel = SignUpScreenViewModel()
+        let view = SignUpScreenView(viewModel: viewModel)
+        return view
+    }
+    
+    @MainActor
     func makeHome() -> HomeScreenView {
         let viewModel = HomeScreenViewModel()
         let view = HomeScreenView(viewModel: viewModel)

@@ -34,7 +34,8 @@ struct SplashScreenView: View {
 extension SplashScreenView {
     private func bindActions() {
         viewModel.onLoginSuccess = {
-            navigator.navigate(to: AppRoutes.home)
+            let routes: [AppRoutes] = [.login, .home]
+            navigator.navigate(to: routes)
         }
         
         viewModel.onLoginFailure = {

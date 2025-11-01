@@ -137,7 +137,7 @@ public struct ObsidianButton: View {
 // MARK: - Preview
 
 #Preview("Button Styles") {
-    ObsidianPreview {
+    ObsidianPreviewContainer {
         VStack(spacing: 24) {
             // Primary
             ObsidianButton("SIGN IN", style: .primary) {

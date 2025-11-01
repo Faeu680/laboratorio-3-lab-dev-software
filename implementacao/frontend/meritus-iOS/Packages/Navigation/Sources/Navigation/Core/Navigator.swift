@@ -22,6 +22,10 @@ extension Navigator: NavigatorProtocol {
         path.append(route)
     }
     
+    func navigate<Route: RouteProtocol>(to routes: [Route]) {
+        routes.forEach { path.append($0) }
+    }
+    
     func pop() {
         guard !path.isEmpty else { return }
         path.removeLast()

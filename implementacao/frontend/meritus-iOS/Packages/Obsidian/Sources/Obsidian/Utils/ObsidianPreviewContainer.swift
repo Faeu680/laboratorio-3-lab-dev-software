@@ -1,5 +1,5 @@
 //
-//  ObsidianPreview.swift
+//  ObsidianPreviewContainer.swift
 //  Obsidian
 //
 //  Created by Arthur Porto on 15/10/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct ObsidianPreview<Content: View>: View {
+public struct ObsidianPreviewContainer<Content: View>: View {
     
     private let content: Content
     

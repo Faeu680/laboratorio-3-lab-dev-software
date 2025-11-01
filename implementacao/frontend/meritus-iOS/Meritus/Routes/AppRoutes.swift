@@ -11,5 +11,6 @@ enum AppRoutes: RouteProtocol {
     var id: String { "" }
     
     case login
+    case signup
     case home
 }

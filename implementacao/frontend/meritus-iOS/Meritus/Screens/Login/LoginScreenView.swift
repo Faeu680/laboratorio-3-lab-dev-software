@@ -114,11 +114,10 @@ extension LoginScreenView {
 extension LoginScreenView {
     private func signUpButtonView() -> some View {
         ObsidianButton(
-            "Cadastro",
+            "Solicitar Acesso",
             style: .secondary
         ) {
-            print("Primary tapped")
+            navigator.navigate(to: AppRoutes.signup)
         }
     }
 }
-

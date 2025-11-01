@@ -21,6 +21,8 @@ final class AppRouteRegister: RouteRegisterProtocol {
         switch route {
         case .login:
             factory.makeLogin()
+        case .signup:
+            factory.makeSignUp()
         case .home:
             factory.makeHome()
         }

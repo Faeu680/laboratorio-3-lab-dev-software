@@ -9,7 +9,7 @@ import SwiftUI
 import CoreText
 
 public enum ObsidianFont {
-    public static func registerFonts() {
+    static func registerFonts() {
         let fontNames = [
             "Montserrat-Regular",
             "Montserrat-Italic",

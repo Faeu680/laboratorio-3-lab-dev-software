@@ -67,6 +67,6 @@ struct MeritusApp: App {
     }
     
     private func setupUI() {
-        ObsidianFont.registerFonts()
+        ObsidianSetup.setup()
     }
 }

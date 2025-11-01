@@ -10,5 +10,8 @@ protocol RouteFactoryProtocol {
     func makeLogin() -> LoginScreenView
     
     @MainActor
+    func makeSignUp() -> SignUpScreenView
+    
+    @MainActor
     func makeHome() -> HomeScreenView
 }
