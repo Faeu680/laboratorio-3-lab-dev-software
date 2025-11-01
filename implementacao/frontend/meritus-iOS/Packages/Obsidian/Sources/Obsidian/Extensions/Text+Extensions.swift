@@ -22,6 +22,11 @@ public extension Text {
             .textCase(.uppercase)
     }
     
+    func obsidianBody() -> some View {
+        self
+            .font(.obsidianBody)
+    }
+    
     func obsidianButton() -> some View {
         self
             .font(.obsidianButton)

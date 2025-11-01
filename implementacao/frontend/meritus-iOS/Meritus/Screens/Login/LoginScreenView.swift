@@ -80,8 +80,8 @@ extension LoginScreenView {
     private func emailInputView() -> some View {
         ObsidianInput(
             text: $viewModel.email,
-            label: "EMAIL",
-            placeholder: "seu@email.com",
+            label: LocalizableKey.LoginScreen.emailLabel,
+            placeholder: LocalizableKey.LoginScreen.emailPlaceholder,
             keyboardType: .emailAddress
         )
     }
@@ -91,8 +91,8 @@ extension LoginScreenView {
     private func passwordInputView() -> some View {
         ObsidianInput(
             text: $viewModel.password,
-            label: "Senha",
-            placeholder: "seu@email.com"
+            label: LocalizableKey.LoginScreen.passwordLabel,
+            placeholder: LocalizableKey.LoginScreen.passwordPlaceholder
         )
     }
 }

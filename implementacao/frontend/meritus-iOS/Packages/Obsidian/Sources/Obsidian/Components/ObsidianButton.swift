@@ -24,18 +24,18 @@ public struct ObsidianButton: View {
     
     // MARK: Private Properties
     
-    private let title: String
+    private let title: LocalizedStringKey
     private let style: Style
     private let action: () -> Void
     
-    // MARK: Initialization
+    // MARK: Inits
     
     public init(
         _ title: String,
         style: Style = .primary,
         action: @escaping () -> Void
     ) {
-        self.title = title
+        self.title = LocalizedStringKey(title)
         self.style = style
         self._isLoading = .constant(false)
         self._isDisabled = .constant(false)
@@ -48,7 +48,7 @@ public struct ObsidianButton: View {
         isLoading: Binding<Bool> = .constant(false),
         action: @escaping () -> Void
     ) {
-        self.title = title
+        self.title = LocalizedStringKey(title)
         self.style = style
         self._isLoading = isLoading
         self._isDisabled = .constant(false)
@@ -57,6 +57,44 @@ public struct ObsidianButton: View {
     
     public init(
         _ title: String,
+        style: Style = .primary,
+        isDisabled: Binding<Bool> = .constant(false),
+        action: @escaping () -> Void
+    ) {
+        self.title = LocalizedStringKey(title)
+        self.style = style
+        self._isLoading = .constant(false)
+        self._isDisabled = isDisabled
+        self.action = action
+    }
+    
+    public init(
+        _ title: LocalizedStringKey,
+        style: Style = .primary,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.style = style
+        self._isLoading = .constant(false)
+        self._isDisabled = .constant(false)
+        self.action = action
+    }
+    
+    public init(
+        _ title: LocalizedStringKey,
+        style: Style = .primary,
+        isLoading: Binding<Bool> = .constant(false),
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.style = style
+        self._isLoading = isLoading
+        self._isDisabled = .constant(false)
+        self.action = action
+    }
+    
+    public init(
+        _ title: LocalizedStringKey,
         style: Style = .primary,
         isDisabled: Binding<Bool> = .constant(false),
         action: @escaping () -> Void

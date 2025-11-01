@@ -11,14 +11,26 @@ public struct ObsidianInput: View {
     @Binding private var text: String
     @FocusState private var isFocused: Bool
     
-    private let label: String
-    private let placeholder: String
+    private let label: LocalizedStringKey
+    private let placeholder: LocalizedStringKey
     private let keyboardType: UIKeyboardType
     
     public init(
         text: Binding<String>,
         label: String,
         placeholder: String,
+        keyboardType : UIKeyboardType = .default
+    ) {
+        self._text = text
+        self.label = LocalizedStringKey(label)
+        self.placeholder = LocalizedStringKey(placeholder)
+        self.keyboardType = keyboardType
+    }
+    
+    public init(
+        text: Binding<String>,
+        label: LocalizedStringKey,
+        placeholder: LocalizedStringKey,
         keyboardType : UIKeyboardType = .default
     ) {
         self._text = text

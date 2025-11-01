@@ -35,34 +35,55 @@ enum SignUpType {
     }
 }
 
+@MainActor
 extension SignUpType.FieldKey {
-    var label: String {
+    var label: LocalizedStringKey {
         switch self {
-        case .name:          return "NOME"
-        case .email:         return "EMAIL"
-        case .password:      return "SENHA"
-        case .cpf:           return "CPF"
-        case .rg:            return "RG"
-        case .address:       return "ENDEREÇO"
-        case .course:        return "CURSO"
-        case .institutionId: return "ID DA INSTITUIÇÃO"
-        case .cnpj:          return "CNPJ"
-        case .description:   return "DESCRIÇÃO"
+        case .name:
+            return LocalizableKey.SignUpScreen.nameLabel
+        case .email:
+            return LocalizableKey.SignUpScreen.emailLabel
+        case .password:
+            return LocalizableKey.SignUpScreen.passwordLabel
+        case .cpf:
+            return LocalizableKey.SignUpScreen.cpfLabel
+        case .rg:
+            return LocalizableKey.SignUpScreen.rgLabel
+        case .address:
+            return LocalizableKey.SignUpScreen.addressLabel
+        case .course:
+            return LocalizableKey.SignUpScreen.courseLabel
+        case .institutionId:
+            return LocalizableKey.SignUpScreen.institutionIdLabel
+        case .cnpj:
+            return LocalizableKey.SignUpScreen.cnpjLabel
+        case .description:
+            return LocalizableKey.SignUpScreen.descriptionLabel
         }
     }
     
-    var placeholder: String {
+    var placeholder: LocalizedStringKey {
         switch self {
-        case .name:          return "Seu nome"
-        case .email:         return "seu@email.com"
-        case .password:      return "Crie uma senha"
-        case .cpf:           return "000.000.000-00"
-        case .rg:            return "Seu RG"
-        case .address:       return "Rua, nº, bairro"
-        case .course:        return "Seu curso"
-        case .institutionId: return "Código/ID da instituição"
-        case .cnpj:          return "00.000.000/0001-00"
-        case .description:   return "Breve descrição"
+        case .name:
+            return LocalizableKey.SignUpScreen.namePlaceholder
+        case .email:
+            return LocalizableKey.SignUpScreen.emailPlaceholder
+        case .password:
+            return LocalizableKey.SignUpScreen.passwordPlaceholder
+        case .cpf:
+            return LocalizableKey.SignUpScreen.cpfPlaceholder
+        case .rg:
+            return LocalizableKey.SignUpScreen.rgPlaceholder
+        case .address:
+            return LocalizableKey.SignUpScreen.addressPlaceholder
+        case .course:
+            return LocalizableKey.SignUpScreen.coursePlaceholder
+        case .institutionId:
+            return LocalizableKey.SignUpScreen.institutionIdPlaceholder
+        case .cnpj:
+            return LocalizableKey.SignUpScreen.cnpjPlaceholder
+        case .description:
+            return LocalizableKey.SignUpScreen.descriptionPlaceholder
         }
     }
     
@@ -74,7 +95,6 @@ extension SignUpType.FieldKey {
         }
     }
 }
-
 @MainActor
 final class SignUpScreenViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
