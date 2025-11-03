@@ -39,7 +39,6 @@ public struct NetworkDebugScreenView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        // Métodos
                         Section("Métodos") {
                             MethodToggle(title: "GET",   selection: $viewModel.methodFilter)
                             MethodToggle(title: "POST",  selection: $viewModel.methodFilter)
@@ -48,14 +47,14 @@ public struct NetworkDebugScreenView: View {
                             MethodToggle(title: "DELETE",selection: $viewModel.methodFilter)
                             Button("Limpar métodos") { viewModel.methodFilter.removeAll() }
                         }
-                        // Status
+                        
                         Section("Status") {
                             Button("2xx (sucesso)") { viewModel.statusFilter = 200...299 }
                             Button("4xx (cliente)") { viewModel.statusFilter = 400...499 }
                             Button("5xx (servidor)") { viewModel.statusFilter = 500...599 }
                             Button("Qualquer") { viewModel.statusFilter = nil }
                         }
-                        // Outros
+                        
                         Section {
                             Button(role: .destructive) {
                                 viewModel.clear()

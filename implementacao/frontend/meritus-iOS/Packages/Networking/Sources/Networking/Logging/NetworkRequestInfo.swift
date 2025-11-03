@@ -10,5 +10,6 @@ public struct NetworkRequestInfo: Codable, Sendable {
     public let url: String
     public let headers: [String: String]
     public let body: String?
-    public let curl: String?
+    public let curlShell: String?
+    public let curlPostman: String?
 }
