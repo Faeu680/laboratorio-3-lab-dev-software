@@ -7,8 +7,11 @@
 
 import SwiftUI
 import Obsidian
+import Navigation
 
 struct SignUpScreenView: View {
+    
+    @Environment(\.navigator) private var navigator: NavigatorProtocol
     
     @StateObject private var viewModel: SignUpScreenViewModel
     
@@ -47,6 +50,21 @@ struct SignUpScreenView: View {
             } else {
                 signUpButtonView()
             }
+        }
+        .onViewDidLoad {
+            bindActions()
+        }
+    }
+}
+
+extension SignUpScreenView {
+    private func bindActions() {
+        viewModel.onStudentSignUpSuccess = {
+            navigator.navigate(to: AppRoutes.home)
+        }
+        
+        viewModel.onStudentSignUpFailure = { error in
+            // TODO: Show Error
         }
     }
 }
@@ -94,14 +112,10 @@ extension SignUpScreenView {
             style: .primary,
             isDisabled: .constant(!viewModel.isCurrentFormComplete)
         ) {
-            print("Primary tapped")
+            Task {
+                await viewModel.didTapSignUp()
+            }
         }
         .padding(.horizontal, .size16)
     }
-}
-
-#Preview {
-    SignUpScreenView(
-        viewModel: .init()
-    )
 }

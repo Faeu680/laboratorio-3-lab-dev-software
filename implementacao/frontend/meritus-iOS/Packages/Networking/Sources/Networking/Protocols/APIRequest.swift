@@ -1,5 +1,5 @@
 //
-//  Request.swift
+//  APIRequest.swift
 //  Networking
 //
 //  Created by Arthur Porto on 17/10/25.
@@ -7,8 +7,7 @@
 
 import Foundation
 
-public protocol Request: Sendable {
-    var baseURL: String { get }
+public protocol APIRequest: Sendable {
     var path: String { get }
     var method: HTTPMethod { get }
     var headers: [String: String]? { get }
@@ -17,8 +16,7 @@ public protocol Request: Sendable {
     var timeout: TimeInterval { get }
 }
 
-public extension Request {
-    var baseURL: String { "" }
+public extension APIRequest {
     var headers: [String: String]? { nil }
     var queryItems: [URLQueryItem]? { nil }
     var body: Encodable? { nil }

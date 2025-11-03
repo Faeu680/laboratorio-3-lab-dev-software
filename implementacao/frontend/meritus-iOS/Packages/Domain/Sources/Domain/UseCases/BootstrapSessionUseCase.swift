@@ -14,7 +14,7 @@ final class BootstrapSessionUseCase: BootstrapSessionUseCaseProtocol {
         self.session = session
     }
     
-    func execute() async throws(BootstrapSessionError) {
+    func execute() async throws(BootstrapSessionUseCaseError) {
         let isExpired = await session.isExpired()
         
         guard !isExpired else {

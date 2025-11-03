@@ -13,10 +13,17 @@ import Session
 import Services
 import Domain
 import Navigation
+#if DEBUG
+import TestMode
+#endif
 
 @main
 struct MeritusApp: App {
     private let appDependencies = AppDependencies.self
+    
+    #if DEBUG
+    @State private var showRequests = false
+    #endif
     
     private var resolver: Resolver {
         appDependencies.resolver
@@ -34,12 +41,22 @@ struct MeritusApp: App {
             ) {
                 makeInitialScreen()
             }
+            #if DEBUG
+            .simultaneousGesture(
+                TapGesture(count: 3)
+                    .onEnded { showRequests = true }
+            )
+            .sheet(isPresented: $showRequests) {
+                makeDebugScreenView()
+                    .presentationDetents([.large, .large])
+            }
+            #endif
         }
     }
     
     private func setupDependencies() {
         let modules: [any DependencyModule.Type] = [
-            NetworkingDependencyModule.self,
+            NetworkingDependencyInjection.self,
             SessionDependencyInjection.self,
             ServicesDependencyInjection.self,
             DomainDependencyInjection.self,
@@ -59,11 +76,14 @@ struct MeritusApp: App {
     
     private func makeInitialScreen() -> some View {
         let bootsrapUseCase = resolver.resolveUnwrapping(BootstrapSessionUseCaseProtocol.self)
-        let viewModel = SplashScreenViewModel(
-            bootsrapUseCase: bootsrapUseCase
-        )
-        
+        let viewModel = SplashScreenViewModel(bootsrapUseCase: bootsrapUseCase)
         return SplashScreenView(viewModel: viewModel)
+    }
+    
+    private func makeDebugScreenView() -> some View {
+        let store = resolver.resolveUnwrapping(NetworkDebugStoreProtocol.self)
+        let viewModel = NetworkDebugScreenViewModel(store: store)
+        return NetworkDebugScreenView(viewModel: viewModel)
     }
     
     private func setupUI() {

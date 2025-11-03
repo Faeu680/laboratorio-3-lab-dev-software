@@ -5,7 +5,6 @@
 //  Created by Arthur Porto on 17/10/25.
 //
 
-import Networking
 import Session
 
 final class SignInUseCase: SignInUseCaseProtocol {

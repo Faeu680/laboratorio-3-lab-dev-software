@@ -1,5 +1,5 @@
 //
-//  ServiceErrror.swift
+//  ServiceError.swift
 //  Domain
 //
 //  Created by Arthur Porto on 29/10/25.

@@ -9,16 +9,20 @@ import Foundation
 import Alamofire
 
 final class NetworkClient: NetworkClientProtocol {
-    private let session: Session = .default
-    private let decoder: JSONDecoder = .init()
+    private let session: Session
+    private let decoder = JSONDecoder()
     
-    func request<T: Decodable>(_ request: some Request) async throws(NetworkError) -> NetworkResponse<T> {
+    init(session: Session) {
+        self.session = session
+    }
+    
+    func request<T: Decodable>(_ request: some APIRequest) async throws(NetworkError) -> NetworkResponse<T> {
         try await runInBackground {
             try await self.performRequest(request)
         }
     }
     
-    func request(_ request: some Request) async throws(NetworkError) {
+    func request(_ request: some APIRequest) async throws(NetworkError) {
         try await runInBackground {
             try await self.performVoidRequest(request)
         }
@@ -40,7 +44,7 @@ final class NetworkClient: NetworkClientProtocol {
         }
     }
     
-    private func performRequest<T: Decodable>(_ request: some Request) async throws(NetworkError) -> NetworkResponse<T> {
+    private func performRequest<T: Decodable>(_ request: some APIRequest) async throws(NetworkError) -> NetworkResponse<T> {
         let urlRequest: URLRequest
         do {
             urlRequest = try request.asURLRequest()
@@ -65,7 +69,7 @@ final class NetworkClient: NetworkClientProtocol {
         return value
     }
     
-    private func performVoidRequest(_ request: some Request) async throws(NetworkError) {
+    private func performVoidRequest(_ request: some APIRequest) async throws(NetworkError) {
         let urlRequest: URLRequest
         do {
             urlRequest = try request.asURLRequest()

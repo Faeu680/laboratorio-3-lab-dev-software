@@ -1,11 +1,11 @@
 //
-//  BootstrapSessionError.swift
+//  BootstrapSessionUseCaseError.swift
 //  Domain
 //
 //  Created by Arthur Porto on 31/10/25.
 //
 
-public enum BootstrapSessionError: Error {
+public enum BootstrapSessionUseCaseError: Error {
     case needsSignIn
     case keychainError
     case initSessionError

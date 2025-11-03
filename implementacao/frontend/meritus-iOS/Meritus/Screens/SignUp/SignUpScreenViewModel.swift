@@ -5,8 +5,9 @@
 //  Created by Arthur Porto on 01/11/25.
 //
 
-import Combine
 import SwiftUI
+import Combine
+import Domain
 
 enum SignUpType {
     case student
@@ -95,15 +96,21 @@ extension SignUpType.FieldKey {
         }
     }
 }
+
 @MainActor
 final class SignUpScreenViewModel: ObservableObject {
+    private let studentSignUpUseCase: SignUpStudentUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     
     @Published private(set) var signUpType: SignUpType = .student
     @Published private(set) var isCurrentFormComplete: Bool = false
     @Published var fields: [SignUpType.FieldKey: String] = [:]
     
-    init() {
+    var onStudentSignUpSuccess: (() -> Void)?
+    var onStudentSignUpFailure: ((SignUpStudentUseCaseError) -> Void)?
+    
+    init(studentSignUpUseCase: SignUpStudentUseCaseProtocol) {
+        self.studentSignUpUseCase = studentSignUpUseCase
         setupObservers()
     }
     
@@ -120,6 +127,45 @@ final class SignUpScreenViewModel: ObservableObject {
     
     func didTapBusiness() {
         signUpType = .business
+    }
+    
+    func didTapSignUp() async {
+        switch signUpType {
+        case .student:
+            await executeStudentSignUp()
+        case .business:
+            await executeBusinessSignUp()
+        }
+    }
+    
+    private func executeStudentSignUp() async {
+        let student = RegisterStudentModel(
+            name: getFieldValue(.name),
+            email: getFieldValue(.email),
+            password: getFieldValue(.password),
+            cpf: getFieldValue(.cpf),
+            rg: getFieldValue(.rg),
+            address: getFieldValue(.address),
+            course: getFieldValue(.course),
+            institutionId: getFieldValue(.institutionId)
+        )
+        
+        do {
+            try await studentSignUpUseCase.execute(student: student)
+        } catch {
+            
+        }
+    }
+    
+    private func executeBusinessSignUp() async {
+        fatalError("Not implemented")
+    }
+    
+    private func getFieldValue(_ key: SignUpType.FieldKey) -> String {
+        guard let text = fields[key]?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !text.isEmpty else { return "" }
+        
+        return text
     }
     
     private func setupObservers() {

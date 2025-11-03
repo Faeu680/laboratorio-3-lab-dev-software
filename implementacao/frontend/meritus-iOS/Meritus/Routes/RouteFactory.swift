@@ -26,7 +26,8 @@ final class RouteFactory: RouteFactoryProtocol {
     
     @MainActor
     func makeSignUp() -> SignUpScreenView {
-        let viewModel = SignUpScreenViewModel()
+        let studentSignUpUseCase = resolver.resolveUnwrapping(SignUpStudentUseCaseProtocol.self)
+        let viewModel = SignUpScreenViewModel(studentSignUpUseCase: studentSignUpUseCase)
         let view = SignUpScreenView(viewModel: viewModel)
         return view
     }

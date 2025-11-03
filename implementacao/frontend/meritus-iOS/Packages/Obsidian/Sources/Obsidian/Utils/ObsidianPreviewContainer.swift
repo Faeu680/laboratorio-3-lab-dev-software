@@ -13,7 +13,7 @@ public struct ObsidianPreviewContainer<Content: View>: View {
     
     public init(@ViewBuilder content: @escaping () -> Content) {
         self.content = content()
-        ObsidianFont.registerFonts()
+        ObsidianSetup.setup()
     }
     
     public var body: some View {

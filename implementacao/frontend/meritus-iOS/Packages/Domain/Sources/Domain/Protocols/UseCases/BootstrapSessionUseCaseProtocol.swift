@@ -7,5 +7,5 @@
 
 
 public protocol BootstrapSessionUseCaseProtocol: Sendable {
-    func execute() async throws(BootstrapSessionError)
+    func execute() async throws(BootstrapSessionUseCaseError)
 }

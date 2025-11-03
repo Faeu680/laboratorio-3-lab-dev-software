@@ -84,6 +84,7 @@ fastlane/screenshots/**/*.png
 fastlane/test_output/
 
 # IDE and Editor files
+*.xcuserdatad/
 .vscode/
 .idea/
 *.swp

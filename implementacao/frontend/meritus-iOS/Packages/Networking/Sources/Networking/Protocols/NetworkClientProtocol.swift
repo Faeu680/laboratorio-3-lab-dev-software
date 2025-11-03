@@ -8,6 +8,6 @@
 import Foundation
 
 public protocol NetworkClientProtocol: Sendable {
-    func request<T: Decodable>(_ endpoint: some Request) async throws(NetworkError) -> NetworkResponse<T>
-    func request(_ endpoint: some Request) async throws(NetworkError)
+    func request<T: Decodable>(_ endpoint: some APIRequest) async throws(NetworkError) -> NetworkResponse<T>
+    func request(_ endpoint: some APIRequest) async throws(NetworkError)
 }

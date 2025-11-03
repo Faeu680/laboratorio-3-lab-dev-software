@@ -10,7 +10,10 @@
     "Home Screen" : {
 
     },
-    "MERITUS" : {
+    "login.button.login.label" : {
+
+    },
+    "login.button.signingin.label" : {
 
     },
     "login.field.email.label" : {
@@ -100,6 +103,15 @@
           }
         }
       }
+    },
+    "login.footer.label" : {
+
+    },
+    "login.header.label" : {
+
+    },
+    "MERITUS" : {
+
     },
     "signup.field.address.label" : {
       "localizations" : {

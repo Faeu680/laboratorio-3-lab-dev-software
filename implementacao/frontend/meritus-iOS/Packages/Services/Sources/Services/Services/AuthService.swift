@@ -17,8 +17,8 @@ final class AuthService: AuthServiceProtocol {
 
     func signIn(email: String, password: String) async throws(ServiceError) -> String {
         do {
-            let endpoint = SigninRequest(email: email, password: password)
-            let response: NetworkResponse<SigninResponse> = try await network.request(endpoint)
+            let request = SigninRequest(email: email, password: password)
+            let response: NetworkResponse<SigninResponse> = try await network.request(request)
             let accessToken = response.data.accessToken
 
             return accessToken

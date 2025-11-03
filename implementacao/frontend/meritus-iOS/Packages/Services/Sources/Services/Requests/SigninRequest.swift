@@ -1,5 +1,5 @@
 //
-//  AuthRequest.swift
+//  SigninRequest.swift
 //  Services
 //
 //  Created by Arthur Porto on 17/10/25.
@@ -7,11 +7,11 @@
 
 import Networking
 
-struct SigninRequest: Request {
+struct SigninRequest: APIRequest {
     private let email: String
     private let password: String
     
-    let path: String =  "/auth/signin"
+    let path: String = "/auth/signin"
     let method: HTTPMethod = .post
     
     init(

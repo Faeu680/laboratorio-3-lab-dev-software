@@ -12,6 +12,7 @@
 		7645A11D2EA2163800AA72C4 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 7645A11C2EA2163800AA72C4 /* Domain */; };
 		7645A11F2EA2163B00AA72C4 /* Services in Frameworks */ = {isa = PBXBuildFile; productRef = 7645A11E2EA2163B00AA72C4 /* Services */; };
 		764AB5FD2EA05AED0014A0BD /* Obsidian in Frameworks */ = {isa = PBXBuildFile; productRef = 764AB5FC2EA05AED0014A0BD /* Obsidian */; };
+		7653180E2EB84D55002036D9 /* TestMode in Frameworks */ = {isa = PBXBuildFile; productRef = 7653180D2EB84D55002036D9 /* TestMode */; };
 		769570F72EA22169002C72E2 /* Commons in Frameworks */ = {isa = PBXBuildFile; productRef = 769570F62EA22169002C72E2 /* Commons */; };
 		76DA3FB12EA1F06F00699659 /* DependencyInjection in Frameworks */ = {isa = PBXBuildFile; productRef = 76DA3FB02EA1F06F00699659 /* DependencyInjection */; };
 		76DA3FB42EA1F26400699659 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 76DA3FB32EA1F26400699659 /* Networking */; };
@@ -23,6 +24,7 @@
 		7645A1192EA212FA00AA72C4 /* Domain */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Domain; sourceTree = "<group>"; };
 		7645A11A2EA214F600AA72C4 /* Services */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Services; sourceTree = "<group>"; };
 		7645A1212EA21F4700AA72C4 /* Commons */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Commons; sourceTree = "<group>"; };
+		7653180B2EB84AE7002036D9 /* TestMode */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = TestMode; sourceTree = "<group>"; };
 		7674A4132E9CEE900071CF0F /* DependencyInjection */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DependencyInjection; sourceTree = "<group>"; };
 		76B311682EA054C100350E48 /* Networking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Networking; sourceTree = "<group>"; };
 		76B311692EA0554400350E48 /* Obsidian */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Obsidian; sourceTree = "<group>"; };
@@ -42,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7653180E2EB84D55002036D9 /* TestMode in Frameworks */,
 				7645A11F2EA2163B00AA72C4 /* Services in Frameworks */,
 				76DA3FB42EA1F26400699659 /* Networking in Frameworks */,
 				762838972EB1DD16005E07C6 /* Navigation in Frameworks */,
@@ -56,9 +59,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7653180C2EB84D55002036D9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7674A4122E9CEE430071CF0F /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				7653180B2EB84AE7002036D9 /* TestMode */,
 				762838942EB1DAAB005E07C6 /* Navigation */,
 				7628388A2EB1C9BB005E07C6 /* Session */,
 				7645A1212EA21F4700AA72C4 /* Commons */,
@@ -77,6 +88,7 @@
 				76C565632E9CEB7D00B90630 /* Meritus */,
 				76C565622E9CEB7D00B90630 /* Products */,
 				7674A4122E9CEE430071CF0F /* Packages */,
+				7653180C2EB84D55002036D9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -116,6 +128,7 @@
 				769570F62EA22169002C72E2 /* Commons */,
 				7628388B2EB1CB23005E07C6 /* Session */,
 				762838962EB1DD16005E07C6 /* Navigation */,
+				7653180D2EB84D55002036D9 /* TestMode */,
 			);
 			productName = Meritus;
 			productReference = 76C565612E9CEB7D00B90630 /* Meritus.app */;
@@ -418,6 +431,10 @@
 		764AB5FC2EA05AED0014A0BD /* Obsidian */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Obsidian;
+		};
+		7653180D2EB84D55002036D9 /* TestMode */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TestMode;
 		};
 		769570F62EA22169002C72E2 /* Commons */ = {
 			isa = XCSwiftPackageProductDependency;

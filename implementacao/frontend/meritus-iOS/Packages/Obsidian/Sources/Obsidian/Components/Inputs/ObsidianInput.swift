@@ -45,7 +45,7 @@ public struct ObsidianInput: View {
                 .obsidianLabel()
                 .foregroundColor(.gray)
             
-            TextField(placeholder, text: $text)
+            TextField(placeholder.localized, text: $text)
                 .obsidianFontSemiBold()
                 .foregroundColor(.primary)
                 .padding()
