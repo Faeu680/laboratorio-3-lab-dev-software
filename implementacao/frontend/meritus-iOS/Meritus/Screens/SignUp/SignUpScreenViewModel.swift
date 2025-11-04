@@ -106,7 +106,7 @@ final class SignUpScreenViewModel: ObservableObject {
     @Published private(set) var isCurrentFormComplete: Bool = false
     @Published var fields: [SignUpType.FieldKey: String] = [:]
     
-    var onStudentSignUpSuccess: (() -> Void)?
+    var onSignUpSuccess: (() -> Void)?
     var onStudentSignUpFailure: ((SignUpStudentUseCaseError) -> Void)?
     
     init(studentSignUpUseCase: SignUpStudentUseCaseProtocol) {
@@ -152,6 +152,7 @@ final class SignUpScreenViewModel: ObservableObject {
         
         do {
             try await studentSignUpUseCase.execute(student: student)
+            onSignUpSuccess?()
         } catch {
             
         }

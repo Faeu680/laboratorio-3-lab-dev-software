@@ -4,10 +4,13 @@
     "Acesso exclusivo" : {
 
     },
+    "Ajustes" : {
+
+    },
     "Experiencia Premium" : {
 
     },
-    "Home Screen" : {
+    "Início" : {
 
     },
     "login.button.login.label" : {
@@ -111,6 +114,18 @@
 
     },
     "MERITUS" : {
+
+    },
+    "Resgatar" : {
+
+    },
+    "Saldo Disponível" : {
+
+    },
+    "Selecione um aluno para realizar uma transferência" : {
+
+    },
+    "Selecione um beneficio para resgatar" : {
 
     },
     "signup.field.address.label" : {
@@ -557,6 +572,15 @@
 
     },
     "Splash Screen" : {
+
+    },
+    "Transfer Screen" : {
+
+    },
+    "Transferências" : {
+
+    },
+    "Transferir" : {
 
     }
   },

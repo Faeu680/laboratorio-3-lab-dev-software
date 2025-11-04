@@ -1,0 +1,173 @@
+//
+//  BalanceCard.swift
+//  Obsidian
+//
+//  Created by Arthur Porto on 03/11/25.
+//
+
+import SwiftUI
+
+public struct BalanceCard: View {
+    private let title: LocalizedStringKey
+    private let amount: Decimal
+    private let currencyCode: String
+    private let locale: Locale
+    private let showsEyeButton: Bool
+    private let onToggleMask: ((Bool) -> Void)?
+
+    @State private var isMasked: Bool
+
+    public init(
+        title: LocalizedStringKey = "Saldo Disponível",
+        amount: Decimal,
+        currencyCode: String = "BRL",
+        locale: Locale = Locale(identifier: "pt_BR"),
+        initiallyMasked: Bool = false,
+        showsEyeButton: Bool = true,
+        onToggleMask: ((Bool) -> Void)? = nil
+    ) {
+        self.title = title
+        self.amount = amount
+        self.currencyCode = currencyCode
+        self.locale = locale
+        self._isMasked = State(initialValue: initiallyMasked)
+        self.showsEyeButton = showsEyeButton
+        self.onToggleMask = onToggleMask
+    }
+
+    public var body: some View {
+        ZStack(alignment: .topLeading) {
+            backgroundView
+            content
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(Color.white.opacity(0.06), lineWidth: 1)
+        )
+        .frame(maxWidth: .infinity)
+        .frame(height: 180)
+    }
+}
+
+// MARK: - Content
+
+private extension BalanceCard {
+    var content: some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    Text(title)
+                        .obsidianLabel()
+                        .foregroundStyle(.gray)
+                }
+
+                amountView
+            }
+
+            Spacer()
+
+            if showsEyeButton {
+                Button(action: toggleMask) {
+                    Image(systemName: isMasked ? "eye" : "eye.slash")
+                        .foregroundStyle(.secondary)
+                        .imageScale(.large)
+                        .padding(8)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text(isMasked ? "Mostrar saldo" : "Ocultar saldo"))
+            }
+        }
+        .padding(24)
+    }
+
+    var amountView: some View {
+        Group {
+            if isMasked {
+                Text("R$ ••••••••")
+                    .font(.system(size: 44, weight: .bold, design: .default))
+                    .foregroundStyle(.primary)
+            } else {
+                Text(formattedAmount(amount, code: currencyCode, locale: locale))
+                    .font(.system(size: 44, weight: .bold, design: .default))
+                    .foregroundStyle(.primary)
+            }
+        }
+        .minimumScaleFactor(0.6)
+        .lineLimit(1)
+    }
+}
+
+// MARK: - Background
+
+private extension BalanceCard {
+    var backgroundView: some View {
+        ZStack {
+            LinearGradient(
+                colors: [
+                    Color.black.opacity(0.0),
+                    Color.black.opacity(0.2)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            RadialGradient(
+                gradient: Gradient(colors: [
+                    Color.orange.opacity(0.18),
+                    Color.clear
+                ]),
+                center: .topTrailing,
+                startRadius: 20,
+                endRadius: 260
+            )
+        }
+    }
+}
+
+// MARK: - Actions
+
+private extension BalanceCard {
+    func toggleMask() {
+        isMasked.toggle()
+        onToggleMask?(isMasked)
+    }
+}
+
+// MARK: - Formatting
+
+private func formattedAmount(_ value: Decimal, code: String, locale: Locale) -> String {
+    let nf = NumberFormatter()
+    nf.locale = locale
+    nf.numberStyle = .currency
+    nf.currencyCode = code
+    // Para BRL com separador de milhar "." e decimal ","
+    if locale.identifier == "pt_BR" {
+        nf.currencySymbol = "R$"
+        nf.currencyGroupingSeparator = "."
+        nf.currencyDecimalSeparator = ","
+        nf.minimumFractionDigits = 2
+        nf.maximumFractionDigits = 2
+    }
+    return nf.string(from: value as NSDecimalNumber) ?? "—"
+}
+
+// MARK: - Preview
+
+#Preview("BalanceCard") {
+    ObsidianPreviewContainer {
+        VStack(spacing: 24) {
+            BalanceCard(
+                amount: 125_430.50,
+                initiallyMasked: false
+            )
+
+            BalanceCard(
+                title: "Saldo Disponível",
+                amount: 125_430.50,
+                initiallyMasked: true
+            )
+        }
+    }
+}

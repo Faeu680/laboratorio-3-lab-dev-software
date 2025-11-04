@@ -59,7 +59,7 @@ struct SignUpScreenView: View {
 
 extension SignUpScreenView {
     private func bindActions() {
-        viewModel.onStudentSignUpSuccess = {
+        viewModel.onSignUpSuccess = {
             navigator.navigate(to: AppRoutes.home)
         }
         
