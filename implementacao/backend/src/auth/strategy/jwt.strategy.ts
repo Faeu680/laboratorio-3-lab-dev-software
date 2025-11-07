@@ -10,7 +10,6 @@ export class JwtStrategy extends PassportStrategy(BaseStrategy) {
     super({
       secretOrKey: env.JWT_SECRET,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      algorithms: ['RS256'],
     });
   }
 
