@@ -5,9 +5,11 @@ import { RolesEnum } from '../auth/consts/roles.enum';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { Roles } from '../auth/decorators/permission-scope.decorator';
 import { AuthPayload } from '../auth/types/auth.types';
+import { BalanceDto } from './dto/balance.dto';
 import { RedeemBenefitDto } from './dto/redeem-benefit.dto';
 import { TransactionResponseDto } from './dto/transaction-response.dto';
 import { TransferCoinsDto } from './dto/transfer-coins.dto';
+import { GetBalanceUseCase } from './usecases/get-balance.usecase';
 import { GetExtractUseCase } from './usecases/get-extract.usecase';
 import { RedeemBenefitUseCase } from './usecases/redeem-benefit.usecase';
 import { TransferCoinsUseCase } from './usecases/transfer-coins.usecase';
@@ -19,7 +21,8 @@ export class TransactionsController {
   constructor(
     private readonly transferCoinsUseCase: TransferCoinsUseCase,
     private readonly redeemBenefitUseCase: RedeemBenefitUseCase,
-    private readonly getExtractUseCase: GetExtractUseCase
+    private readonly getExtractUseCase: GetExtractUseCase,
+    private readonly getBalanceUseCase: GetBalanceUseCase
   ) {}
 
   @Roles(RolesEnum.TEACHER)
@@ -72,5 +75,17 @@ export class TransactionsController {
   @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
   async getExtract(@GetUser() user: AuthPayload): Promise<TransactionResponseDto[]> {
     return this.getExtractUseCase.execute(user.sub, user.role);
+  }
+
+  @Get('balance')
+  @ApiOperation({ summary: 'Consultar extrato de transações do usuário autenticado' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Saldo retornado com sucesso. Mostra saldo do aluno ou professor',
+    type: BalanceDto,
+  })
+  @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
+  async getBalance(@GetUser() user: AuthPayload): Promise<BalanceDto> {
+    return this.getBalanceUseCase.execute(user);
   }
 }
