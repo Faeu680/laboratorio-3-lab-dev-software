@@ -8,7 +8,6 @@ import { CreateStudentUseCase } from './usecases/create-student.usecase';
 import { DeleteStudentUseCase } from './usecases/delete-student.usecase';
 import { FindAllStudentsUseCase } from './usecases/find-all-students.usecase';
 import { FindStudentByIdUseCase } from './usecases/find-student-by-id.usecase';
-import { GetStudentBalanceUseCase } from './usecases/get-student-balance.usecase';
 import { UpdateStudentUseCase } from './usecases/update-student.usecase';
 
 @Module({
@@ -16,7 +15,6 @@ import { UpdateStudentUseCase } from './usecases/update-student.usecase';
   controllers: [StudentsController],
   providers: [
     CreateStudentUseCase,
-    GetStudentBalanceUseCase,
     UpdateStudentUseCase,
     DeleteStudentUseCase,
     FindAllStudentsUseCase,

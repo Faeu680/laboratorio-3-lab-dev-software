@@ -7,12 +7,13 @@ import { TeacherEntity } from './entities/teacher.entity';
 import { TeachersController } from './teachers.controller';
 import { CreateTeacherUseCase } from './usecases/create-teacher.usecase';
 import { CreditSemesterCoinsUseCase } from './usecases/credit-semester-coins.usecase';
-import { GetTeacherBalanceUseCase } from './usecases/get-teacher-balance.usecase';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([TeacherEntity, UserEntity, InstitutionEntity, TransactionEntity])],
+  imports: [
+    TypeOrmModule.forFeature([TeacherEntity, UserEntity, InstitutionEntity, TransactionEntity]),
+  ],
   controllers: [TeachersController],
-  providers: [CreateTeacherUseCase, GetTeacherBalanceUseCase, CreditSemesterCoinsUseCase],
+  providers: [CreateTeacherUseCase, CreditSemesterCoinsUseCase],
   exports: [TypeOrmModule],
 })
 export class TeachersModule {}
