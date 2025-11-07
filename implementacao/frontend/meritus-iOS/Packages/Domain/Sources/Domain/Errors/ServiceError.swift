@@ -5,7 +5,7 @@
 //  Created by Arthur Porto on 29/10/25.
 //
 
-public enum ServiceError: Error, Sendable {
+public enum ServiceError: Error, Equatable, Sendable {
     case invalidURL
     case invalidResponse
     case unauthorized(message: String?)

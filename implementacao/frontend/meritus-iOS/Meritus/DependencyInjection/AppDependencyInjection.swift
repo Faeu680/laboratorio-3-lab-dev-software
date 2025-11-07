@@ -19,12 +19,12 @@ public struct AppDependencyInjection: DependencyModule {
     // MARK: - Private Methods
     
     private static func registerServices(in container: Container) {
-        container.register(RouteFactoryProtocol.self) { resolver in
-            return RouteFactory(resolver: resolver)
+        container.register(AppRouteFactoryProtocol.self) { resolver in
+            return AppRouteFactory(resolver: resolver)
         }
         
         container.register(AppRouteRegister.self) { resolver in
-            let factory = resolver.resolveUnwrapping(RouteFactoryProtocol.self)
+            let factory = resolver.resolveUnwrapping(AppRouteFactoryProtocol.self)
             return AppRouteRegister(factory: factory)
         }
     }

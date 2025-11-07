@@ -52,3 +52,7 @@ extension ExtractScreenView {
         .padding(.horizontal, .size16)
     }
 }
+
+#Preview {
+    ExtractScreenView(viewModel: .init())
+}

@@ -39,3 +39,10 @@ extension RedeemScreenView {
         .padding(.horizontal, .size16)
     }
 }
+
+
+#Preview {
+    ObsidianPreviewContainer {
+        RedeemScreenView(viewModel: .init())
+    }
+}

@@ -22,6 +22,8 @@ struct SigninRequest: APIRequest {
         self.password = password
     }
     
+    var scope: APIScope { .unauthenticated }
+    
     var body: (any Encodable)? {
         return Body(
             email: email,

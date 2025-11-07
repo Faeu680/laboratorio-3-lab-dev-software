@@ -1,25 +1,21 @@
 //
-//  StudentsRequest.swift
+//  CompaniesRequest.swift
 //  Services
 //
-//  Created by Arthur Porto on 02/11/25.
+//  Created by Arthur Porto on 07/11/25.
 //
 
 import Networking
 
-enum StudentsRequest: APIRequest {
+enum CompaniesRequest: APIRequest {
     case signUp(
         name: String,
         email: String,
         password: String,
-        cpf: String,
-        rg: String,
+        cnpj: String,
         address: String,
-        course: String,
-        institutionId: String
+        description: String,
     )
-    
-    static let basePath = "/students"
     
     var scope: APIScope {
         switch self {
@@ -29,10 +25,7 @@ enum StudentsRequest: APIRequest {
     }
     
     var path: String {
-        switch self {
-        case .signUp:
-            return Self.basePath
-        }
+        "/companies"
     }
     
     var method: HTTPMethod {
@@ -44,16 +37,14 @@ enum StudentsRequest: APIRequest {
     
     var body: (any Encodable)? {
         switch self {
-        case let .signUp(name, email, password, cpf, rg, address, course, institutionId):
+        case let .signUp(name, email, password, cnpj, address, description):
             return SignUpBody(
                 name: name,
                 email: email,
                 password: password,
-                cpf: cpf,
-                rg: rg,
+                cnpj: cnpj,
                 address: address,
-                course: course,
-                institutionId: institutionId
+                description: description
             )
         }
     }
@@ -62,10 +53,8 @@ enum StudentsRequest: APIRequest {
         let name: String
         let email: String
         let password: String
-        let cpf: String
-        let rg: String
+        let cnpj: String
         let address: String
-        let course: String
-        let institutionId: String
+        let description: String
     }
 }

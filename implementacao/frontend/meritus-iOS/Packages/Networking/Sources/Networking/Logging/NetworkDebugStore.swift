@@ -26,13 +26,13 @@ actor NetworkDebugStore: NetworkDebugStoreProtocol {
 
     func snapshot() -> [NetworkLogEntry] { entries }
 
-    func updateMetrics(requestId: UUID, summary: String?) {   // ⬅️ UUID
+    func updateMetrics(requestId: UUID, summary: String?) {
         guard let idx = entries.firstIndex(where: { $0.requestId == requestId }) else { return }
         entries[idx].timing.metricsSummary = summary
         broadcast()
     }
     
-    func setResponse(requestId: UUID, response: NetworkResponseInfo) { // ⬅️ UUID
+    func setResponse(requestId: UUID, response: NetworkResponseInfo) {
         guard let idx = entries.firstIndex(where: { $0.requestId == requestId }) else { return }
         entries[idx].response = response
         entries[idx].timing.endAt = Date()

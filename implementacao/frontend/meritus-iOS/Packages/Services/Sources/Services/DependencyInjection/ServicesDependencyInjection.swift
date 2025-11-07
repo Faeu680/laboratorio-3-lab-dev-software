@@ -30,5 +30,15 @@ public struct ServicesDependencyInjection: DependencyModule {
             let network = resolver.resolveUnwrapping(NetworkClientProtocol.self)
             return StudentsService(network: network)
         }
+        
+        container.register(BenefitsServiceProtocol.self) { resolver in
+            let network = resolver.resolveUnwrapping(NetworkClientProtocol.self)
+            return BenefitsService(network: network)
+        }
+        
+        container.register(CompaniesServiceProtocol.self) { resolver in
+            let network = resolver.resolveUnwrapping(NetworkClientProtocol.self)
+            return CompaniesService(network: network)
+        }
     }
 }

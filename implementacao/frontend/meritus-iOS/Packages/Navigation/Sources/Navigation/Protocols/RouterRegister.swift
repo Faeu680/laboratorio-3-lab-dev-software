@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public protocol RouteRegisterProtocol {
+public protocol RouteRegisterProtocol: Sendable {
     associatedtype Route: RouteProtocol
     associatedtype Destination: View
     

@@ -11,13 +11,26 @@ import Combine
 @MainActor
 final class Navigator: ObservableObject {
     @Published var path = NavigationPath()
+    private var registers: [AnyRouteRegister] = []
     
     static let shared = Navigator()
     
     private init() {}
+    
+    func configure(registers: [AnyRouteRegister]) {
+        self.registers = registers
+    }
 }
 
 extension Navigator: NavigatorProtocol {
+    func view<Route: RouteProtocol>(for route: Route) -> AnyView? {
+        let any = AnyHashable(route)
+        for reg in registers where reg.canHandle(any) {
+            if let v = reg.makeDestination(for: any) { return v }
+        }
+        return nil
+    }
+    
     func navigate<Route: RouteProtocol>(to route: Route) {
         path.append(route)
     }

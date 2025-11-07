@@ -17,7 +17,7 @@ struct TransferScreenView: View {
     }
     
     var body: some View {
-        VStack {
+        List {
             ForEach(0..<10, id: \.self) { index in
                 userListItemView()
             }
@@ -25,7 +25,6 @@ struct TransferScreenView: View {
         .navigationTitle("Transferências")
         .navigationSubtitle("Selecione um aluno para realizar uma transferência")
         .toolbarTitleDisplayMode(.inlineLarge)
-        
     }
 }
 
@@ -35,5 +34,11 @@ extension TransferScreenView {
             name: "Ana Silva",
             email: "ana.silva@email.com"
         )
+    }
+}
+
+#Preview {
+    ObsidianPreviewContainer {
+        TransferScreenView(viewModel: .init())
     }
 }

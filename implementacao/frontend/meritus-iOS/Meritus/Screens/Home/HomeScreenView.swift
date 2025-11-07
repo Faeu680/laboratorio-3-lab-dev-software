@@ -7,76 +7,77 @@
 
 import SwiftUI
 import Obsidian
+import Navigation
 
 struct HomeScreenView: View {
-
+    
+    @Environment(\.navigator) private var navigator: NavigatorProtocol
+    
     @StateObject private var viewModel: HomeScreenViewModel
-    private let isBusiness = false
-
+    
     init(viewModel: HomeScreenViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
-
+    
     var body: some View {
         TabView {
-            NavigationView {
-                if isBusiness {
-                    // Empresa Somente
-                    BenefitsScreenView(viewModel: .init())
-                        .applyHomeToolbar()
-                } else {
-                    // Aluno e Professor Somente
-                    ExtractScreenView(viewModel: .init())
-                        .applyHomeToolbar()
+            if viewModel.isCompany {
+                NavigationView {
+                    navigator.view(for: AppRoutes.benefits)
+                }
+                .tabItem {
+                    Label("Início", systemImage: "house.fill")
                 }
             }
-            .tabItem {
-                Label("Início", systemImage: "house.fill")
+            
+            if !viewModel.isCompany {
+                NavigationView {
+                    ExtractScreenView(viewModel: .init())
+                }
+                .tabItem {
+                    Label("Início", systemImage: "house.fill")
+                }
             }
-
-            // Professor Somente
+            
+           
+            if viewModel.isTeacher {
+                NavigationView {
+                    TransferScreenView(viewModel: .init())
+                }
+                .tabItem {
+                    Label("Transferir", systemImage: "arrow.left.arrow.right.circle.fill")
+                }
+            }
+            
+            if viewModel.isStudent {
+                NavigationView {
+                    RedeemScreenView(viewModel: .init())
+                }
+                .tabItem {
+                    Label("Resgatar", systemImage: "creditcard.fill")
+                }
+            }
+            
             NavigationView {
-                TransferScreenView(viewModel: .init())
-            }
-            .tabItem {
-                Label("Transferir", systemImage: "arrow.left.arrow.right.circle.fill")
-            }
-
-                
-            // Aluno Somente
-            NavigationView {
-                RedeemScreenView(viewModel: .init())
-            }
-            .tabItem {
-                Label("Resgatar", systemImage: "creditcard.fill")
-            }
-
-            // Ajustes / Perfil
-            NavigationView {
-                Text("Ajustes")
+                settingsView()
             }
             .tabItem {
                 Label("Ajustes", systemImage: "gearshape.fill")
             }
         }
         .navigationBarBackButtonHidden()
+        .tabBarMinimizeBehavior(.onScrollDown)
     }
 }
 
-private extension View {
-    func applyHomeToolbar() -> some View {
-        self.toolbar {
-            ToolbarItem(placement: .subtitle) {
-                Text("MERITUS")
-                    .meritusTitle()
-            }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    // ação do avatar (ex: ir para perfil)
-                } label: {
-                    AvatarView(size: 32)
-                }
+extension HomeScreenView {
+    private func settingsView() -> some View {
+        ObsidianButton(
+            "Logout",
+            style: .primary,
+        ) {
+            Task {
+                await viewModel.didTapLogout()
             }
         }
     }
@@ -93,11 +94,5 @@ private struct AvatarView: View {
                 .padding(size * 0.12)
         }
         .frame(width: size, height: size)
-    }
-}
-
-#Preview {
-    ObsidianPreviewContainer {
-        HomeScreenView(viewModel: .init())
     }
 }

@@ -13,4 +13,5 @@ enum AppRoutes: RouteProtocol {
     case login
     case signup
     case home
+    case benefits
 }

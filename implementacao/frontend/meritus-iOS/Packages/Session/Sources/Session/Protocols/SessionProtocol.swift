@@ -7,10 +7,13 @@
 
 public protocol SessionProtocol: Actor {
     func getUserId() -> String?
+    nonisolated func unsafeGetUserId() -> String?
     
     func getEmail() -> String?
+    nonisolated func unsafeGetEmail() -> String?
     
     func getRole() -> UserRole?
+    nonisolated func unsafeGetRole() -> UserRole?
     
     func refresh(token: String) throws(SessionError)
     

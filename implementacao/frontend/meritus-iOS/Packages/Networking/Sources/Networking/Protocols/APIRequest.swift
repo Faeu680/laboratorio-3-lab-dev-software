@@ -6,8 +6,12 @@
 //
 
 import Foundation
+import Commons
+
+fileprivate let keychainManager = KeychainManager.shared
 
 public protocol APIRequest: Sendable {
+    var scope: APIScope { get }
     var path: String { get }
     var method: HTTPMethod { get }
     var headers: [String: String]? { get }
@@ -39,9 +43,15 @@ public extension APIRequest {
         request.httpMethod = method.rawValue
         request.timeoutInterval = timeout
         
-        if let headers = headers {
-            headers.forEach { request.setValue($1, forHTTPHeaderField: $0) }
+        var finalHeaders = headers ?? [:]
+        
+        if case .authenticated = scope {
+            if let token = try? keychainManager.read(for: .authToken) {
+                finalHeaders["Authorization"] = "Bearer \(token)"
+            }
         }
+        
+        finalHeaders.forEach { request.setValue($1, forHTTPHeaderField: $0) }
         
         if let body {
             do {

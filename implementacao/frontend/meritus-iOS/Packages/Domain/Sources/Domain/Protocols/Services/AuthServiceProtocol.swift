@@ -6,5 +6,8 @@
 //
 
 public protocol AuthServiceProtocol: Sendable {
-    func signIn(email: String, password: String) async throws(ServiceError) -> String
+    func signIn(
+        email: String,
+        password: String
+    ) async throws(ServiceError) -> String
 }

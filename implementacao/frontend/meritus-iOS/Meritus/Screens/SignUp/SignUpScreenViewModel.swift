@@ -100,6 +100,7 @@ extension SignUpType.FieldKey {
 @MainActor
 final class SignUpScreenViewModel: ObservableObject {
     private let studentSignUpUseCase: SignUpStudentUseCaseProtocol
+    private let companySignUpUseCase: SignUpCompanyUseCaseProtocol
     private var cancellables = Set<AnyCancellable>()
     
     @Published private(set) var signUpType: SignUpType = .student
@@ -109,8 +110,12 @@ final class SignUpScreenViewModel: ObservableObject {
     var onSignUpSuccess: (() -> Void)?
     var onStudentSignUpFailure: ((SignUpStudentUseCaseError) -> Void)?
     
-    init(studentSignUpUseCase: SignUpStudentUseCaseProtocol) {
+    init(
+        studentSignUpUseCase: SignUpStudentUseCaseProtocol,
+        companySignUpUseCase: SignUpCompanyUseCaseProtocol
+    ) {
         self.studentSignUpUseCase = studentSignUpUseCase
+        self.companySignUpUseCase = companySignUpUseCase
         setupObservers()
     }
     
@@ -159,7 +164,21 @@ final class SignUpScreenViewModel: ObservableObject {
     }
     
     private func executeBusinessSignUp() async {
-        fatalError("Not implemented")
+        let company = RegisterCompanyModel(
+            name: getFieldValue(.name),
+            email: getFieldValue(.email),
+            password: getFieldValue(.password),
+            cnpj: getFieldValue(.cnpj),
+            address: getFieldValue(.address),
+            description: getFieldValue(.description)
+        )
+        
+        do {
+            try await companySignUpUseCase.execute(company: company)
+            onSignUpSuccess?()
+        } catch {
+            
+        }
     }
     
     private func getFieldValue(_ key: SignUpType.FieldKey) -> String {

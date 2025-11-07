@@ -9,9 +9,9 @@ import SwiftUI
 import Navigation
 
 final class AppRouteRegister: RouteRegisterProtocol {
-    private let factory: RouteFactoryProtocol
+    private let factory: AppRouteFactoryProtocol
     
-    init(factory: RouteFactoryProtocol) {
+    init(factory: AppRouteFactoryProtocol) {
         self.factory = factory
     }
     
@@ -25,6 +25,8 @@ final class AppRouteRegister: RouteRegisterProtocol {
             factory.makeSignUp()
         case .home:
             factory.makeHome()
+        case .benefits:
+            factory.makeBenefits()
         }
     }
 }

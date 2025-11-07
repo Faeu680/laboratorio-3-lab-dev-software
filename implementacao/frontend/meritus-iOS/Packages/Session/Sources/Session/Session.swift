@@ -10,10 +10,10 @@ import Commons
 
 final actor Session: SessionProtocol {
     private let keychain = KeychainManager.shared
-    private var userId: String?
-    private var email: String?
-    private var role: UserRole?
-    private var expiration: Date?
+    private nonisolated(unsafe) var userId: String?
+    private nonisolated(unsafe) var email: String?
+    private nonisolated(unsafe) var role: UserRole?
+    private nonisolated(unsafe) var expiration: Date?
     
     init() {
         guard let token = try? keychain.read(for: .authToken) else {
@@ -29,11 +29,23 @@ final actor Session: SessionProtocol {
         userId
     }
     
+    nonisolated func unsafeGetUserId() -> String? {
+        userId
+    }
+    
     func getEmail() -> String? {
         email
     }
     
+    nonisolated func unsafeGetEmail() -> String? {
+        email
+    }
+    
     func getRole() -> UserRole? {
+        role
+    }
+    
+    nonisolated func unsafeGetRole() -> UserRole? {
         role
     }
     
@@ -97,7 +109,6 @@ final actor Session: SessionProtocol {
         var base64 = encodedString
             .replacingOccurrences(of: "-", with: "+")
             .replacingOccurrences(of: "_", with: "/")
-        
 
         let padding = 4 - (base64.count % 4)
         if padding != 4 {

@@ -1,11 +1,11 @@
 //
-//  RouteFactoryProtocol.swift
+//  AppRouteFactoryProtocol.swift
 //  Meritus
 //
 //  Created by Arthur Porto on 31/10/25.
 //
 
-protocol RouteFactoryProtocol {
+protocol AppRouteFactoryProtocol: Sendable {
     @MainActor
     func makeLogin() -> LoginScreenView
     
@@ -14,4 +14,7 @@ protocol RouteFactoryProtocol {
     
     @MainActor
     func makeHome() -> HomeScreenView
+    
+    @MainActor
+    func makeBenefits() -> BenefitsScreenView
 }
