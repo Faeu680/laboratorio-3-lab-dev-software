@@ -10,7 +10,7 @@ import Alamofire
 
 enum NetworkDebugUtils {
     static let redactedHeaderKeys: Set<String> = [
-        /*"authorization",*/"proxy-authorization","api-key","x-api-key","x-auth-token"
+        "authorization", "proxy-authorization", "api-key", "x-api-key", "x-auth-token"
     ]
     static let maxBodyPreviewBytes: Int = 64 * 1024
     

@@ -15,6 +15,8 @@ enum BenefitsRequest: APIRequest {
         cost: Double
     )
     
+    case getBenefits
+    
     var scope: APIScope { .authenticated }
     
     var path: String {
@@ -25,6 +27,8 @@ enum BenefitsRequest: APIRequest {
         switch self {
         case .createBenefit:
             return .post
+        case .getBenefits:
+            return .get
         }
     }
     
@@ -37,6 +41,8 @@ enum BenefitsRequest: APIRequest {
                 photo: photo,
                 cost: cost
             )
+        case .getBenefits:
+            return nil
         }
     }
     

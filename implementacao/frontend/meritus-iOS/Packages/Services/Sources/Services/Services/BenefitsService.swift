@@ -34,4 +34,15 @@ final class BenefitsService: BenefitsServiceProtocol {
             throw ServiceError(from: error)
         }
     }
+    
+    func getBenefits() async throws(ServiceError) -> [BenefitModel] {
+        do {
+            let request = BenefitsRequest.getBenefits
+            let response: NetworkResponse<[GetBenefitsResponse]> = try await network.request(request)
+            let mapped = response.data.toDomain()
+            return mapped
+        } catch {
+            throw ServiceError(from: error)
+        }
+    }
 }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Obsidian
+import Domain
 
 struct RedeemScreenView: View {
     @StateObject private var viewModel: RedeemScreenViewModel
@@ -17,32 +18,38 @@ struct RedeemScreenView: View {
     
     var body: some View {
         ScrollView {
-            ForEach(0..<10, id: \.self) { index in
-                benefitCardView()
+            ForEach(viewModel.benefits, id: \.self) { benefit in
+                benefitCardView(
+                    title: benefit.name,
+                    description: benefit.description,
+                    imageUrl: benefit.photo ?? ""
+                )
             }
         }
         .scrollIndicators(.never)
         .navigationTitle("Resgatar")
         .navigationSubtitle("Selecione um beneficio para resgatar")
         .toolbarTitleDisplayMode(.inlineLarge)
+        .onViewDidLoad {
+            Task(priority: .userInitiated) {
+                await viewModel.onViewDidLoad()
+            }
+        }
     }
 }
 
 extension RedeemScreenView {
-    private func benefitCardView() -> some View {
+    private func benefitCardView(
+        title: String,
+        description: String,
+        imageUrl: String
+    ) -> some View {
         BenefitCard(
-            title: "Spa Premium Experience",
-            description: "Dia completo de relaxamento em spa 5 estrelas com massagem e tratamento facial. Inclui acesso à sauna e piscina aquecida.",
+            title: title,
+            description: description,
             price: 850,
-            image: Image("spa_header")
+            image: Image(imageUrl)
         )
         .padding(.horizontal, .size16)
-    }
-}
-
-
-#Preview {
-    ObsidianPreviewContainer {
-        RedeemScreenView(viewModel: .init())
     }
 }

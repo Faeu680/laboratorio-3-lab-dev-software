@@ -39,7 +39,6 @@ struct HomeScreenView: View {
                 }
             }
             
-           
             if viewModel.isTeacher {
                 NavigationView {
                     TransferScreenView(viewModel: .init())
@@ -51,7 +50,7 @@ struct HomeScreenView: View {
             
             if viewModel.isStudent {
                 NavigationView {
-                    RedeemScreenView(viewModel: .init())
+                    navigator.view(for: AppRoutes.redeem)
                 }
                 .tabItem {
                     Label("Resgatar", systemImage: "creditcard.fill")

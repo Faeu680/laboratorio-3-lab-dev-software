@@ -27,6 +27,8 @@ final class AppRouteRegister: RouteRegisterProtocol {
             factory.makeHome()
         case .benefits:
             factory.makeBenefits()
+        case .redeem:
+            factory.makeRedeem()
         }
     }
 }

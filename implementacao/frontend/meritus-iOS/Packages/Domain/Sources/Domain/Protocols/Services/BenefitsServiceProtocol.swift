@@ -12,4 +12,6 @@ public protocol BenefitsServiceProtocol: Sendable {
         photo: String,
         cost: Double
     ) async throws(ServiceError)
+    
+    func getBenefits() async throws(ServiceError) -> [BenefitModel]
 }

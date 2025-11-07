@@ -48,5 +48,10 @@ public struct DomainDependencyInjection: DependencyModule {
             let session = resolver.resolveUnwrapping(SessionProtocol.self)
             return SignUpCompanyUseCase(service: service, session: session)
         }
+        
+        container.register(GetBenefitsUseCaseProtocol.self) { resolver in
+            let service = resolver.resolveUnwrapping(BenefitsServiceProtocol.self)
+            return GetBenefitsUseCase(service: service)
+        }
     }
 }

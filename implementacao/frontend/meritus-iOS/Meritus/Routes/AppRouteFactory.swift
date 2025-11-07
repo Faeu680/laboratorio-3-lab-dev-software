@@ -46,4 +46,11 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
         let viewModel = BenefitsScreenViewModel(createBenefitUseCase: createBenefitUseCase)
         return BenefitsScreenView(viewModel: viewModel)
     }
+    
+    @MainActor
+    func makeRedeem() -> RedeemScreenView {
+        let getBenefitsUseCase = resolver.resolveUnwrapping(GetBenefitsUseCaseProtocol.self)
+        let viewModel = RedeemScreenViewModel(getBenefitsUseCase: getBenefitsUseCase)
+        return RedeemScreenView(viewModel: viewModel)
+    }
 }
