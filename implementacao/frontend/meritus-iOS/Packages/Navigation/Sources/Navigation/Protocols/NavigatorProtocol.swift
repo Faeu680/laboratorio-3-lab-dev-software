@@ -13,6 +13,7 @@ public protocol NavigatorProtocol {
     func navigate<Route: RouteProtocol>(to route: Route)
     func navigate<Route: RouteProtocol>(to routes: [Route])
     func pop()
+    func popTo<Route: RouteProtocol>(_ target: Route)
     func popToRoot()
     func pop(count: Int)
 }

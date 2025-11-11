@@ -48,7 +48,7 @@ extension RedeemScreenView {
             title: title,
             description: description,
             price: 850,
-            image: Image(imageUrl)
+            image: Image("mock-porto-faria")
         )
         .padding(.horizontal, .size16)
     }

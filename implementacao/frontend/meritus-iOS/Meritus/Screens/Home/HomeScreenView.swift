@@ -77,6 +77,7 @@ extension HomeScreenView {
         ) {
             Task {
                 await viewModel.didTapLogout()
+                navigator.popTo(AppRoutes.login)
             }
         }
     }

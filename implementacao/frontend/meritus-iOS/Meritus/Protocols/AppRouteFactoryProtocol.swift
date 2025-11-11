@@ -19,5 +19,8 @@ protocol AppRouteFactoryProtocol: Sendable {
     func makeBenefits() -> BenefitsScreenView
     
     @MainActor
+    func makeNewBenefit() -> NewBenefitScreenView
+    
+    @MainActor
     func makeRedeem() -> RedeemScreenView
 }

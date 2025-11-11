@@ -26,6 +26,7 @@ struct ExtractScreenView: View {
             }
         }
         .scrollIndicators(.never)
+        .applyMeritusToolbarTitle()
     }
 }
 

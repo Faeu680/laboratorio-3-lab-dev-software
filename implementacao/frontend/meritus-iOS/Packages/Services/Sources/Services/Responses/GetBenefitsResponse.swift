@@ -12,7 +12,7 @@ struct GetBenefitsResponse: Decodable {
     let name: String
     let description: String
     let photo: String?
-    let cost: Int
+    let cost: String
     let active: Bool
     let companyId: String
     let companyName: String?

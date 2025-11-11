@@ -8,8 +8,11 @@
 import SwiftUI
 import PhotosUI
 import Obsidian
+import Navigation
 
 struct BenefitsScreenView: View {
+    
+    @Environment(\.navigator) private var navigator: NavigatorProtocol
     
     @StateObject private var viewModel: BenefitsScreenViewModel
 
@@ -25,13 +28,10 @@ struct BenefitsScreenView: View {
         }
         .scrollIndicators(.never)
         .applyMeritusToolbarTitle()
-        .sheet(isPresented: $viewModel.showCreateBenefit) {
-            createBenefitSheetView()
-        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    viewModel.showCreateBenefit.toggle()
+                    navigator.navigate(to: AppRoutes.newBenifit)
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -49,108 +49,5 @@ extension BenefitsScreenView {
             image: Image("spa_header")
         )
         .padding(.horizontal, .size16)
-    }
-}
-
-extension BenefitsScreenView {
-    private func createBenefitSheetView() -> some View {
-        NavigationStack {
-            VStack {
-                nameInputView()
-                
-                descriptionInputView()
-                
-                costInputView()
-                
-                createBenefitButtonView()
-            }
-            .padding(.horizontal, .size16)
-            .presentationDetents([.medium, .medium])
-            .navigationTitle("Novo Beneficio")
-        }
-    }
-}
-
-extension BenefitsScreenView {
-    private func nameInputView() -> some View {
-        ObsidianInput(
-            text: $viewModel.name,
-            label: "Nome",
-            placeholder: "Nome",
-            keyboardType: .emailAddress
-        )
-    }
-}
-
-extension BenefitsScreenView {
-    private func descriptionInputView() -> some View {
-        ObsidianInput(
-            text: $viewModel.description,
-            label: "Descrição",
-            placeholder: "Descrição",
-            keyboardType: .emailAddress
-        )
-    }
-}
-
-extension BenefitsScreenView {
-    private func costInputView() -> some View {
-        ObsidianInput(
-            text: $viewModel.cost,
-            label: "Preço",
-            placeholder: "Preço",
-            keyboardType: .emailAddress
-        )
-    }
-}
-
-extension BenefitsScreenView {
-    private func createBenefitButtonView() -> some View {
-        ObsidianButton(
-            "Criar",
-            style: .primary,
-        ) {
-            Task {
-                await viewModel.didTapCreateBenefit()
-            }
-        }
-    }
-}
-
-
-struct CameraPicker: UIViewControllerRepresentable {
-    @Environment(\.dismiss) private var dismiss
-    var onImagePicked: (UIImage) -> Void
-
-    func makeUIViewController(context: Context) -> UIImagePickerController {
-        let picker = UIImagePickerController()
-        picker.delegate = context.coordinator
-        picker.sourceType = .camera
-        picker.allowsEditing = false
-        return picker
-    }
-
-    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-
-    class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-        let parent: CameraPicker
-        init(_ parent: CameraPicker) {
-            self.parent = parent
-        }
-
-        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            if let image = info[.originalImage] as? UIImage {
-                parent.onImagePicked(image)
-            }
-            parent.dismiss()
-        }
-
-        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            parent.dismiss()
-        }
     }
 }

@@ -40,7 +40,7 @@ public struct ObsidianInput: View {
     }
     
     public var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: .size8) {
             Text(label)
                 .obsidianLabel()
                 .foregroundColor(.gray)
@@ -72,19 +72,21 @@ public struct ObsidianInput: View {
 #Preview {
     @Previewable @State var email: String = ""
     
-    VStack(spacing: 20) {
-        ObsidianInput(
-            text: $email,
-            label: "EMAIL",
-            placeholder: "seu@email.com",
-            keyboardType: .emailAddress
-        )
-        
-        ObsidianInput(
-            text: $email,
-            label: "Senha",
-            placeholder: "seu@email.com"
-        )
+    ObsidianPreviewContainer {
+        VStack(spacing: 20) {
+            ObsidianInput(
+                text: $email,
+                label: "EMAIL",
+                placeholder: "seu@email.com",
+                keyboardType: .emailAddress
+            )
+            
+            ObsidianInput(
+                text: $email,
+                label: "Senha",
+                placeholder: "seu@email.com"
+            )
+        }
+        .padding()
     }
-    .padding()
 }

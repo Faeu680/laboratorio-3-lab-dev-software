@@ -46,6 +46,7 @@ struct LoginScreenView: View {
                 .padding(.bottom, .size24)
         }
         .padding(.horizontal, .size16)
+        .navigationBarBackButtonHidden()
         .onViewDidLoad {
             bindActions()
         }

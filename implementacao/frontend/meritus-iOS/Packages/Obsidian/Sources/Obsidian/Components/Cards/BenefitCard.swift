@@ -29,23 +29,12 @@ public struct BenefitCard: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .topLeading) {
-            background
-            content
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .stroke(Color.white.opacity(0.06), lineWidth: 1)
-        )
-        .shadow(color: Color.black.opacity(0.35), radius: 18, x: 0, y: 10)
-    }
-
-    // MARK: - Background
-
-    private var background: some View {
-        RoundedRectangle(cornerRadius: 24, style: .continuous)
-            .fill(Color.black.opacity(0.04))
+        content
+            .background(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(Color.black.opacity(0.04))
+            )
+            .shadow(color: Color.black.opacity(0.35), radius: 18, x: 0, y: 10)
     }
 
     // MARK: - Content
@@ -53,48 +42,37 @@ public struct BenefitCard: View {
     private var content: some View {
         VStack(spacing: 0) {
             headerImage
-            VStack(alignment: .leading, spacing: 16) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(title)
-                        .obsidianBody()
-                        .foregroundStyle(.primary)
-                        .fixedSize(horizontal: false, vertical: true)
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text(title)
+                    .obsidianBody()
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
 
-                    Text(description)
-                        .obsidianBody()
-                        .foregroundStyle(.secondary)
-                        .lineLimit(3)
-                }
-
+                Text(description)
+                    .obsidianBody()
+                    .foregroundStyle(.secondary)
+                    .lineLimit(3)
+                
                 pricePill
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 20)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.all, .size16)
         }
     }
 
     private var headerImage: some View {
         image
             .resizable()
-            .scaledToFill()
             .frame(height: 180)
             .frame(maxWidth: .infinity)
+            .scaledToFill()
             .clipped()
-            .overlay(
-                Rectangle()
-                    .fill(LinearGradient(
-                        colors: [Color.black.opacity(0.0), Color.black.opacity(0.15)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ))
-            )
-            .mask(
-                RoundedCornersMask(radius: 24, corners: [.topLeft, .topRight])
-            )
+            .cornerRadius(.size24, corners: [.topLeft, .topRight])
     }
 
     private var pricePill: some View {
-        Text("RS 200")
+        Text("MC \(price)")
             .font(.obsidianButton)
             .foregroundStyle(.primary)
             .padding(.horizontal, 16)
@@ -103,25 +81,7 @@ public struct BenefitCard: View {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .fill(Color.black.opacity(0.6))
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
-            )
             .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 6)
-    }
-}
-
-private struct RoundedCornersMask: Shape {
-    var radius: CGFloat
-    var corners: UIRectCorner
-
-    func path(in rect: CGRect) -> Path {
-        let path = UIBezierPath(
-            roundedRect: rect,
-            byRoundingCorners: corners,
-            cornerRadii: CGSize(width: radius, height: radius)
-        )
-        return Path(path.cgPath)
     }
 }
 
