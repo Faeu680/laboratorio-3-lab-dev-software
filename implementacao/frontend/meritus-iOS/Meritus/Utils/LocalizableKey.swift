@@ -44,7 +44,6 @@ enum LocalizableKey {
         static let descriptionPlaceholder: LocalizedStringKey = "signup.field.description.placeholder"
     }
     
-    
     // MARK: - Login Screen
     
     @MainActor

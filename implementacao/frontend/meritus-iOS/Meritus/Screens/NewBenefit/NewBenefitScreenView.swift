@@ -12,6 +12,13 @@ struct NewBenefitScreenView: View {
     
     @StateObject private var viewModel: NewBenefitScreenViewModel
     
+    private var cardImage: Image {
+        guard let image = viewModel.selectedImage else {
+            return Image(systemName: "photo")
+        }
+        return Image(uiImage: image)
+    }
+    
     init(viewModel: NewBenefitScreenViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -20,13 +27,13 @@ struct NewBenefitScreenView: View {
         VStack {
             ScrollView {
                 VStack(spacing: .size16) {
+                    benefitCardView()
+                    
                     nameInputView()
                     
                     descriptionInputView()
                     
                     costInputView()
-                    
-                    benefitCardView()
                 }
                 .padding(.top, .size16)
             }
@@ -34,10 +41,35 @@ struct NewBenefitScreenView: View {
             .toolbarTitleDisplayMode(.inlineLarge)
             .navigationTitle("Novo Beneficio")
             
-            createBenefitButtonView()
+            if viewModel.shouldShowCreateBenefitButton {
+                HStack {
+                    createBenefitButtonView()
+                    
+                    removePhotoButtonView()
+                }
+                .padding(.horizontal, .size16)
+            } else {
+                HStack {
+                    addPhotoButtonView()
+                    
+                    takePhotoButtonView()
+                }
+                .padding(.horizontal, .size16)
+            }
+            
+            
         }
         .fullScreenCover(isPresented: $viewModel.isCameraPresented) {
-            cameraScreenView()
+            CameraPicker { selectedImage in
+                viewModel.selectedImage = selectedImage
+            }
+            .ignoresSafeArea()
+        }
+        .fullScreenCover(isPresented: $viewModel.isPhotoLibraryPresented) {
+            PhotoLibraryPicker { selectedImage in
+                viewModel.selectedImage = selectedImage
+            }
+            .ignoresSafeArea()
         }
     }
 }
@@ -84,28 +116,59 @@ extension NewBenefitScreenView {
             title: viewModel.name,
             description: viewModel.description,
             price: 850,
-            image: Image("mock-porto-faria")
+            image: cardImage
         )
         .padding(.horizontal, .size16)
     }
 }
 
 extension NewBenefitScreenView {
-    private func createBenefitButtonView() -> some View {
+    private func addPhotoButtonView() -> some View {
         ObsidianButton(
             "Adicionar Foto",
             style: .primary,
         ) {
-            viewModel.isCameraPresented.toggle()
+            Task {
+                await viewModel.didTapAddPhoto()
+            }
         }
-        .padding(.horizontal, .size16)
     }
 }
 
 extension NewBenefitScreenView {
-    private func cameraScreenView() -> some View {
-        CameraPicker { _ in }
-            .ignoresSafeArea()
+    private func takePhotoButtonView() -> some View {
+        ObsidianButton(
+            "Tirar Foto",
+            style: .secondary,
+        ) {
+            Task {
+                await viewModel.didTapTakePhoto()
+            }
+        }
+    }
+}
+
+extension NewBenefitScreenView {
+    private func createBenefitButtonView() -> some View {
+        ObsidianButton(
+            "Criar Beneficio",
+            style: .primary,
+        ) {
+            Task {
+                await viewModel.didTapCreateBenefit()
+            }
+        }
+    }
+}
+
+extension NewBenefitScreenView {
+    private func removePhotoButtonView() -> some View {
+        ObsidianButton(
+            "Remover Foto",
+            style: .secondary,
+        ) {
+            viewModel.selectedImage = nil
+        }
     }
 }
 
@@ -135,6 +198,48 @@ extension NewBenefitScreenView {
             }
 
             func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+                if let image = info[.originalImage] as? UIImage {
+                    parent.onImagePicked(image)
+                }
+                parent.dismiss()
+            }
+
+            func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+                parent.dismiss()
+            }
+        }
+    }
+}
+
+extension NewBenefitScreenView {
+    private struct PhotoLibraryPicker: UIViewControllerRepresentable {
+        @Environment(\.dismiss) private var dismiss
+        var onImagePicked: (UIImage) -> Void
+
+        func makeUIViewController(context: Context) -> UIImagePickerController {
+            let picker = UIImagePickerController()
+            picker.delegate = context.coordinator
+            picker.sourceType = .photoLibrary
+            picker.allowsEditing = false
+            return picker
+        }
+
+        func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+        func makeCoordinator() -> Coordinator {
+            Coordinator(self)
+        }
+
+        final class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+            let parent: PhotoLibraryPicker
+            init(_ parent: PhotoLibraryPicker) {
+                self.parent = parent
+            }
+
+            func imagePickerController(
+                _ picker: UIImagePickerController,
+                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]
+            ) {
                 if let image = info[.originalImage] as? UIImage {
                     parent.onImagePicked(image)
                 }

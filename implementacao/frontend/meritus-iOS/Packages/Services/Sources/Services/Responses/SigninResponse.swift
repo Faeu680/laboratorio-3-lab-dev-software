@@ -5,6 +5,6 @@
 //  Created by Arthur Porto on 17/10/25.
 //
 
-struct SigninResponse: Codable {
+struct SigninResponse: Decodable {
     let accessToken: String
 }
