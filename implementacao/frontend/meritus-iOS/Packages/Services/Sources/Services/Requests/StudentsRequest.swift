@@ -42,18 +42,20 @@ enum StudentsRequest: APIRequest {
         }
     }
     
-    var body: (any Encodable)? {
+    var body: BodyType {
         switch self {
         case let .signUp(name, email, password, cpf, rg, address, course, institutionId):
-            return SignUpBody(
-                name: name,
-                email: email,
-                password: password,
-                cpf: cpf,
-                rg: rg,
-                address: address,
-                course: course,
-                institutionId: institutionId
+            return .json(
+                SignUpBody(
+                    name: name,
+                    email: email,
+                    password: password,
+                    cpf: cpf,
+                    rg: rg,
+                    address: address,
+                    course: course,
+                    institutionId: institutionId
+                )
             )
         }
     }

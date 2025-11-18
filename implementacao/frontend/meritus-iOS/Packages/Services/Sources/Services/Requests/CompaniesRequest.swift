@@ -24,9 +24,7 @@ enum CompaniesRequest: APIRequest {
         }
     }
     
-    var path: String {
-        "/companies"
-    }
+    var path: String { "/companies" }
     
     var method: HTTPMethod {
         switch self {
@@ -35,16 +33,18 @@ enum CompaniesRequest: APIRequest {
         }
     }
     
-    var body: (any Encodable)? {
+    var body: BodyType {
         switch self {
         case let .signUp(name, email, password, cnpj, address, description):
-            return SignUpBody(
-                name: name,
-                email: email,
-                password: password,
-                cnpj: cnpj,
-                address: address,
-                description: description
+            return .json(
+                SignUpBody(
+                    name: name,
+                    email: email,
+                    password: password,
+                    cnpj: cnpj,
+                    address: address,
+                    description: description
+                )
             )
         }
     }

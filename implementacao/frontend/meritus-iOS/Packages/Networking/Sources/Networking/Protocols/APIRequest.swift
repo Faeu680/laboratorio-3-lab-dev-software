@@ -12,22 +12,35 @@ fileprivate let keychainManager = KeychainManager.shared
 
 public protocol APIRequest: Sendable {
     var scope: APIScope { get }
+    var usePathAsURL: Bool { get }
     var path: String { get }
+    var contentType: ContentType { get }
     var method: HTTPMethod { get }
     var headers: [String: String]? { get }
     var queryItems: [URLQueryItem]? { get }
-    var body: Encodable? { get }
+    var body: BodyType { get }
     var timeout: TimeInterval { get }
 }
 
 public extension APIRequest {
+    var usePathAsURL: Bool { false }
+    var contentType: ContentType { .json }
     var headers: [String: String]? { nil }
     var queryItems: [URLQueryItem]? { nil }
-    var body: Encodable? { nil }
+    var body: BodyType { .none }
     var timeout: TimeInterval { 30 }
     
     func asURLRequest() throws -> URLRequest {
-        guard var urlComponents = URLComponents(string: "https://meritus.bitpickle.dev/api" + path) else {
+        let absolutePath = "https://meritus.bitpickle.dev/api"
+        let completePath: String
+        
+        if !usePathAsURL {
+            completePath = absolutePath + path
+        } else {
+            completePath = path
+        }
+        
+        guard var urlComponents = URLComponents(string: completePath) else {
             throw NetworkError.invalidURL
         }
         
@@ -53,13 +66,18 @@ public extension APIRequest {
         
         finalHeaders.forEach { request.setValue($1, forHTTPHeaderField: $0) }
         
-        if let body {
+        switch body {
+        case .none:
+            break
+        case let .json(encodable):
             do {
-                request.httpBody = try JSONEncoder().encode(body)
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                request.httpBody = try JSONEncoder().encode(encodable)
+                request.setValue(contentType.rawValue, forHTTPHeaderField: "Content-Type")
             } catch {
                 throw NetworkError.encodingError(error)
             }
+        case let .data(data):
+            request.httpBody = data
         }
         
         return request

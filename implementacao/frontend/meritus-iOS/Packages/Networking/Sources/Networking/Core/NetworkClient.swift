@@ -81,7 +81,7 @@ final class NetworkClient: NetworkClientProtocol {
         
         let dr = await session.request(urlRequest)
             .validate(statusCode: 200..<300)
-            .serializingData()
+            .serializingData(emptyResponseCodes: [200, 300])
             .response
         
         if let afError = dr.error {

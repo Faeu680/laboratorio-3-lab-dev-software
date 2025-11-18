@@ -13,6 +13,7 @@ struct SigninRequest: APIRequest {
     
     let path: String = "/auth/signin"
     let method: HTTPMethod = .post
+    let scope: APIScope = .unauthenticated
     
     init(
         email: String,
@@ -22,12 +23,12 @@ struct SigninRequest: APIRequest {
         self.password = password
     }
     
-    var scope: APIScope { .unauthenticated }
-    
-    var body: (any Encodable)? {
-        return Body(
-            email: email,
-            password: password
+    var body: BodyType {
+        return .json(
+            Body(
+                email: email,
+                password: password
+            )
         )
     }
     

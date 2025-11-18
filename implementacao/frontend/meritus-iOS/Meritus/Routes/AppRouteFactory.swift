@@ -28,7 +28,10 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
     func makeSignUp() -> SignUpScreenView {
         let studentSignUpUseCase = resolver.resolveUnwrapping(SignUpStudentUseCaseProtocol.self)
         let companySignUpUseCase = resolver.resolveUnwrapping(SignUpCompanyUseCaseProtocol.self)
-        let viewModel = SignUpScreenViewModel(studentSignUpUseCase: studentSignUpUseCase, companySignUpUseCase: companySignUpUseCase)
+        let viewModel = SignUpScreenViewModel(
+            studentSignUpUseCase: studentSignUpUseCase,
+            companySignUpUseCase: companySignUpUseCase
+        )
         return SignUpScreenView(viewModel: viewModel)
     }
     
@@ -49,7 +52,14 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
     
     @MainActor
     func makeNewBenefit() -> NewBenefitScreenView {
-        let viewModel = NewBenefitScreenViewModel()
+        let getPresignedUrlUseCase = resolver.resolveUnwrapping(GetPresignedURLUseCaseProtocol.self)
+        let uploadImageWithPresignedURLUseCase = resolver.resolveUnwrapping(UploadImageWithPresignedURLUseCaseProtocol.self)
+        let createBenefitUseCase = resolver.resolveUnwrapping(CreateBenefitUseCaseProtocol.self)
+        let viewModel = NewBenefitScreenViewModel(
+            getPresignedUrlUseCase: getPresignedUrlUseCase,
+            uploadImageWithPresignedUrlUseCase: uploadImageWithPresignedURLUseCase,
+            createBenefitUseCase: createBenefitUseCase
+        )
         return NewBenefitScreenView(viewModel: viewModel)
     }
     

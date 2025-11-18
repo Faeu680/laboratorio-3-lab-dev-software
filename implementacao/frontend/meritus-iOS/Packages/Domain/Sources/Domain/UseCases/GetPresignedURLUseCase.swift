@@ -1,11 +1,11 @@
 //
-//  PresignedURLUseCase.swift
+//  GetPresignedURLUseCase.swift
 //  Domain
 //
 //  Created by Arthur Porto on 12/11/25.
 //
 
-final class PresignedURLUseCase: PresignedURLUseCaseProtocol {
+final class GetPresignedURLUseCase: GetPresignedURLUseCaseProtocol {
     private let service: UploadServiceProtocol
     
     init(service: UploadServiceProtocol) {

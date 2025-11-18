@@ -1,11 +1,11 @@
 //
-//  PresignedURLUseCaseProtocol.swift
+//  GetPresignedURLUseCaseProtocol.swift
 //  Domain
 //
 //  Created by Arthur Porto on 12/11/25.
 //
 
-public protocol PresignedURLUseCaseProtocol: Sendable {
+public protocol GetPresignedURLUseCaseProtocol: Sendable {
     func execute(
         originalName: String,
         mimeType: String

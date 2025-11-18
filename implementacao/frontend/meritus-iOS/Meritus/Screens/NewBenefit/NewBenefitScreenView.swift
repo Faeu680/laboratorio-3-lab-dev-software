@@ -252,9 +252,3 @@ extension NewBenefitScreenView {
         }
     }
 }
-
-#Preview {
-    ObsidianPreviewContainer {
-        NewBenefitScreenView(viewModel: .init())
-    }
-}

@@ -19,9 +19,7 @@ enum BenefitsRequest: APIRequest {
     
     var scope: APIScope { .authenticated }
     
-    var path: String {
-        "/benefits"
-    }
+    var path: String { "/benefits" }
     
     var method: HTTPMethod {
         switch self {
@@ -32,17 +30,19 @@ enum BenefitsRequest: APIRequest {
         }
     }
     
-    var body: (any Encodable)? {
+    var body: BodyType {
         switch self {
         case let .createBenefit(name, description, photo, cost):
-            return CreateBenefitBody(
-                name: name,
-                description: description,
-                photo: photo,
-                cost: cost
+            return .json(
+                CreateBenefitBody(
+                    name: name,
+                    description: description,
+                    photo: photo,
+                    cost: cost
+                )
             )
         case .getBenefits:
-            return nil
+            return .none
         }
     }
     

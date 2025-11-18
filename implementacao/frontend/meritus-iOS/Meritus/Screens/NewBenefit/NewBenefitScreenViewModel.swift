@@ -5,6 +5,7 @@
 //  Created by Arthur Porto on 10/11/25.
 //
 
+import Foundation
 import SwiftUI
 import Combine
 import Photos
@@ -13,7 +14,13 @@ import Domain
 
 final class NewBenefitScreenViewModel: ObservableObject {
     
-    private let presignedUrlUseCase: PresignedURLUseCaseProtocol
+    // MARK: - Private Properties
+    
+    private let getPresignedUrlUseCase: GetPresignedURLUseCaseProtocol
+    private let uploadImageWithPresignedUrlUseCase: UploadImageWithPresignedURLUseCaseProtocol
+    private let createBenefitUseCase: CreateBenefitUseCaseProtocol
+    
+    // MARK: - Public Properties
     
     @Published var name: String = ""
     @Published var description: String = ""
@@ -29,9 +36,19 @@ final class NewBenefitScreenViewModel: ObservableObject {
     @Published var shouldShowCreateBenefitButton: Bool = false
     @Published var shouldShowPermissionsAlert = false
     
-    init(presignedUrlUseCase: PresignedURLUseCaseProtocol) {
-        self.presignedUrlUseCase = presignedUrlUseCase
+    // MARK: - Init
+    
+    init(
+        getPresignedUrlUseCase: GetPresignedURLUseCaseProtocol,
+        uploadImageWithPresignedUrlUseCase: UploadImageWithPresignedURLUseCaseProtocol,
+        createBenefitUseCase: CreateBenefitUseCaseProtocol
+    ) {
+        self.getPresignedUrlUseCase = getPresignedUrlUseCase
+        self.uploadImageWithPresignedUrlUseCase = uploadImageWithPresignedUrlUseCase
+        self.createBenefitUseCase = createBenefitUseCase
     }
+    
+    // MARK: - Public Methods
     
     func didTapAddPhoto() async {
         let hasPhotoLibrary = await checkPhotoLibraryPermission()
@@ -45,16 +62,13 @@ final class NewBenefitScreenViewModel: ObservableObject {
         isCameraPresented = hasCamera
     }
     
+    // TODO: Olhar esses metodos encadeados
+    
     func didTapCreateBenefit() async {
-//        let model = CreateBenefitModel(
-//            name: name,
-//            description: description,
-//            photo: "",
-//            cost: 10.0
-//        )
-//        
-//        try? await createBenefitUseCase.execute(model)
+        await getPresignedUrl()
     }
+    
+    // MARK: - Private Methods
     
     private func getPresignedUrl() async {
         guard let selectedImage,
@@ -63,16 +77,53 @@ final class NewBenefitScreenViewModel: ObservableObject {
             return
         }
         
-        let fileName = "benefit-\(UUID().uuidString).jpg"
+        let fileName = "benefit-image\(UUID().uuidString).jpg"
         let mimeType = "image/jpeg"
         
         do {
-            try await presignedUrlUseCase.execute(
+            let result = try await getPresignedUrlUseCase.execute(
                 originalName: fileName,
                 mimeType: mimeType
             )
-        } catch {
             
+            let path = result.path
+            let presignedUrl = result.presignedUrl
+            
+            await uploadImage(with: presignedUrl, for: data, in: path)
+        } catch {
+            // TODO: Mostar erro
+        }
+    }
+    
+    private func uploadImage(
+        with url: URL,
+        for data: Data,
+        in path: String
+    ) async {
+        do {
+            try await uploadImageWithPresignedUrlUseCase.execute(
+                with: url,
+                for: data
+            )
+            
+            await createBenefit(for: path)
+        } catch {
+            // TODO: Mostar erro
+        }
+    }
+    
+    private func createBenefit(for path: String) async {
+        let model = CreateBenefitModel(
+            name: name,
+            description: description,
+            photo: path,
+            cost: 10.0
+        )
+        
+        do {
+            try await createBenefitUseCase.execute(model)
+        } catch {
+            // TODO: Mostar erro
         }
     }
     
