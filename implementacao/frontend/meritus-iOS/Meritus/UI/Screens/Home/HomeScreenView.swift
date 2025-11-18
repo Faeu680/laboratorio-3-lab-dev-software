@@ -28,9 +28,14 @@ struct HomeScreenView: View {
                 .tabItem {
                     Label("Início", systemImage: "house.fill")
                 }
-            }
-            
-            if !viewModel.isCompany {
+                
+                NavigationView {
+                    navigator.view(for: AppRoutes.newBenifit)
+                }
+                .tabItem {
+                    Label("Novo Beneficio", systemImage: "plus")
+                }
+            } else {
                 NavigationView {
                     ExtractScreenView(viewModel: .init())
                 }
@@ -56,30 +61,9 @@ struct HomeScreenView: View {
                     Label("Resgatar", systemImage: "creditcard.fill")
                 }
             }
-            
-            NavigationView {
-                settingsView()
-            }
-            .tabItem {
-                Label("Ajustes", systemImage: "gearshape.fill")
-            }
         }
         .navigationBarBackButtonHidden()
         .tabBarMinimizeBehavior(.onScrollDown)
-    }
-}
-
-extension HomeScreenView {
-    private func settingsView() -> some View {
-        ObsidianButton(
-            "Logout",
-            style: .primary,
-        ) {
-            Task {
-                await viewModel.didTapLogout()
-                navigator.popTo(AppRoutes.login)
-            }
-        }
     }
 }
 

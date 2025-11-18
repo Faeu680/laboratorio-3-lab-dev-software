@@ -9,7 +9,7 @@ public struct BenefitModel: Hashable {
     public let id: String
     public let name: String
     public let description: String
-    public let photo: String?
+    public let photo: String
     public let cost: String
     public let active: Bool
     public let companyId: String
@@ -19,7 +19,7 @@ public struct BenefitModel: Hashable {
         id: String,
         name: String,
         description: String,
-        photo: String?,
+        photo: String,
         cost: String,
         active: Bool,
         companyId: String,

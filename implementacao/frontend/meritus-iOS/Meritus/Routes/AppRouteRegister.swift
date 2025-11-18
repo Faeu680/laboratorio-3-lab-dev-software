@@ -31,6 +31,12 @@ final class AppRouteRegister: RouteRegisterProtocol {
             factory.makeNewBenefit()
         case .redeem:
             factory.makeRedeem()
+        case .settings:
+            factory.makeSettings()
+        case .selectLanguage:
+            factory.makeSelectLanguage()
+        case .selectColorScheme:
+            factory.makeSelectColorScheme()
         }
     }
 }

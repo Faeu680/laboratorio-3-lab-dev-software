@@ -28,15 +28,6 @@ struct BenefitsScreenView: View {
         }
         .scrollIndicators(.never)
         .applyMeritusToolbarTitle()
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    navigator.navigate(to: AppRoutes.newBenifit)
-                } label: {
-                    Image(systemName: "plus")
-                }
-            }
-        }
     }
 }
 

@@ -16,4 +16,7 @@ enum AppRoutes: RouteProtocol {
     case benefits
     case newBenifit
     case redeem
+    case settings
+    case selectLanguage
+    case selectColorScheme
 }

@@ -69,4 +69,22 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
         let viewModel = RedeemScreenViewModel(getBenefitsUseCase: getBenefitsUseCase)
         return RedeemScreenView(viewModel: viewModel)
     }
+    
+    @MainActor
+    func makeSettings() -> SettingsScreenView {
+        let viewModel = SettingsScreenViewModel()
+        return SettingsScreenView(viewModel: viewModel)
+    }
+    
+    @MainActor
+    func makeSelectLanguage() -> ResourceSelectScreenView<LanguageSelectScreenViewModel> {
+        let viewModel = LanguageSelectScreenViewModel()
+        return ResourceSelectScreenView(viewModel: viewModel)
+    }
+    
+    @MainActor
+    func makeSelectColorScheme() -> ResourceSelectScreenView<ColorSchemeSelectScreenViewModel> {
+        let viewModel = ColorSchemeSelectScreenViewModel()
+        return ResourceSelectScreenView(viewModel: viewModel)
+    }
 }

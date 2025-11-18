@@ -6,13 +6,41 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 public struct BenefitCard: View {
+    
+    private enum ImageSource {
+        case local(Image)
+        case remote(String)
+    }
+    
     private let id: UUID
     private let title: String
     private let description: String
     private let price: Decimal
-    private let image: Image
+    private let headerSource: ImageSource
+
+    // MARK: - Inits
+
+    public init(
+        id: UUID = UUID(),
+        title: String,
+        description: String,
+        price: Decimal,
+        imageURL: String?
+    ) {
+        self.id = id
+        self.title = title
+        self.description = description
+        self.price = price
+
+        if let imageURL {
+            self.headerSource = .remote(imageURL)
+        } else {
+            self.headerSource = .remote("")
+        }
+    }
 
     public init(
         id: UUID = UUID(),
@@ -25,8 +53,10 @@ public struct BenefitCard: View {
         self.title = title
         self.description = description
         self.price = price
-        self.image = image
+        self.headerSource = .local(image)
     }
+
+    // MARK: - Body
 
     public var body: some View {
         content
@@ -37,12 +67,10 @@ public struct BenefitCard: View {
             .shadow(color: Color.black.opacity(0.35), radius: 18, x: 0, y: 10)
     }
 
-    // MARK: - Content
-
     private var content: some View {
         VStack(spacing: 0) {
             headerImage
-            
+
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
                     .obsidianBody()
@@ -53,7 +81,7 @@ public struct BenefitCard: View {
                     .obsidianBody()
                     .foregroundStyle(.secondary)
                     .lineLimit(3)
-                
+
                 pricePill
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -61,15 +89,36 @@ public struct BenefitCard: View {
         }
     }
 
+    // MARK: - Header Image
+
     private var headerImage: some View {
-        image
-            .resizable()
-            .frame(height: 180)
-            .frame(maxWidth: .infinity)
-            .scaledToFill()
-            .clipped()
-            .cornerRadius(.size24, corners: [.topLeft, .topRight])
+        Group {
+            switch headerSource {
+            case .local(let image):
+                image
+                    .resizable()
+                    .scaledToFill()
+
+            case .remote(let urlString):
+                if let url = URL(string: urlString) {
+                    KFImage(url)
+                        .placeholder {
+                            Rectangle().fill(Color.gray.opacity(0.2))
+                        }
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    Rectangle().fill(Color.gray.opacity(0.2))
+                }
+            }
+        }
+        .frame(height: 180)
+        .frame(maxWidth: .infinity)
+        .clipped()
+        .cornerRadius(.size24, corners: [.topLeft, .topRight])
     }
+
+    // MARK: - Price Pill
 
     private var pricePill: some View {
         Text("MC \(price)")
@@ -91,16 +140,19 @@ public struct BenefitCard: View {
     ObsidianPreviewContainer {
         ScrollView {
             VStack(spacing: 24) {
+
+                // Usando imagem remota
                 BenefitCard(
                     title: "Spa Premium Experience",
-                    description: "Dia completo de relaxamento em spa 5 estrelas com massagem e tratamento facial. Inclui acesso à sauna e piscina aquecida.",
+                    description: "Dia completo de relaxamento em spa 5 estrelas.",
                     price: 850,
-                    image: Image("spa_header")
+                    imageURL: "https://picsum.photos/600"
                 )
 
+                // Usando imagem local
                 BenefitCard(
-                    title: "Jantar Degustação Michelin",
-                    description: "Menu degustação com harmonização em restaurante premiado.",
+                    title: "Jantar Michelin",
+                    description: "Menu degustação harmonizado.",
                     price: 1250,
                     image: Image("michelin_dinner")
                 )

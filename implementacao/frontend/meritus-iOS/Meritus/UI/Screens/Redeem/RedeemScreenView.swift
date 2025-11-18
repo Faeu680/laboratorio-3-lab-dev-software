@@ -22,7 +22,7 @@ struct RedeemScreenView: View {
                 benefitCardView(
                     title: benefit.name,
                     description: benefit.description,
-                    imageUrl: benefit.photo ?? ""
+                    imageUrl: benefit.photo
                 )
             }
         }
@@ -48,7 +48,7 @@ extension RedeemScreenView {
             title: title,
             description: description,
             price: 850,
-            image: Image("mock-porto-faria")
+            imageURL: imageUrl
         )
         .padding(.horizontal, .size16)
     }

@@ -2,7 +2,7 @@
 //  View+Extensions.swift
 //  Meritus
 //
-//  Created by Arthur Porto on 07/11/25.
+//  Created by Arthur Porto on 17/11/25.
 //
 
 import SwiftUI
@@ -10,11 +10,6 @@ import Obsidian
 
 extension View {
     func applyMeritusToolbarTitle() -> some View {
-        self.toolbar {
-            ToolbarItem(placement: .principal) {
-                Text("MERITUS")
-                    .meritusTitle()
-            }
-        }
+        self.modifier(MeritusToolbarTitleModifier())
     }
 }

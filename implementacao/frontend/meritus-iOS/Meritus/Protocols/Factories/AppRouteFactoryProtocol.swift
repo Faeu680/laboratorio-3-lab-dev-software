@@ -23,4 +23,13 @@ protocol AppRouteFactoryProtocol: Sendable {
     
     @MainActor
     func makeRedeem() -> RedeemScreenView
+    
+    @MainActor
+    func makeSettings() -> SettingsScreenView
+    
+    @MainActor
+    func makeSelectLanguage() -> ResourceSelectScreenView<LanguageSelectScreenViewModel>
+    
+    @MainActor
+    func makeSelectColorScheme() -> ResourceSelectScreenView<ColorSchemeSelectScreenViewModel>
 }

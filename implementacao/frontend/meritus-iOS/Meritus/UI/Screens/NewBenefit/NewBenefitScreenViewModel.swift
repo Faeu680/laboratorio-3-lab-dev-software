@@ -72,8 +72,8 @@ final class NewBenefitScreenViewModel: ObservableObject {
     
     private func getPresignedUrl() async {
         guard let selectedImage,
-              let data = selectedImage.jpegData(compressionQuality: 0.9) else {
-            // TODO: Compress errror sheet
+              let data = compressImage(selectedImage) else {
+            // TODO: mostrar erro de compressão
             return
         }
         
@@ -125,6 +125,46 @@ final class NewBenefitScreenViewModel: ObservableObject {
         } catch {
             // TODO: Mostar erro
         }
+    }
+    
+    private func compressImage(_ image: UIImage) -> Data? {
+        let maxSizeKB = 500
+        let maxSize = maxSizeKB * 1024
+
+        let compressionSteps: [CGFloat] = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
+
+        for quality in compressionSteps {
+            if let data = image.jpegData(compressionQuality: quality),
+               data.count <= maxSize {
+                return data
+            }
+        }
+
+        var resizedImage = image
+        var scale: CGFloat = 0.9
+
+        while scale > 0.2 {
+            let newSize = CGSize(
+                width: image.size.width * scale,
+                height: image.size.height * scale
+            )
+
+            UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+            resizedImage = UIGraphicsGetImageFromCurrentImageContext() ?? image
+            UIGraphicsEndImageContext()
+
+            for quality in compressionSteps {
+                if let data = resizedImage.jpegData(compressionQuality: quality),
+                   data.count <= maxSize {
+                    return data
+                }
+            }
+
+            scale -= 0.1
+        }
+
+        return nil
     }
     
     private func checkCameraPermission() async -> Bool {

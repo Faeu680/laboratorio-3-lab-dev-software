@@ -8,11 +8,11 @@
 import DependencyInjection
 import Navigation
 
-public struct AppDependencyInjection: DependencyModule {
+struct AppDependencyInjection: DependencyModule {
     
     // MARK: - Public Methods
     
-    public static func register(in container: Container) {
+    static func register(in container: Container) {
         registerServices(in: container)
     }
     
@@ -26,6 +26,14 @@ public struct AppDependencyInjection: DependencyModule {
         container.register(AppRouteRegister.self) { resolver in
             let factory = resolver.resolveUnwrapping(AppRouteFactoryProtocol.self)
             return AppRouteRegister(factory: factory)
+        }
+        
+        container.register(ColorSchemeManagerProtocol.self) { _ in
+            return ColorSchemeManager()
+        }
+        
+        container.register(LocalizationManagerProtocol.self) { _ in
+            return LocalizationManager()
         }
     }
 }
