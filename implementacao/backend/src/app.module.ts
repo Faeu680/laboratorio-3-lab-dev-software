@@ -12,6 +12,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './@shared/interceptors/response.interceptor';
 import { HttpExceptionFilter } from './@shared/interceptors/exception-filter';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { HttpExceptionFilter } from './@shared/interceptors/exception-filter';
     CompaniesModule,
     BenefitsModule,
     TransactionsModule,
+    UploadModule,
   ],
   controllers: [],
   providers: [
