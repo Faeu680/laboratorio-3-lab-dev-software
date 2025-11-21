@@ -7,10 +7,13 @@
 
 import Combine
 import Domain
+import Session
 
 @MainActor
 final class LoginScreenViewModel: ObservableObject {
     
+    private let action: LoginScreenViewAction
+    private let session: SessionProtocol
     private let signInUseCase: SignInUseCaseProtocol
     
     @Published var email: String = ""
@@ -20,8 +23,22 @@ final class LoginScreenViewModel: ObservableObject {
     var onLoginSuccess: (() -> Void)?
     var onLoginFailure: ((SignInUseCaseError) -> Void)?
     
-    init(signInUseCase: SignInUseCaseProtocol) {
+    init(
+        action: LoginScreenViewAction,
+        session: SessionProtocol,
+        signInUseCase: SignInUseCaseProtocol
+    ) {
+        self.action = action
+        self.session = session
         self.signInUseCase = signInUseCase
+    }
+    
+    func onViewDidLoad() async {
+        guard case let .switchAccount(choosedSession) = action else {
+            return
+        }
+        
+        await didSelectToSwitchAccount(choosedSession)
     }
     
     func didTapSignIn() async {
@@ -34,6 +51,19 @@ final class LoginScreenViewModel: ObservableObject {
             clearForm()
         } catch {
             handleError(error)
+        }
+    }
+    
+    func didSelectToSwitchAccount(_ choosedSession: StoredSession) async {
+        // TODO: Adcionar face id
+        
+        email = choosedSession.email
+        
+        do {
+            try await session.switchToSession(choosedSession.userId)
+            onLoginSuccess?()
+        } catch {
+            // TODO: cuidar do erro de trocar sessão
         }
     }
     

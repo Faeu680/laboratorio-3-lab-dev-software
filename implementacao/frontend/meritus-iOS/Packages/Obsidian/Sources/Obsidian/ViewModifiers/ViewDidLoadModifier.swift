@@ -9,9 +9,9 @@ import SwiftUI
 
 struct ViewDidLoadModifier: ViewModifier {
     @State private var didLoad = false
-    private let action: () -> Void
+    private let action: () async -> Void
     
-    init(action: @escaping () -> Void) {
+    init(action: @escaping () async -> Void) {
         self.action = action
     }
     
@@ -20,7 +20,9 @@ struct ViewDidLoadModifier: ViewModifier {
             .onAppear {
                 if !didLoad {
                     didLoad = true
-                    action()
+                    Task(priority: .userInitiated) {
+                        await action()
+                    }
                 }
             }
     }

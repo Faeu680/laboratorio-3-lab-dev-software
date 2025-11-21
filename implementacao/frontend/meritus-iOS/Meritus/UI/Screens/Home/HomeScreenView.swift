@@ -30,14 +30,14 @@ struct HomeScreenView: View {
                 }
                 
                 NavigationView {
-                    navigator.view(for: AppRoutes.newBenifit)
+                    navigator.view(for: AppRoutes.newBenefit)
                 }
                 .tabItem {
                     Label("Novo Beneficio", systemImage: "plus")
                 }
             } else {
                 NavigationView {
-                    ExtractScreenView(viewModel: .init())
+                    navigator.view(for: AppRoutes.extract)
                 }
                 .tabItem {
                     Label("Início", systemImage: "house.fill")

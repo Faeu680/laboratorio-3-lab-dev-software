@@ -46,3 +46,9 @@ final class BenefitsService: BenefitsServiceProtocol {
         }
     }
 }
+
+fileprivate extension Array where Element == GetBenefitsResponse {
+    func toDomain() -> [BenefitModel] {
+        map { $0.toDomain() }
+    }
+}

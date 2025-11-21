@@ -5,34 +5,27 @@
 //  Created by Arthur Porto on 31/10/25.
 //
 
+@MainActor
 protocol AppRouteFactoryProtocol: Sendable {
-    @MainActor
-    func makeLogin() -> LoginScreenView
+    func makeLogin(action: LoginScreenViewAction) -> LoginScreenView
     
-    @MainActor
     func makeSignUp() -> SignUpScreenView
     
-    @MainActor
     func makeHome() -> HomeScreenView
     
-    @MainActor
+    func makeExtract() -> ExtractScreenView
+    
     func makeBenefits() -> BenefitsScreenView
     
-    @MainActor
     func makeNewBenefit() -> NewBenefitScreenView
     
-    @MainActor
     func makeRedeem() -> RedeemScreenView
     
-    @MainActor
     func makeSettings() -> SettingsScreenView
     
-    @MainActor
     func makeSelectLanguage() -> ResourceSelectScreenView<LanguageSelectScreenViewModel>
     
-    @MainActor
     func makeSelectColorScheme() -> ResourceSelectScreenView<ColorSchemeSelectScreenViewModel>
     
-    @MainActor
     func makeSwitchAccount() -> SwitchAccountScreenView
 }

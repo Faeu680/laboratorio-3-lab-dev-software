@@ -7,8 +7,11 @@
 
 import SwiftUI
 import Obsidian
+import Session
+import Navigation
 
 struct SwitchAccountScreenView: View {
+    @Environment(\.navigator) private var navigator: NavigatorProtocol
     
     @StateObject private var viewModel: SwitchAccountScreenViewModel
     
@@ -19,9 +22,9 @@ struct SwitchAccountScreenView: View {
     var body: some View {
         VStack {
             ObsidianList(verticalPadding: .size8) {
-                accountListItemView()
-                accountListItemView()
-                accountListItemView()
+                ForEach(viewModel.sessions, id: \.userId) { session in
+                    accountListItemView(session)
+                }
             }
             .navigationTitle("Trocar de Conta")
             .toolbarTitleDisplayMode(.inlineLarge)
@@ -37,14 +40,18 @@ struct SwitchAccountScreenView: View {
 }
 
 extension SwitchAccountScreenView {
-    private func accountListItemView() -> some View {
+    private func accountListItemView(_ session: StoredSession) -> some View {
         ObsidianListItem(
-            title: "João da Silva",
-            subtitle: "joao@example.com",
+            title: session.name,
+            subtitle: session.email,
             leading: ObsidianAvatar(initials: "JS", size: .medium),
             trailing: Image(systemName: "chevron.right"),
             borderStyle: .regular // se selecionado aplicar dashed
         )
+        .onTapGesture {
+            // TODO: e pra dar popup
+            navigator.navigate(to: AppRoutes.switchAccountLogin(chooseAccount: session))
+        }
     }
 }
 
@@ -54,7 +61,8 @@ extension SwitchAccountScreenView {
             "Adicionar Conta",
             style: .outline
         ) {
-            return
+            // TODO: Adicionar bottom sheet avisando antes
+            navigator.popTo(AppRoutes.login)
         }
     }
 }
@@ -65,13 +73,7 @@ extension SwitchAccountScreenView {
             "Sair do App",
             style: .destructiveOutline
         ) {
-//            navigator.popTo(AppRoutes.login)
+            return
         }
-    }
-}
-
-#Preview {
-    ObsidianPreviewContainer {
-        SwitchAccountScreenView(viewModel: .init())
     }
 }

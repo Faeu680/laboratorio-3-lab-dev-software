@@ -7,6 +7,7 @@
 
 import Foundation
 import DependencyInjection
+import Session
 
 public struct NetworkingDependencyInjection: DependencyModule {
     
@@ -26,8 +27,9 @@ public struct NetworkingDependencyInjection: DependencyModule {
         
         container.register(NetworkClientProtocol.self) { resolver in
             let store = resolver.resolveUnwrapping(NetworkDebugStoreProtocol.self)
-            let session = NetworkSessionFactory.make(store: store)
-            return NetworkClient(session: session)
+            let AFSession = NetworkSessionFactory.make(store: store)
+            let session = resolver.resolveUnwrapping(SessionProtocol.self)
+            return NetworkClient(AFSession: AFSession, session: session)
         }.inObjectScope(.container)
     }
 }

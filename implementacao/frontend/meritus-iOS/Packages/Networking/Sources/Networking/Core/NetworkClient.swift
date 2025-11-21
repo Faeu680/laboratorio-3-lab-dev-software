@@ -7,12 +7,18 @@
 
 import Foundation
 import Alamofire
+import Session
 
 final class NetworkClient: NetworkClientProtocol {
-    private let session: Session
+    private let AFSession: Session
+    private let session: SessionProtocol
     private let decoder = JSONDecoder()
     
-    init(session: Session) {
+    init(
+        AFSession: Session,
+        session: SessionProtocol
+    ) {
+        self.AFSession = AFSession
         self.session = session
     }
     
@@ -46,15 +52,14 @@ final class NetworkClient: NetworkClientProtocol {
     
     private func performRequest<T: Decodable>(_ request: some APIRequest) async throws(NetworkError) -> NetworkResponse<T> {
         let urlRequest: URLRequest
+        
         do {
-            urlRequest = try request.asURLRequest()
-        } catch let e as NetworkError {
-            throw e
-        } catch {
-            throw .unknown
+            urlRequest = try await mapAPIRequest(request)
+        } catch  {
+            throw error
         }
         
-        let dr = await session.request(urlRequest)
+        let dr = await AFSession.request(urlRequest)
             .validate(statusCode: 200..<300)
             .serializingDecodable(NetworkResponse<T>.self, decoder: decoder)
             .response
@@ -71,15 +76,14 @@ final class NetworkClient: NetworkClientProtocol {
     
     private func performVoidRequest(_ request: some APIRequest) async throws(NetworkError) {
         let urlRequest: URLRequest
+        
         do {
-            urlRequest = try request.asURLRequest()
-        } catch let e as NetworkError {
-            throw e
+            urlRequest = try await mapAPIRequest(request)
         } catch {
-            throw .unknown
+            throw error
         }
         
-        let dr = await session.request(urlRequest)
+        let dr = await AFSession.request(urlRequest)
             .validate(statusCode: 200..<300)
             .serializingData(emptyResponseCodes: [200, 300])
             .response
@@ -87,6 +91,62 @@ final class NetworkClient: NetworkClientProtocol {
         if let afError = dr.error {
             throw mapAFError(afError, dr.response, dr.data)
         }
+    }
+    
+    private func mapAPIRequest(_ request: some APIRequest) async throws(NetworkError) -> URLRequest {
+        let absolutePath = "https://meritus.bitpickle.dev/api"
+        let completePath: String
+        
+        if !request.usePathAsURL {
+            completePath = absolutePath + request.path
+        } else {
+            completePath = request.path
+        }
+        
+        guard var urlComponents = URLComponents(string: completePath) else {
+            throw .invalidURL
+        }
+        
+        if let queryItems = request.queryItems {
+            urlComponents.queryItems = queryItems
+        }
+        
+        guard let url = urlComponents.url else {
+            throw .invalidURL
+        }
+        
+        var finalRequest = URLRequest(url: url)
+        finalRequest.httpMethod = request.method.rawValue
+        finalRequest.timeoutInterval = request.timeout
+        
+        var finalHeaders = request.headers ?? [:]
+        
+        if case .authenticated = request.scope {
+            if let token = await session.getActiveToken() {
+                finalHeaders["Authorization"] = "Bearer \(token)"
+            }
+        }
+        
+        finalHeaders.forEach { key, value in
+            finalRequest.setValue(value, forHTTPHeaderField: key)
+        }
+        
+        switch request.body {
+        case .none:
+            break
+        case let .json(encodable):
+            do {
+                let data = try JSONEncoder().encode(encodable)
+                finalRequest.httpBody = data
+                finalRequest.setValue(request.contentType.rawValue, forHTTPHeaderField: "Content-Type")
+            } catch {
+                throw .encodingError(error)
+            }
+        case let .data(data):
+            finalRequest.httpBody = data
+        }
+        
+        return finalRequest
     }
     
     private func mapAFError(

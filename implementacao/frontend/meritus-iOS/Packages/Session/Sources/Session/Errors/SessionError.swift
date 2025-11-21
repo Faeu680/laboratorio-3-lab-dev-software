@@ -10,4 +10,5 @@ public enum SessionError: Error {
     case decodingError
     case missingField
     case keychainError
+    case notFound
 }

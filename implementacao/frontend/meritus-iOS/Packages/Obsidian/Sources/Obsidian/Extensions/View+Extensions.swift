@@ -12,6 +12,10 @@ public extension View {
         modifier(ViewDidLoadModifier(action: action))
     }
     
+    func onViewDidLoad(perform action: @escaping () async -> Void) -> some View {
+        modifier(ViewDidLoadModifier(action: action))
+    }
+    
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         modifier(RoundedCornersModifier(radius: radius, corners: corners))
     }

@@ -17,7 +17,7 @@ struct TransferScreenView: View {
     }
     
     var body: some View {
-        List {
+        ObsidianList(verticalPadding: .size8) {
             ForEach(0..<10, id: \.self) { index in
                 userListItemView()
             }

@@ -14,7 +14,7 @@ final class SettingsScreenViewModel: ObservableObject {
     let email: String
     
     init(session: SessionProtocol) {
-        self.name = session.unsafeGetEmail() ?? "Anonymous"
+        self.name = session.unsafeGetName() ?? "Anonymous"
         self.email = session.unsafeGetEmail() ?? "Anonymous"
     }
 }

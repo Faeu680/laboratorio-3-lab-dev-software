@@ -27,6 +27,9 @@ struct ExtractScreenView: View {
         }
         .scrollIndicators(.never)
         .applyMeritusToolbarTitle()
+        .onViewDidLoad {
+            await viewModel.onViewDidLoad()
+        }
     }
 }
 
@@ -52,8 +55,4 @@ extension ExtractScreenView {
         )
         .padding(.horizontal, .size16)
     }
-}
-
-#Preview {
-    ExtractScreenView(viewModel: .init())
 }

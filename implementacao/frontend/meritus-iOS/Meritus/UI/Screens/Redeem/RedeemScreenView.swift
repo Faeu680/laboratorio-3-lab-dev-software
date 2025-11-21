@@ -31,9 +31,7 @@ struct RedeemScreenView: View {
         .navigationSubtitle("Selecione um beneficio para resgatar")
         .toolbarTitleDisplayMode(.inlineLarge)
         .onViewDidLoad {
-            Task(priority: .userInitiated) {
-                await viewModel.onViewDidLoad()
-            }
+            await viewModel.onViewDidLoad()
         }
     }
 }

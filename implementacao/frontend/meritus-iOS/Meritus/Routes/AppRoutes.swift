@@ -6,15 +6,18 @@
 //
 
 import Navigation
+import Session
 
 enum AppRoutes: RouteProtocol {
     var id: String { "" }
     
     case login
+    case switchAccountLogin(chooseAccount: StoredSession)
     case signup
     case home
+    case extract
     case benefits
-    case newBenifit
+    case newBenefit
     case redeem
     case settings
     case selectLanguage

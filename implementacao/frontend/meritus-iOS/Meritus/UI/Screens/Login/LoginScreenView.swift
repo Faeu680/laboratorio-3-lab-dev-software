@@ -49,6 +49,7 @@ struct LoginScreenView: View {
         .navigationBarBackButtonHidden()
         .onViewDidLoad {
             bindActions()
+            await viewModel.onViewDidLoad()
         }
     }
 }

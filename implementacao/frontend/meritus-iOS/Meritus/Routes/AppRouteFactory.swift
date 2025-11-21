@@ -9,22 +9,22 @@ import DependencyInjection
 import Session
 import Domain
 
+@MainActor
 final class AppRouteFactory: AppRouteFactoryProtocol {
     
     private nonisolated(unsafe) let resolver: Resolver
     
-    init(resolver: Resolver) {
+    nonisolated init(resolver: Resolver) {
         self.resolver = resolver
     }
     
-    @MainActor
-    func makeLogin() -> LoginScreenView {
+    func makeLogin(action: LoginScreenViewAction) -> LoginScreenView {
         let signInUseCase = resolver.resolveUnwrapping(SignInUseCaseProtocol.self)
-        let viewModel = LoginScreenViewModel(signInUseCase: signInUseCase)
+        let session = resolver.resolveUnwrapping(SessionProtocol.self)
+        let viewModel = LoginScreenViewModel(action: action, session: session, signInUseCase: signInUseCase)
         return LoginScreenView(viewModel: viewModel)
     }
     
-    @MainActor
     func makeSignUp() -> SignUpScreenView {
         let studentSignUpUseCase = resolver.resolveUnwrapping(SignUpStudentUseCaseProtocol.self)
         let companySignUpUseCase = resolver.resolveUnwrapping(SignUpCompanyUseCaseProtocol.self)
@@ -35,22 +35,24 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
         return SignUpScreenView(viewModel: viewModel)
     }
     
-    @MainActor
     func makeHome() -> HomeScreenView {
         let session = resolver.resolveUnwrapping(SessionProtocol.self)
         let viewModel = HomeScreenViewModel(session: session)
-        let view = HomeScreenView(viewModel: viewModel)
-        return view
+        return HomeScreenView(viewModel: viewModel)
     }
     
-    @MainActor
+    func makeExtract() -> ExtractScreenView {
+        let getTransactionsUseCase = resolver.resolveUnwrapping(GetTransactionsUseCaseProtocol.self)
+        let viewModel = ExtractScreenViewModel(getTransactionsUseCase: getTransactionsUseCase)
+        return ExtractScreenView(viewModel: viewModel)
+    }
+    
     func makeBenefits() -> BenefitsScreenView {
         let createBenefitUseCase = resolver.resolveUnwrapping(CreateBenefitUseCaseProtocol.self)
         let viewModel = BenefitsScreenViewModel(createBenefitUseCase: createBenefitUseCase)
         return BenefitsScreenView(viewModel: viewModel)
     }
     
-    @MainActor
     func makeNewBenefit() -> NewBenefitScreenView {
         let getPresignedUrlUseCase = resolver.resolveUnwrapping(GetPresignedURLUseCaseProtocol.self)
         let uploadImageWithPresignedURLUseCase = resolver.resolveUnwrapping(UploadImageWithPresignedURLUseCaseProtocol.self)
@@ -63,35 +65,31 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
         return NewBenefitScreenView(viewModel: viewModel)
     }
     
-    @MainActor
     func makeRedeem() -> RedeemScreenView {
         let getBenefitsUseCase = resolver.resolveUnwrapping(GetBenefitsUseCaseProtocol.self)
         let viewModel = RedeemScreenViewModel(getBenefitsUseCase: getBenefitsUseCase)
         return RedeemScreenView(viewModel: viewModel)
     }
     
-    @MainActor
     func makeSettings() -> SettingsScreenView {
         let session = resolver.resolveUnwrapping(SessionProtocol.self)
         let viewModel = SettingsScreenViewModel(session: session)
         return SettingsScreenView(viewModel: viewModel)
     }
     
-    @MainActor
     func makeSelectLanguage() -> ResourceSelectScreenView<LanguageSelectScreenViewModel> {
         let viewModel = LanguageSelectScreenViewModel()
         return ResourceSelectScreenView(viewModel: viewModel)
     }
     
-    @MainActor
     func makeSelectColorScheme() -> ResourceSelectScreenView<ColorSchemeSelectScreenViewModel> {
         let viewModel = ColorSchemeSelectScreenViewModel()
         return ResourceSelectScreenView(viewModel: viewModel)
     }
     
-    @MainActor
     func makeSwitchAccount() -> SwitchAccountScreenView {
-        let viewModel = SwitchAccountScreenViewModel()
+        let session = resolver.resolveUnwrapping(SessionProtocol.self)
+        let viewModel = SwitchAccountScreenViewModel(session: session)
         return SwitchAccountScreenView(viewModel: viewModel)
     }
 }

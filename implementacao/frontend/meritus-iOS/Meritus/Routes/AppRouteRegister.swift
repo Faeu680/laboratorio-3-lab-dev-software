@@ -19,14 +19,18 @@ final class AppRouteRegister: RouteRegisterProtocol {
     func makeDestination(for route: AppRoutes) -> some View {
         switch route {
         case .login:
-            factory.makeLogin()
+            factory.makeLogin(action: .login)
+        case let .switchAccountLogin(chooseAccount):
+            factory.makeLogin(action: .switchAccount(choosedSession: chooseAccount))
         case .signup:
             factory.makeSignUp()
         case .home:
             factory.makeHome()
+        case .extract:
+            factory.makeExtract()
         case .benefits:
             factory.makeBenefits()
-        case .newBenifit:
+        case .newBenefit:
             factory.makeNewBenefit()
         case .redeem:
             factory.makeRedeem()

@@ -23,10 +23,7 @@ struct SplashScreenView: View {
         Text("Splash Screen")
             .onViewDidLoad {
                 bindActions()
-                
-                Task(priority: .userInitiated) {
-                    await viewModel.onViewDidLoad()
-                }
+                await viewModel.onViewDidLoad()
             }
     }
 }
