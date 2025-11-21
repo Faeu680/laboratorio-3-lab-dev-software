@@ -68,5 +68,20 @@ public struct DomainDependencyInjection: DependencyModule {
             let service = resolver.resolveUnwrapping(TransactionsServiceProtocol.self)
             return GetTransactionsUseCase(service: service)
         }
+        
+        container.register(GetStudentsOfInstitutionUseCaseProtocol.self) { resolver in
+            let service = resolver.resolveUnwrapping(StudentsServiceProtocol.self)
+            return GetStudentsOfInstitutionUseCase(service: service)
+        }
+        
+        container.register(MakeTransferUseCaseProtocol.self) { resolver in
+            let service = resolver.resolveUnwrapping(TransactionsServiceProtocol.self)
+            return MakeTransferUseCase(service: service)
+        }
+        
+        container.register(GetBalanceUseCaseProtocol.self) { resolver in
+            let service = resolver.resolveUnwrapping(TransactionsServiceProtocol.self)
+            return GetBalanceUseCase(service: service)
+        }
     }
 }

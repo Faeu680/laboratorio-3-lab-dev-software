@@ -10,10 +10,13 @@ import Networking
 enum TransactionsRequest: APIRequest {
     case transfer(
         studentId: String,
-        amount: Double,
+        amount: String,
         message: String
     )
+    
     case getExtract
+    
+    case getBalance
     
     static let basePath = "/transactions"
     
@@ -27,6 +30,8 @@ enum TransactionsRequest: APIRequest {
             return Self.basePath + "/transfer"
         case .getExtract:
             return Self.basePath + "/extract"
+        case .getBalance:
+            return Self.basePath + "/balance"
         }
     }
     
@@ -35,6 +40,8 @@ enum TransactionsRequest: APIRequest {
         case .transfer:
             return .post
         case .getExtract:
+            return .get
+        case .getBalance:
             return .get
         }
     }
@@ -49,14 +56,14 @@ enum TransactionsRequest: APIRequest {
                     message: message
                 )
             )
-        case .getExtract:
+        case .getExtract, .getBalance:
             return .none
         }
     }
     
     private struct TransferBody: Encodable {
         let studentId: String
-        let amount: Double
+        let amount: String
         let message: String
     }
 }

@@ -46,7 +46,7 @@ struct HomeScreenView: View {
             
             if viewModel.isTeacher {
                 NavigationView {
-                    TransferScreenView(viewModel: .init())
+                    navigator.view(for: AppRoutes.transfer)
                 }
                 .tabItem {
                     Label("Transferir", systemImage: "arrow.left.arrow.right.circle.fill")

@@ -6,6 +6,13 @@
 //
 
 public protocol TransactionsServiceProtocol: Sendable {
-    func transfer() async throws(ServiceError)
+    func transfer(
+        studentId: String,
+        amount: String,
+        message: String
+    ) async throws(ServiceError)
+    
     func getExtract() async throws(ServiceError) -> [TransactionModel]
+    
+    func getBalance() async throws(ServiceError) -> String
 }

@@ -23,6 +23,9 @@ public protocol SessionProtocol: Actor {
     func getRole() -> UserRole?
     nonisolated func unsafeGetRole() -> UserRole?
     
+    func getActiveSession() -> StoredSession?
+    nonisolated func unsafeGetActiveSession() -> StoredSession?
+    
     func getAllSessions() -> [StoredSession]
     nonisolated func unsafeGetAllSessions() -> [StoredSession]
     

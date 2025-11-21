@@ -16,4 +16,6 @@ public protocol StudentsServiceProtocol: Sendable {
         course: String,
         institutionId: String
     ) async throws(ServiceError) -> String
+    
+    func getStudentsOfInstitution() async throws(ServiceError) -> [StudentModel]
 }

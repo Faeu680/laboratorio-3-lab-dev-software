@@ -15,8 +15,22 @@ final class TransactionsService: TransactionsServiceProtocol {
         self.network = network
     }
     
-    func transfer() async throws(ServiceError) {
+    func transfer(
+        studentId: String,
+        amount: String,
+        message: String
+    ) async throws(ServiceError) {
+        let request = TransactionsRequest.transfer(
+            studentId: studentId,
+            amount: amount,
+            message: message
+        )
         
+        do {
+            try await network.request(request)
+        } catch {
+            throw ServiceError(from: error)
+        }
     }
     
     func getExtract() async throws(ServiceError) -> [TransactionModel] {
@@ -26,6 +40,18 @@ final class TransactionsService: TransactionsServiceProtocol {
             let response: NetworkResponse<[GetExtractResponse]> = try await network.request(request)
             let mapped = response.data.toDomain()
             return mapped
+        } catch {
+            throw ServiceError(from: error)
+        }
+    }
+    
+    func getBalance() async throws(ServiceError) -> String {
+        let request = TransactionsRequest.getBalance
+        
+        do {
+            let response: NetworkResponse<GetBalanceResponse> = try await network.request(request)
+            let balance = response.data.balance
+            return balance
         } catch {
             throw ServiceError(from: error)
         }

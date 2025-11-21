@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Obsidian
+import Domain
 
 struct ExtractScreenView: View {
     
@@ -20,39 +21,54 @@ struct ExtractScreenView: View {
         ScrollView {
             balanceCardView()
             
-            // Professor / Aluno
-            ForEach(0..<10, id: \.self) { index in
-                transactionListItemView()
+            ForEach(viewModel.transactions, id: \.id) { transaction in
+                transactionListItemView(transaction)
             }
         }
         .scrollIndicators(.never)
         .applyMeritusToolbarTitle()
-        .onViewDidLoad {
-            await viewModel.onViewDidLoad()
+        .onAppear {
+            Task(priority: .userInitiated) {
+                await viewModel.onViewDidLoad()
+            }
         }
     }
 }
 
 extension ExtractScreenView {
+    @ViewBuilder
     private func balanceCardView() -> some View {
-        BalanceCard(
-            title: "Saldo Disponível",
-            amount: 125_430.50,
-            initiallyMasked: true
+        if let balance = viewModel.balance {
+            BalanceCard(
+                title: "Saldo Disponível",
+                amount: balance,
+                initiallyMasked: true
+            )
+            .padding(.horizontal, .size16)
+        }
+    }
+}
+
+extension ExtractScreenView {
+    private func transactionListItemView(_ transaction: TransactionModel) -> some View {
+        TransactionListItem(
+            title: "Alguma coisa",
+            subtitle: "Alguma descrição",
+            amount: transaction.amount,
+            kind: transaction.origin.toTransactionKind(),
+            date: .now
         )
         .padding(.horizontal, .size16)
     }
 }
 
-extension ExtractScreenView {
-    private func transactionListItemView() -> some View {
-        TransactionListItem(
-            title: "Mercado",
-            subtitle: "Despesa",
-            amount: 350.89,
-            kind: .expense,
-            date: .now
-        )
-        .padding(.horizontal, .size16)
+fileprivate extension TransactionOrigin {
+    func toTransactionKind() -> TransactionListItem.Kind {
+        switch self {
+        case .income:
+            return .income
+        case .outcome:
+            return .expense
+        }
     }
 }

@@ -24,7 +24,7 @@ public struct TransactionListItem: View {
     private let id: UUID
     private let title: String
     private let subtitle: String
-    private let amount: Decimal
+    private let amount: String
     private let kind: Kind
     private let date: Date
 
@@ -32,7 +32,7 @@ public struct TransactionListItem: View {
         id: UUID = UUID(),
         title: String,
         subtitle: String,
-        amount: Decimal,
+        amount: String,
         kind: Kind,
         date: Date
     ) {
@@ -69,7 +69,7 @@ public struct TransactionListItem: View {
 
                 Spacer()
 
-                Text("RS 2.000")
+                Text(amount)
                     .font(.obsidianBody.weight(.bold))
                     .foregroundStyle(kind == .income ? Color.obsidianGold : Color.red.opacity(0.9))
                     .multilineTextAlignment(.trailing)
@@ -100,29 +100,4 @@ private func shortDate(_ date: Date) -> String {
     df.locale = Locale(identifier: "pt_BR")
     df.setLocalizedDateFormatFromTemplate("d MMM")
     return df.string(from: date)
-}
-
-// MARK: - Preview
-
-#Preview("ListItem") {
-    ObsidianPreviewContainer {
-        VStack(spacing: 12) {
-            TransactionListItem(
-                title: "Salário",
-                subtitle: "Receita",
-                amount: 15_000,
-                kind: .income,
-                date: ISO8601DateFormatter().date(from: "2025-02-28T12:00:00Z") ?? .now
-            )
-
-            TransactionListItem(
-                title: "Mercado",
-                subtitle: "Despesa",
-                amount: 350.89,
-                kind: .expense,
-                date: .now
-            )
-        }
-        .padding(.horizontal, .size16)
-    }
 }

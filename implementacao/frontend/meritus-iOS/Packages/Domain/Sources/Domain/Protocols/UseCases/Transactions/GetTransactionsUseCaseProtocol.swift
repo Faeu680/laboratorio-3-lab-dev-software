@@ -6,5 +6,5 @@
 //
 
 public protocol GetTransactionsUseCaseProtocol: Sendable {
-    func execute() async throws(GetTransactionsUseCaseError)
+    func execute() async throws(GetTransactionsUseCaseError) -> [TransactionModel]
 }

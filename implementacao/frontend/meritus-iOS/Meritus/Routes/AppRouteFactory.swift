@@ -21,7 +21,11 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
     func makeLogin(action: LoginScreenViewAction) -> LoginScreenView {
         let signInUseCase = resolver.resolveUnwrapping(SignInUseCaseProtocol.self)
         let session = resolver.resolveUnwrapping(SessionProtocol.self)
-        let viewModel = LoginScreenViewModel(action: action, session: session, signInUseCase: signInUseCase)
+        let viewModel = LoginScreenViewModel(
+            action: action,
+            session: session,
+            signInUseCase: signInUseCase
+        )
         return LoginScreenView(viewModel: viewModel)
     }
     
@@ -42,9 +46,25 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
     }
     
     func makeExtract() -> ExtractScreenView {
+        let getBalanceUseCase = resolver.resolveUnwrapping(GetBalanceUseCaseProtocol.self)
         let getTransactionsUseCase = resolver.resolveUnwrapping(GetTransactionsUseCaseProtocol.self)
-        let viewModel = ExtractScreenViewModel(getTransactionsUseCase: getTransactionsUseCase)
+        let viewModel = ExtractScreenViewModel(
+            getBalanceUseCase: getBalanceUseCase,
+            getTransactionsUseCase: getTransactionsUseCase
+        )
         return ExtractScreenView(viewModel: viewModel)
+    }
+    
+    func makeTransfer() -> TransferScreenView {
+        let session = resolver.resolveUnwrapping(SessionProtocol.self)
+        let getStudentsOfInstitutionUseCase = resolver.resolveUnwrapping(GetStudentsOfInstitutionUseCaseProtocol.self)
+        let makeTransferUseCase = resolver.resolveUnwrapping(MakeTransferUseCaseProtocol.self)
+        let viewModel = TransferScreenViewModel(
+            session: session,
+            makeTransferUseCase: makeTransferUseCase,
+            getStudentsOfInstitutionUseCase: getStudentsOfInstitutionUseCase
+        )
+        return TransferScreenView(viewModel: viewModel)
     }
     
     func makeBenefits() -> BenefitsScreenView {

@@ -25,17 +25,18 @@ final class StudentsService: StudentsServiceProtocol {
         course: String,
         institutionId: String
     ) async throws(ServiceError) -> String {
+        let request = StudentsRequest.signUp(
+            name: name,
+            email: email,
+            password: password,
+            cpf: cpf,
+            rg: rg,
+            address: address,
+            course: course,
+            institutionId: institutionId
+        )
+        
         do {
-            let request = StudentsRequest.signUp(
-                name: name,
-                email: email,
-                password: password,
-                cpf: cpf,
-                rg: rg,
-                address: address,
-                course: course,
-                institutionId: institutionId
-            )
             let response: NetworkResponse<SigninResponse> = try await network.request(request)
             let accessToken = response.data.accessToken
 
@@ -43,5 +44,23 @@ final class StudentsService: StudentsServiceProtocol {
         } catch {
             throw ServiceError(from: error)
         }
+    }
+    
+    func getStudentsOfInstitution() async throws(ServiceError) -> [StudentModel] {
+        let request = StudentsRequest.getStudentsOfInstitution
+        
+        do {
+            let response: NetworkResponse<[GetStudentResponse]> = try await network.request(request)
+            let mapped = response.data.toDomain()
+            return mapped
+        } catch {
+            throw ServiceError(from: error)
+        }
+    }
+}
+
+fileprivate extension Array where Element == GetStudentResponse {
+    func toDomain() -> [StudentModel] {
+        map { $0.toDomain() }
     }
 }

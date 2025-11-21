@@ -81,6 +81,16 @@ final actor Session: SessionProtocol {
         return sessions[id]?.role
     }
     
+    func getActiveSession() -> StoredSession? {
+        guard let userId = activeUserId else { return nil }
+        return sessions[userId]
+    }
+
+    nonisolated func unsafeGetActiveSession() -> StoredSession? {
+        guard let userId = activeUserId else { return nil }
+        return sessions[userId]
+    }
+    
     func getAllSessions() -> [StoredSession] {
         Array(sessions.values)
     }

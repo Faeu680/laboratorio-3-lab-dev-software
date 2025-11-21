@@ -28,6 +28,8 @@ final class AppRouteRegister: RouteRegisterProtocol {
             factory.makeHome()
         case .extract:
             factory.makeExtract()
+        case .transfer:
+            factory.makeTransfer()
         case .benefits:
             factory.makeBenefits()
         case .newBenefit:

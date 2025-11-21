@@ -8,3 +8,7 @@
 public protocol RouteProtocol: Hashable, Identifiable {
     var id: String { get }
 }
+
+public extension RouteProtocol {
+    var id: String { String(describing: Self.self) }
+}

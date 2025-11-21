@@ -15,6 +15,8 @@ protocol AppRouteFactoryProtocol: Sendable {
     
     func makeExtract() -> ExtractScreenView
     
+    func makeTransfer() -> TransferScreenView
+    
     func makeBenefits() -> BenefitsScreenView
     
     func makeNewBenefit() -> NewBenefitScreenView

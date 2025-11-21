@@ -9,13 +9,12 @@ import Navigation
 import Session
 
 enum AppRoutes: RouteProtocol {
-    var id: String { "" }
-    
     case login
     case switchAccountLogin(chooseAccount: StoredSession)
     case signup
     case home
     case extract
+    case transfer
     case benefits
     case newBenefit
     case redeem

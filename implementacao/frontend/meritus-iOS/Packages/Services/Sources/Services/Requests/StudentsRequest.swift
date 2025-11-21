@@ -19,12 +19,16 @@ enum StudentsRequest: APIRequest {
         institutionId: String
     )
     
+    case getStudentsOfInstitution
+    
     static let basePath = "/students"
     
     var scope: APIScope {
         switch self {
         case .signUp:
             return .unauthenticated
+        case .getStudentsOfInstitution:
+            return .authenticated
         }
     }
     
@@ -32,6 +36,8 @@ enum StudentsRequest: APIRequest {
         switch self {
         case .signUp:
             return Self.basePath
+        case .getStudentsOfInstitution:
+            return Self.basePath + "/students-of-institution"
         }
     }
     
@@ -39,6 +45,8 @@ enum StudentsRequest: APIRequest {
         switch self {
         case .signUp:
             return .post
+        case .getStudentsOfInstitution:
+            return .get
         }
     }
     
@@ -57,6 +65,8 @@ enum StudentsRequest: APIRequest {
                     institutionId: institutionId
                 )
             )
+        case .getStudentsOfInstitution:
+            return .none
         }
     }
     

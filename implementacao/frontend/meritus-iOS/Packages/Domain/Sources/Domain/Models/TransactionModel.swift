@@ -10,17 +10,20 @@ import Foundation
 public struct TransactionModel {
     public let id: String
     public let type: TransactionType
-    public let amount: Decimal
-    public let createdAt: Date
+    public let origin: TransactionOrigin
+    public let amount: String
+    public let createdAt: String
     
     public init(
         id: String,
         type: TransactionType,
-        amount: Decimal,
-        createdAt: Date
+        origin: TransactionOrigin,
+        amount: String,
+        createdAt: String
     ) {
         self.id = id
         self.type = type
+        self.origin = origin
         self.amount = amount
         self.createdAt = createdAt
     }

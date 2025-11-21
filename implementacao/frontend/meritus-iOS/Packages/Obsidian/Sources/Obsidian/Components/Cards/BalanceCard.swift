@@ -9,9 +9,7 @@ import SwiftUI
 
 public struct BalanceCard: View {
     private let title: LocalizedStringKey
-    private let amount: Decimal
-    private let currencyCode: String
-    private let locale: Locale
+    private let amount: String
     private let showsEyeButton: Bool
     private let onToggleMask: ((Bool) -> Void)?
 
@@ -19,17 +17,13 @@ public struct BalanceCard: View {
 
     public init(
         title: LocalizedStringKey = "Saldo Disponível",
-        amount: Decimal,
-        currencyCode: String = "BRL",
-        locale: Locale = Locale(identifier: "pt_BR"),
+        amount: String,
         initiallyMasked: Bool = false,
         showsEyeButton: Bool = true,
         onToggleMask: ((Bool) -> Void)? = nil
     ) {
         self.title = title
         self.amount = amount
-        self.currencyCode = currencyCode
-        self.locale = locale
         self._isMasked = State(initialValue: initiallyMasked)
         self.showsEyeButton = showsEyeButton
         self.onToggleMask = onToggleMask
@@ -89,7 +83,7 @@ private extension BalanceCard {
                     .font(.system(size: 44, weight: .bold, design: .default))
                     .foregroundStyle(.primary)
             } else {
-                Text(formattedAmount(amount, code: currencyCode, locale: locale))
+                Text(amount)
                     .font(.system(size: 44, weight: .bold, design: .default))
                     .foregroundStyle(.primary)
             }
@@ -132,42 +126,5 @@ private extension BalanceCard {
     func toggleMask() {
         isMasked.toggle()
         onToggleMask?(isMasked)
-    }
-}
-
-// MARK: - Formatting
-
-private func formattedAmount(_ value: Decimal, code: String, locale: Locale) -> String {
-    let nf = NumberFormatter()
-    nf.locale = locale
-    nf.numberStyle = .currency
-    nf.currencyCode = code
-    // Para BRL com separador de milhar "." e decimal ","
-    if locale.identifier == "pt_BR" {
-        nf.currencySymbol = "R$"
-        nf.currencyGroupingSeparator = "."
-        nf.currencyDecimalSeparator = ","
-        nf.minimumFractionDigits = 2
-        nf.maximumFractionDigits = 2
-    }
-    return nf.string(from: value as NSDecimalNumber) ?? "—"
-}
-
-// MARK: - Preview
-
-#Preview("BalanceCard") {
-    ObsidianPreviewContainer {
-        VStack(spacing: 24) {
-            BalanceCard(
-                amount: 125_430.50,
-                initiallyMasked: false
-            )
-
-            BalanceCard(
-                title: "Saldo Disponível",
-                amount: 125_430.50,
-                initiallyMasked: true
-            )
-        }
     }
 }

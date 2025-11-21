@@ -11,13 +11,15 @@ import Domain
 struct GetExtractResponse: Decodable {
     let id: String
     let type: TransactionType
-    let amount: Decimal
-    let createdAt: Date
+    let origin: TransactionOrigin
+    let amount: String
+    let createdAt: String
     
     func toDomain() -> TransactionModel {
         TransactionModel(
             id: id,
             type: type,
+            origin: origin,
             amount: amount,
             createdAt: createdAt
         )
