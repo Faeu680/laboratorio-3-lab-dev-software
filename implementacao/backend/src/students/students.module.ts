@@ -9,6 +9,7 @@ import { DeleteStudentUseCase } from './usecases/delete-student.usecase';
 import { FindAllStudentsUseCase } from './usecases/find-all-students.usecase';
 import { FindStudentByIdUseCase } from './usecases/find-student-by-id.usecase';
 import { UpdateStudentUseCase } from './usecases/update-student.usecase';
+import { FindStudentsOfInstitutionUseCase } from './usecases/find-students-of-institution.usecase';
 
 @Module({
   imports: [TypeOrmModule.forFeature([StudentEntity, UserEntity, InstitutionEntity])],
@@ -19,6 +20,7 @@ import { UpdateStudentUseCase } from './usecases/update-student.usecase';
     DeleteStudentUseCase,
     FindAllStudentsUseCase,
     FindStudentByIdUseCase,
+    FindStudentsOfInstitutionUseCase
   ],
   exports: [TypeOrmModule],
 })

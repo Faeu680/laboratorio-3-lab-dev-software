@@ -4,7 +4,7 @@ import { ApiWrappedResponse } from 'src/@shared/interceptors/api-wrapped-respons
 import { RolesEnum } from '../auth/consts/roles.enum';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { Roles } from '../auth/decorators/permission-scope.decorator';
-import { AuthPayload } from '../auth/types/auth.types';
+import { AuthUser } from '../auth/types/auth.types';
 import { BenefitResponseDto } from './dto/benefit-response.dto';
 import { CreateBenefitDto } from './dto/create-benefit.dto';
 import { CreateBenefitUseCase } from './usecases/create-benefit.usecase';
@@ -31,10 +31,10 @@ export class BenefitsController {
   @ApiWrappedResponse({ status: 403, description: 'Acesso negado - apenas empresas' })
   @ApiWrappedResponse({ status: 404, description: 'Empresa não encontrada' })
   async create(
-    @GetUser() user: AuthPayload,
+    @GetUser() user: AuthUser,
     @Body() dto: CreateBenefitDto
   ): Promise<BenefitResponseDto> {
-    return this.createBenefitUseCase.execute(user.sub, dto);
+    return this.createBenefitUseCase.execute(user.id, dto);
   }
 
   @Get()

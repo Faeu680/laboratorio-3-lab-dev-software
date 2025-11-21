@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RolesEnum } from 'src/auth/consts/roles.enum';
-import { AuthPayload } from 'src/auth/types/auth.types';
+import { AuthUser } from 'src/auth/types/auth.types';
 import { StudentEntity } from 'src/students/entities/student.entity';
 import { TeacherEntity } from 'src/teachers/entities/teacher.entity';
 import { Repository } from 'typeorm';
@@ -14,9 +14,9 @@ export class GetBalanceUseCase {
     private readonly studentRepository: Repository<StudentEntity>
   ) {}
 
-  async execute(user: AuthPayload) {
-    if (user.role === RolesEnum.STUDENT) return this.getStudentBalance(user.sub);
-    if (user.role === RolesEnum.TEACHER) return this.getTeacherBalance(user.sub);
+  async execute(user: AuthUser) {
+    if (user.role === RolesEnum.STUDENT) return this.getStudentBalance(user.id);
+    if (user.role === RolesEnum.TEACHER) return this.getTeacherBalance(user.id);
 
     throw new BadRequestException('Somente estudantes e professores possuem saldo');
   }

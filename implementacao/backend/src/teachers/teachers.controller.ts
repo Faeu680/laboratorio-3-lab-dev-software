@@ -4,9 +4,9 @@ import { ApiWrappedResponse } from 'src/@shared/interceptors/api-wrapped-respons
 import { RolesEnum } from '../auth/consts/roles.enum';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { Roles } from '../auth/decorators/permission-scope.decorator';
-import { AuthPayload } from '../auth/types/auth.types';
 import { CreditSemesterResponseDto } from './dto/teacher-response.dto';
 import { CreditSemesterCoinsUseCase } from './usecases/credit-semester-coins.usecase';
+import { AuthUser } from 'src/auth/types/auth.types';
 
 @ApiTags('Teachers')
 @ApiBearerAuth()
@@ -25,7 +25,8 @@ export class TeachersController {
   @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
   @ApiWrappedResponse({ status: 403, description: 'Acesso negado - apenas professores' })
   @ApiWrappedResponse({ status: 404, description: 'Professor não encontrado' })
-  async creditSemester(@GetUser() user: AuthPayload): Promise<CreditSemesterResponseDto> {
-    return this.creditSemesterCoinsUseCase.execute(user.sub);
+  async creditSemester(@GetUser() user: AuthUser): Promise<CreditSemesterResponseDto> {
+    return this.creditSemesterCoinsUseCase.execute(user.id);
   }
+
 }
