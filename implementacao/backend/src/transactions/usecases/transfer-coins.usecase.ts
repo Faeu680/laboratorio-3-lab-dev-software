@@ -21,6 +21,7 @@ export class TransferCoinsUseCase {
   ) {}
 
   async execute(userId: string, dto: TransferCoinsDto): Promise<TransactionEntity> {
+    const amount = parseFloat(dto.amount);
     return this.dataSource.transaction(async (manager) => {
       const teacher = await manager.findOne(TeacherEntity, {
         where: { userId },
@@ -40,13 +41,13 @@ export class TransferCoinsUseCase {
         throw new NotFoundException('Student not found');
       }
 
-      if (Number(teacher.balance) < dto.amount) {
+      if (Number(teacher.balance) < amount) {
         throw new BadRequestException('Insufficient balance');
       }
 
       // Atualizar saldos
-      teacher.balance = Number(teacher.balance) - dto.amount;
-      student.balance = Number(student.balance) + dto.amount;
+      teacher.balance = Number(teacher.balance) - amount;
+      student.balance = Number(student.balance) + amount;
 
       await manager.save(TeacherEntity, teacher);
       await manager.save(StudentEntity, student);
@@ -54,7 +55,7 @@ export class TransferCoinsUseCase {
       // Criar transação
       const transaction = manager.create(TransactionEntity, {
         type: TransactionTypeEnum.TRANSFER,
-        amount: dto.amount,
+        amount: amount,
         message: dto.message,
         teacherId: teacher.id,
         studentId: student.id,
@@ -67,7 +68,7 @@ export class TransferCoinsUseCase {
         studentEmail: student.user.email,
         studentName: student.user.name,
         teacherName: teacher.user.name,
-        amount: dto.amount,
+        amount: amount,
         message: dto.message,
       });
 
