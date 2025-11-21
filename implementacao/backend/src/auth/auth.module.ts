@@ -10,6 +10,9 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { SignInUseCase } from './usecase/signin.usecase';
+import { TeacherEntity } from 'src/teachers/entities/teacher.entity';
+import { CompanyEntity } from 'src/companies/entities/company.entity';
+import { StudentEntity } from 'src/students/entities/student.entity';
 
 @Global()
 @Module({
@@ -23,7 +26,7 @@ import { SignInUseCase } from './usecase/signin.usecase';
         expiresIn: '1d',
       },
     }),
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, TeacherEntity, CompanyEntity, StudentEntity]),
   ],
   providers: [
     JwtStrategy,

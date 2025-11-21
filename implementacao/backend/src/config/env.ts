@@ -10,4 +10,10 @@ export const env = cleanEnv(process.env, {
   JWT_SECRET: str({
     default: '0QruKcexB13BsbqxwgVAwNxsgRSkerI5Sgh7whXMk',
   }),
+  S3_ENDPOINT: str({
+    default: '',
+  }),
+  S3_ACCESS_KEY_ID: str({}),
+  S3_SECRET_ACCESS_KEY: str({}),
+  S3_BUCKET: str({}),
 });
