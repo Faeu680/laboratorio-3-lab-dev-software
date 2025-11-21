@@ -19,4 +19,5 @@ enum AppRoutes: RouteProtocol {
     case settings
     case selectLanguage
     case selectColorScheme
+    case switchAccount
 }

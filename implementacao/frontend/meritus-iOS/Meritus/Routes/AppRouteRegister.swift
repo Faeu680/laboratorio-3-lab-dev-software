@@ -16,7 +16,6 @@ final class AppRouteRegister: RouteRegisterProtocol {
     }
     
     @MainActor
-    @ViewBuilder
     func makeDestination(for route: AppRoutes) -> some View {
         switch route {
         case .login:
@@ -37,6 +36,8 @@ final class AppRouteRegister: RouteRegisterProtocol {
             factory.makeSelectLanguage()
         case .selectColorScheme:
             factory.makeSelectColorScheme()
+        case .switchAccount:
+            factory.makeSwitchAccount()
         }
     }
 }

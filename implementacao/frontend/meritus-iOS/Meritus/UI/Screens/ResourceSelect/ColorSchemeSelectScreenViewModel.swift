@@ -32,7 +32,7 @@ final class ColorSchemeSelectScreenViewModel: ResourceSelectScreenViewModelProto
         }
     }
     
-    private let manager: ColorSchemeManagerProtocol
+    private let manager = ColorSchemeManager.shared
     
     let toolbarTitle: String = "Aparência"
     
@@ -42,13 +42,9 @@ final class ColorSchemeSelectScreenViewModel: ResourceSelectScreenViewModelProto
         ColorSchemeResource.allCases
     }
     
-    init(manager: ColorSchemeManagerProtocol) {
-        self.manager = manager
-        self.selectedResource = selectedResource
-    }
-    
     func select(_ resource: ColorSchemeResource) {
         selectedResource = resource
+        setColorScheme(resource)
     }
     
     private func setColorScheme(_ resource: ColorSchemeResource) {

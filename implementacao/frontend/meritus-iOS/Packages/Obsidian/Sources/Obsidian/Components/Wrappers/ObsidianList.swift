@@ -8,9 +8,17 @@
 import SwiftUI
 
 public struct ObsidianList<Content: View>: View {
+    private let horizontalPadding: CGFloat
+    private let verticalPadding: CGFloat
     private let content: () -> Content
 
-    public init(@ViewBuilder content: @escaping () -> Content) {
+    public init(
+        horizontalPadding: CGFloat = .size16,
+        verticalPadding: CGFloat = .zero,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.horizontalPadding = horizontalPadding
+        self.verticalPadding = verticalPadding
         self.content = content
     }
 
@@ -20,10 +28,10 @@ public struct ObsidianList<Content: View>: View {
                 .listRowSeparator(.hidden)
                 .listRowInsets(
                     EdgeInsets(
-                        top: .zero,
-                        leading: .size16,
-                        bottom: .zero,
-                        trailing: .size16
+                        top: verticalPadding,
+                        leading: horizontalPadding,
+                        bottom: verticalPadding,
+                        trailing: horizontalPadding
                     )
                 )
         }

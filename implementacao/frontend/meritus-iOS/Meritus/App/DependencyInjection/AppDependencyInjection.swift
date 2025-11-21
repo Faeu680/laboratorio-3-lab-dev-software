@@ -27,13 +27,5 @@ struct AppDependencyInjection: DependencyModule {
             let factory = resolver.resolveUnwrapping(AppRouteFactoryProtocol.self)
             return AppRouteRegister(factory: factory)
         }
-        
-        container.register(ColorSchemeManagerProtocol.self) { _ in
-            return ColorSchemeManager()
-        }
-        
-        container.register(LocalizationManagerProtocol.self) { _ in
-            return LocalizationManager()
-        }
     }
 }

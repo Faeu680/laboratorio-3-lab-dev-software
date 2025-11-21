@@ -21,6 +21,9 @@ import TestMode
 struct MeritusApp: App {
     private let appDependencies = AppDependencies.self
     
+    @StateObject private var localizationManager = LocalizationManager.shared
+    @StateObject private var colorSchemeManager = ColorSchemeManager.shared
+    
     #if DEBUG
     @State private var showRequests = false
     #endif
@@ -41,6 +44,10 @@ struct MeritusApp: App {
             ) {
                 makeInitialScreen()
             }
+            .environmentObject(localizationManager)
+            .environmentObject(colorSchemeManager)
+            .environment(\.locale, localizationManager.locale)
+            .preferredColorScheme(colorSchemeManager.colorScheme)
             #if DEBUG
             .simultaneousGesture(
                 TapGesture(count: 3)

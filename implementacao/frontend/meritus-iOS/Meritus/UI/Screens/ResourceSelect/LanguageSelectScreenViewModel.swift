@@ -35,7 +35,7 @@ final class LanguageSelectScreenViewModel: ResourceSelectScreenViewModelProtocol
         }
     }
     
-    private let manager: LocalizationManagerProtocol
+    private let manager = LocalizationManager.shared
     
     let toolbarTitle: String = "Linguagem"
     
@@ -45,12 +45,9 @@ final class LanguageSelectScreenViewModel: ResourceSelectScreenViewModelProtocol
         LanguageResource.allCases
     }
     
-    init(manager: LocalizationManagerProtocol) {
-        self.manager = manager
-    }
-    
     func select(_ resource: LanguageResource) {
         selectedResource = resource
+        setLanguage(resource)
     }
     
     private func setLanguage(_ resource: LanguageResource) {

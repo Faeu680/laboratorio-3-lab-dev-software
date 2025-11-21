@@ -19,26 +19,22 @@ struct SettingsScreenView: View {
     }
     
     var body: some View {
-        VStack {
-            ScrollView {
-                VStack(spacing: .size32) {
-                    avatarView()
-                    
-                    VStack(spacing: .size24) {
-                        nameInputView()
-                        emailInputView()
-                    }
-                    
-                    VStack {
-                        languageListItemView()
-                        appearanceListItemView()
-                        changeAccountListItemView()
-                    }
+        ScrollView {
+            VStack(spacing: .size32) {
+                avatarView()
+                
+                VStack(spacing: .size24) {
+                    nameInputView()
+                    emailInputView()
                 }
-                .padding(.top, .size24)
+                
+                VStack {
+                    languageListItemView()
+                    appearanceListItemView()
+                    changeAccountListItemView()
+                }
             }
-            
-            logoutButtonView()
+            .padding(.top, .size24)
         }
         .navigationTitle("Ajustes")
         .toolbarTitleDisplayMode(.inlineLarge)
@@ -54,7 +50,7 @@ extension SettingsScreenView {
 extension SettingsScreenView {
     private func nameInputView() -> some View {
         ObsidianInput(
-            text: .constant("João Silva"),
+            text: .constant(viewModel.name),
             label: "Nome Completo",
             placeholder: ""
         )
@@ -66,7 +62,7 @@ extension SettingsScreenView {
 extension SettingsScreenView {
     private func emailInputView() -> some View {
         ObsidianInput(
-            text: .constant("joao.silva@example.com"),
+            text: .constant(viewModel.email),
             label: "Email",
             placeholder: ""
         )
@@ -115,26 +111,7 @@ extension SettingsScreenView {
         )
         .padding(.horizontal, .size16)
         .onTapGesture {
-            return
+            navigator.navigate(to: AppRoutes.switchAccount)
         }
-    }
-}
-
-extension SettingsScreenView {
-    private func logoutButtonView() -> some View {
-        ObsidianButton(
-            "Sair do app",
-            style: .outline,
-        ) {
-            return
-        }
-        .padding(.horizontal, .size16)
-        .padding(.bottom, .size16)
-    }
-}
-
-#Preview {
-    ObsidianPreviewContainer {
-        SettingsScreenView(viewModel: .init())
     }
 }

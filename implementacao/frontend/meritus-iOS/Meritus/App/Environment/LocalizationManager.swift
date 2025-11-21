@@ -9,10 +9,12 @@ import Foundation
 import Combine
 
 @MainActor
-final class LocalizationManager: LocalizationManagerProtocol {
+final class LocalizationManager: ObservableObject {
     @Published var locale: Locale = Locale(identifier: "pt_BR")
     
-    nonisolated init() {}
+    static let shared = LocalizationManager()
+    
+    private init() {}
     
     func setLocale(_ locale: Locale) {
         self.locale = locale

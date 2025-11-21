@@ -32,4 +32,7 @@ protocol AppRouteFactoryProtocol: Sendable {
     
     @MainActor
     func makeSelectColorScheme() -> ResourceSelectScreenView<ColorSchemeSelectScreenViewModel>
+    
+    @MainActor
+    func makeSwitchAccount() -> SwitchAccountScreenView
 }

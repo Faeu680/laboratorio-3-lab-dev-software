@@ -9,10 +9,12 @@ import SwiftUI
 import Combine
 
 @MainActor
-final class ColorSchemeManager: ColorSchemeManagerProtocol {
+final class ColorSchemeManager: ObservableObject {
     @Published var colorScheme: ColorScheme?
     
-    nonisolated init() {}
+    static let shared = ColorSchemeManager()
+    
+    private init() {}
     
     func setColorScheme(_ colorScheme: ColorScheme?) {
         self.colorScheme = colorScheme

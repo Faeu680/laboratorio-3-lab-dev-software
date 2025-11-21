@@ -72,7 +72,8 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
     
     @MainActor
     func makeSettings() -> SettingsScreenView {
-        let viewModel = SettingsScreenViewModel()
+        let session = resolver.resolveUnwrapping(SessionProtocol.self)
+        let viewModel = SettingsScreenViewModel(session: session)
         return SettingsScreenView(viewModel: viewModel)
     }
     
@@ -86,5 +87,11 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
     func makeSelectColorScheme() -> ResourceSelectScreenView<ColorSchemeSelectScreenViewModel> {
         let viewModel = ColorSchemeSelectScreenViewModel()
         return ResourceSelectScreenView(viewModel: viewModel)
+    }
+    
+    @MainActor
+    func makeSwitchAccount() -> SwitchAccountScreenView {
+        let viewModel = SwitchAccountScreenViewModel()
+        return SwitchAccountScreenView(viewModel: viewModel)
     }
 }
