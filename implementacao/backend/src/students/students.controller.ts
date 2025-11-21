@@ -108,7 +108,7 @@ export class StudentsController {
   }
 
   @Roles(RolesEnum.TEACHER)
-  @Get()
+  @Get('students-of-institution')
   @ApiOperation({ summary: 'Listar todos os alunos da mesma instituição do usuário logado' })
   @ApiWrappedResponse({
     status: 200,
