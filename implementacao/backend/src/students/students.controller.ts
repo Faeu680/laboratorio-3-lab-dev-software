@@ -30,6 +30,21 @@ export class StudentsController {
     private readonly findStudentsOfInstitutionUseCase: FindStudentsOfInstitutionUseCase
   ) {}
 
+  @Roles(RolesEnum.TEACHER)
+  @Get('students-of-institution')
+  @ApiOperation({ summary: 'Listar todos os alunos da mesma instituição do usuário logado' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Lista de alunos retornada com sucesso',
+    type: StudentResponseDto,
+    isArray: true,
+  })
+  @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
+  @ApiWrappedResponse({ status: 403, description: 'Acesso negado - apenas professores' })
+  async findAllOfSameInstitution(@GetUser() user: AuthUser): Promise<StudentResponseDto[]> {
+    return this.findStudentsOfInstitutionUseCase.execute(user.institutionId!);
+  }
+
   @SkipAuth()
   @Post()
   @ApiOperation({ summary: 'Cadastrar um novo aluno no sistema' })
@@ -105,20 +120,5 @@ export class StudentsController {
   @ApiWrappedResponse({ status: 404, description: 'Aluno não encontrado' })
   async delete(@Param('id') id: string): Promise<void> {
     return this.deleteStudentUseCase.execute(id);
-  }
-
-  @Roles(RolesEnum.TEACHER)
-  @Get('students-of-institution')
-  @ApiOperation({ summary: 'Listar todos os alunos da mesma instituição do usuário logado' })
-  @ApiWrappedResponse({
-    status: 200,
-    description: 'Lista de alunos retornada com sucesso',
-    type: StudentResponseDto,
-    isArray: true,
-  })
-  @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
-  @ApiWrappedResponse({ status: 403, description: 'Acesso negado - apenas professores' })
-  async findAllOfSameInstitution(@GetUser() user: AuthUser): Promise<StudentResponseDto[]> {
-    return this.findStudentsOfInstitutionUseCase.execute(user.institutionId!);
   }
 }
