@@ -13,6 +13,9 @@ import { DeleteStudentUseCase } from './usecases/delete-student.usecase';
 import { FindAllStudentsUseCase } from './usecases/find-all-students.usecase';
 import { FindStudentByIdUseCase } from './usecases/find-student-by-id.usecase';
 import { UpdateStudentUseCase } from './usecases/update-student.usecase';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { AuthUser } from 'src/auth/types/auth.types';
+import { FindStudentsOfInstitutionUseCase } from './usecases/find-students-of-institution.usecase';
 
 @ApiTags('Students')
 @ApiBearerAuth()
@@ -23,7 +26,8 @@ export class StudentsController {
     private readonly updateStudentUseCase: UpdateStudentUseCase,
     private readonly deleteStudentUseCase: DeleteStudentUseCase,
     private readonly findAllStudentsUseCase: FindAllStudentsUseCase,
-    private readonly findStudentByIdUseCase: FindStudentByIdUseCase
+    private readonly findStudentByIdUseCase: FindStudentByIdUseCase,
+    private readonly findStudentsOfInstitutionUseCase: FindStudentsOfInstitutionUseCase
   ) {}
 
   @SkipAuth()
@@ -46,7 +50,8 @@ export class StudentsController {
   @ApiWrappedResponse({
     status: 200,
     description: 'Lista de alunos retornada com sucesso',
-    type: [StudentResponseDto],
+    type: StudentResponseDto,
+    isArray: true,
   })
   @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
   @ApiWrappedResponse({ status: 403, description: 'Acesso negado - apenas administradores' })
@@ -100,5 +105,20 @@ export class StudentsController {
   @ApiWrappedResponse({ status: 404, description: 'Aluno não encontrado' })
   async delete(@Param('id') id: string): Promise<void> {
     return this.deleteStudentUseCase.execute(id);
+  }
+
+  @Roles(RolesEnum.TEACHER)
+  @Get()
+  @ApiOperation({ summary: 'Listar todos os alunos da mesma instituição do usuário logado' })
+  @ApiWrappedResponse({
+    status: 200,
+    description: 'Lista de alunos retornada com sucesso',
+    type: StudentResponseDto,
+    isArray: true,
+  })
+  @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
+  @ApiWrappedResponse({ status: 403, description: 'Acesso negado - apenas professores' })
+  async findAllOfSameInstitution(@GetUser() user: AuthUser): Promise<StudentResponseDto[]> {
+    return this.findStudentsOfInstitutionUseCase.execute(user.institutionId!);
   }
 }

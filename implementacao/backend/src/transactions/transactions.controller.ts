@@ -4,7 +4,6 @@ import { ApiWrappedResponse } from 'src/@shared/interceptors/api-wrapped-respons
 import { RolesEnum } from '../auth/consts/roles.enum';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { Roles } from '../auth/decorators/permission-scope.decorator';
-import { AuthPayload } from '../auth/types/auth.types';
 import { BalanceDto } from './dto/balance.dto';
 import { RedeemBenefitDto } from './dto/redeem-benefit.dto';
 import { TransactionResponseDto } from './dto/transaction-response.dto';
@@ -13,6 +12,7 @@ import { GetBalanceUseCase } from './usecases/get-balance.usecase';
 import { GetExtractUseCase } from './usecases/get-extract.usecase';
 import { RedeemBenefitUseCase } from './usecases/redeem-benefit.usecase';
 import { TransferCoinsUseCase } from './usecases/transfer-coins.usecase';
+import { AuthUser } from 'src/auth/types/auth.types';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
@@ -38,10 +38,10 @@ export class TransactionsController {
   @ApiWrappedResponse({ status: 404, description: 'Professor ou aluno não encontrado' })
   @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
   async transfer(
-    @GetUser() user: AuthPayload,
+    @GetUser() user: AuthUser,
     @Body() dto: TransferCoinsDto
   ): Promise<TransactionResponseDto> {
-    return this.transferCoinsUseCase.execute(user.sub, dto);
+    return this.transferCoinsUseCase.execute(user.id, dto);
   }
 
   @Roles(RolesEnum.STUDENT)
@@ -58,10 +58,10 @@ export class TransactionsController {
   @ApiWrappedResponse({ status: 404, description: 'Aluno ou vantagem não encontrada' })
   @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
   async redeem(
-    @GetUser() user: AuthPayload,
+    @GetUser() user: AuthUser,
     @Body() dto: RedeemBenefitDto
   ): Promise<TransactionResponseDto> {
-    return this.redeemBenefitUseCase.execute(user.sub, dto);
+    return this.redeemBenefitUseCase.execute(user.id, dto);
   }
 
   @Get('extract')
@@ -70,11 +70,12 @@ export class TransactionsController {
     status: 200,
     description:
       'Extrato retornado com sucesso. Mostra transferências (professor) ou recebimentos/resgates (aluno).',
-    type: [TransactionResponseDto],
+    type: TransactionResponseDto,
+    isArray: true,
   })
   @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
-  async getExtract(@GetUser() user: AuthPayload): Promise<TransactionResponseDto[]> {
-    return this.getExtractUseCase.execute(user.sub, user.role);
+  async getExtract(@GetUser() user: AuthUser): Promise<TransactionResponseDto[]> {
+    return this.getExtractUseCase.execute(user.id, user.role);
   }
 
   @Get('balance')
@@ -85,7 +86,7 @@ export class TransactionsController {
     type: BalanceDto,
   })
   @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
-  async getBalance(@GetUser() user: AuthPayload): Promise<BalanceDto> {
+  async getBalance(@GetUser() user: AuthUser): Promise<BalanceDto> {
     return this.getBalanceUseCase.execute(user);
   }
 }
