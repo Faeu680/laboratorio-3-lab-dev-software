@@ -7,13 +7,9 @@
 
 import Combine
 
-protocol ResourceType: Hashable, Equatable {
-    var title: String { get }
-}
-
 @MainActor
 protocol ResourceSelectScreenViewModelProtocol: ObservableObject {
-    associatedtype Resource: ResourceType
+    associatedtype Resource: ResourceSelectScreenViewProtocol
     
     var toolbarTitle: String { get }
     

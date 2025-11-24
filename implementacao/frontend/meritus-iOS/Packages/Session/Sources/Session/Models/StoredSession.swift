@@ -17,3 +17,17 @@ public struct StoredSession: Codable, Sendable, Equatable, Hashable {
     public let role: UserRole
     public let isActive: Bool
 }
+
+extension StoredSession {
+    func with(isActive: Bool) -> StoredSession {
+        StoredSession(
+            token: self.token,
+            expiration: self.expiration,
+            userId: self.userId,
+            name: self.name,
+            email: self.email,
+            role: self.role,
+            isActive: isActive
+        )
+    }
+}

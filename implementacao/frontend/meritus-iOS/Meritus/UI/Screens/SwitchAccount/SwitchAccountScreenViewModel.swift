@@ -31,6 +31,10 @@ final class SwitchAccountScreenViewModel: ObservableObject {
         loginSubject.setLoginAction(action)
     }
     
+    func didSwipeToDeleteAccount(_ userId: String) async {
+        await session.destroy(userId: userId)
+    }
+    
     func didTapToAddNewAccount() async {
         await session.logout()
     }

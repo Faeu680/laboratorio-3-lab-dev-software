@@ -47,6 +47,13 @@ extension SwitchAccountScreenView {
             viewModel.didTapToSwitchAccount(session)
             navigator.popTo(AppRoutes.login)
         }
+        .swipeActions(edge: .trailing) {
+            Button(role: .destructive) {
+                await viewModel.didSwipeToDeleteAccount(session.userId)
+            } label: {
+                Label("Remover", systemImage: "trash")
+            }
+        }
         .orEmptyView(session.isActive)
     }
 }

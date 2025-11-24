@@ -20,17 +20,11 @@ final actor Session: SessionProtocol {
     // MARK: - Public Properties
     
     var isActive: Bool {
-        for (id, session) in sessions where session.isActive {
-            return true
-        }
-        return false
+        sessions.values.contains { $0.isActive }
     }
     
     nonisolated var unsafeIsActive: Bool {
-        for (id, session) in sessions where session.isActive {
-            return true
-        }
-        return false
+        sessions.values.contains { $0.isActive }
     }
 
     // MARK: - Init
@@ -137,15 +131,7 @@ final actor Session: SessionProtocol {
         let expiration = Date(timeIntervalSince1970: expirationTs)
 
         for (id, session) in sessions where session.isActive {
-            let updated = StoredSession(
-                token: session.token,
-                expiration: session.expiration,
-                userId: session.userId,
-                name: session.name,
-                email: session.email,
-                role: session.role,
-                isActive: false
-            )
+            let updated = session.with(isActive: false)
             sessions[id] = updated
             try persistSession(updated)
         }
@@ -169,22 +155,13 @@ final actor Session: SessionProtocol {
     }
     
     func logout() {
-        guard let id = activeUserId else { return }
+        guard let activeId = activeUserId,
+              let session = sessions[activeId],
+              session.isActive else { return }
         
-        for (id, session) in sessions where session.isActive {
-            let updated = StoredSession(
-                token: session.token,
-                expiration: session.expiration,
-                userId: session.userId,
-                name: session.name,
-                email: session.email,
-                role: session.role,
-                isActive: false
-            )
-            sessions[id] = updated
-            try? persistSession(updated)
-        }
-        
+        let updated = session.with(isActive: false)
+        sessions[activeId] = updated
+        try? persistSession(updated)
         activeUserId = nil
     }
 
@@ -197,20 +174,18 @@ final actor Session: SessionProtocol {
         activeUserId = nil
         try? persistSessionIDs()
     }
+    
+    func destroy(userId: String) {
+        sessions.removeValue(forKey: userId)
+        try? deleteSessionFromKeychain(userId)
+        try? persistSessionIDs()
+    }
 
     func switchToSession(_ userId: String) throws(SessionError) {
         guard sessions[userId] != nil else { throw .notFound }
 
         for (id, session) in sessions {
-            let updated = StoredSession(
-                token: session.token,
-                expiration: session.expiration,
-                userId: session.userId,
-                name: session.name,
-                email: session.email,
-                role: session.role,
-                isActive: id == userId
-            )
+            let updated = session.with(isActive: id == userId)
             sessions[id] = updated
             try persistSession(updated)
         }

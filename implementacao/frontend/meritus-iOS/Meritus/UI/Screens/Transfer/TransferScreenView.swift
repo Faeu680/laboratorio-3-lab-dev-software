@@ -74,7 +74,7 @@ extension TransferScreenView {
 
 extension TransferScreenView {
     private func transferModalView() -> some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 transferInputView()
                 
@@ -138,9 +138,7 @@ extension TransferScreenView {
             style: .primary,
             isLoading: $viewModel.isLoading
         ) {
-            Task(priority: .userInitiated) {
-                await viewModel.didTapTransferButton()
-            }
+            await viewModel.didTapTransferButton()
         }
     }
 }

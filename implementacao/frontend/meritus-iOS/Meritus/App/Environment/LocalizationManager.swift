@@ -16,6 +16,10 @@ final class LocalizationManager: ObservableObject {
     
     private init() {}
     
+    func getLocale() -> Locale {
+        locale
+    }
+    
     func setLocale(_ locale: Locale) {
         self.locale = locale
     }

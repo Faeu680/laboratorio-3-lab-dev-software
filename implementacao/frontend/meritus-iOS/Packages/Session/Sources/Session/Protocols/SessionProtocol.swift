@@ -41,4 +41,6 @@ public protocol SessionProtocol: Actor {
     func logout()
     
     func destroy()
+    
+    func destroy(userId: String)
 }

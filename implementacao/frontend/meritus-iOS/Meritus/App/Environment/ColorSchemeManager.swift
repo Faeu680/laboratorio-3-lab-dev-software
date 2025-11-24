@@ -16,6 +16,10 @@ final class ColorSchemeManager: ObservableObject {
     
     private init() {}
     
+    func getColorScheme() -> ColorScheme? {
+        colorScheme
+    }
+    
     func setColorScheme(_ colorScheme: ColorScheme?) {
         self.colorScheme = colorScheme
     }
