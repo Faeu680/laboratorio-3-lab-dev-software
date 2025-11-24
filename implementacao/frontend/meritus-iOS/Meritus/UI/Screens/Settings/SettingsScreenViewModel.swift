@@ -18,26 +18,15 @@ final class SettingsScreenViewModel: ObservableObject {
     let name: String
     let email: String
 
-    @Published var currentLocation: String
-    @Published var currentColorScheme: String
+    @Published var currentLocation: String = ""
+    @Published var currentColorScheme: String = ""
 
     init(session: SessionProtocol) {
         self.name = session.unsafeGetName() ?? "Anonymous"
         self.email = session.unsafeGetEmail() ?? "Anonymous"
-
-        self._currentLocation = .init(
-            initialValue: locationManager
-                .getLocale()
-                .toString()
-        )
-        self._currentColorScheme = .init(
-            initialValue: colorSchemeManager
-                .getColorScheme()
-                .toString()
-        )
     }
     
-    func onAppear() {
+    func task() {
         refresh()
     }
 

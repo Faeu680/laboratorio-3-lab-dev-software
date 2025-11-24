@@ -42,8 +42,8 @@ struct SettingsScreenView: View {
             
             logoutButtonView()
         }
-        .onAppear {
-            viewModel.onAppear()
+        .task {
+            viewModel.task()
         }
     }
 }
