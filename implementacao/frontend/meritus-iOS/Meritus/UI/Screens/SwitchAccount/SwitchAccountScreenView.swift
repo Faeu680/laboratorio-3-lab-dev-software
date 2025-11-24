@@ -44,8 +44,10 @@ extension SwitchAccountScreenView {
             borderStyle: .regular // se selecionado aplicar dashed
         )
         .onTapGesture {
-            viewModel.didTapToSwitchAccount(session)
-            navigator.popTo(AppRoutes.login)
+            Task(priority: .userInitiated) {
+                await viewModel.didTapToSwitchAccount(session)
+                navigator.popTo(AppRoutes.login)
+            }
         }
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) {

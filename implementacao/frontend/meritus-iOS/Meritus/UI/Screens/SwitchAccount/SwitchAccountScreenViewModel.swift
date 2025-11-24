@@ -23,12 +23,12 @@ final class SwitchAccountScreenViewModel: ObservableObject {
         self.shouldHideAddNewAccountButton = !session.unsafeIsActive
     }
     
-    func didTapToSwitchAccount(_ choosedSession: StoredSession) {
+    func didTapToSwitchAccount(_ choosedSession: StoredSession) async {
         let action: LoginScreenViewAction = .switchAccount(
             choosedSession: choosedSession
         )
         
-        loginSubject.setLoginAction(action)
+        await loginSubject.setLoginAction(action)
     }
     
     func didSwipeToDeleteAccount(_ userId: String) async {

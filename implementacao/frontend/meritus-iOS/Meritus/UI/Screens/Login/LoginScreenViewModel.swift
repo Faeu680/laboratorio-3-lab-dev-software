@@ -35,7 +35,7 @@ final class LoginScreenViewModel: ObservableObject {
     }
     
     func onAppear() async {
-        let action = subject.getLoginAction()
+        let action = await subject.getLoginAction()
         
         guard case let .switchAccount(choosedSession) = action else {
             return
@@ -58,14 +58,13 @@ final class LoginScreenViewModel: ObservableObject {
     }
     
     func didSelectToSwitchAccount(_ choosedSession: StoredSession) async {
-        defer { subject.setLoginAction(.login) }
-        
         guard await biometryDidSuccess() else {
             email = choosedSession.email
             return
         }
         
         await evaluateSwitchAccount(choosedSession)
+        await subject.setLoginAction(.login)
     }
     
     private func biometryDidSuccess() async -> Bool {

@@ -7,8 +7,7 @@
 
 import Session
 
-@MainActor
-final class LoginScreenViewSubject {
+final actor LoginScreenViewSubject {
     private var action: LoginScreenViewAction = .login
     
     static let shared = LoginScreenViewSubject()
@@ -16,7 +15,7 @@ final class LoginScreenViewSubject {
     private init() {}
     
     func getLoginAction() -> LoginScreenViewAction {
-        self.action
+        action
     }
     
     func setLoginAction(_ action: LoginScreenViewAction) {
