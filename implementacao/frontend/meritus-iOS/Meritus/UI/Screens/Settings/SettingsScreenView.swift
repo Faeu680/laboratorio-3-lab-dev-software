@@ -42,6 +42,9 @@ struct SettingsScreenView: View {
             
             logoutButtonView()
         }
+        .onAppear {
+            viewModel.onAppear()
+        }
     }
 }
 
@@ -79,7 +82,7 @@ extension SettingsScreenView {
     private func languageListItemView() -> some View {
         ObsidianListItem(
             title: "Idioma",
-            subtitle: "Português (BR)",
+            subtitle: viewModel.currentLocation,
             leading: Image(systemName: "globe"),
             trailing: Image(systemName: "chevron.right")
         )
@@ -94,7 +97,7 @@ extension SettingsScreenView {
     private func appearanceListItemView() -> some View {
         ObsidianListItem(
             title: "Aparência",
-            subtitle: "Automático",
+            subtitle: viewModel.currentColorScheme,
             leading: Image(systemName: "circle.lefthalf.filled"),
             trailing: Image(systemName: "chevron.right")
         )

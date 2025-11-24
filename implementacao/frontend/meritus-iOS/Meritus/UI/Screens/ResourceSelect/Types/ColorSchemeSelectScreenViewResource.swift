@@ -30,17 +30,23 @@ enum ColorSchemeSelectScreenViewResource: String, CaseIterable, ResourceSelectSc
     
     var title: String {
         switch self {
-        case .light: return "Claro"
-        case .dark: return "Escuro"
-        case .system: return "Sistema"
+        case .light:
+            return "Claro"
+        case .dark:
+            return "Escuro"
+        case .system: 
+            return "Sistema"
         }
     }
     
     var colorSchemeType: ColorScheme? {
         switch self {
-        case .light: return .light
-        case .dark: return .dark
-        case .system: return nil
+        case .light:
+            return .light
+        case .dark:
+            return .dark
+        case .system:
+            return nil
         }
     }
 }
