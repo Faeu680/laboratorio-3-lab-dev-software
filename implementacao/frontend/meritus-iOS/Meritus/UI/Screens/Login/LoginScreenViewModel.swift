@@ -12,9 +12,10 @@ import Session
 @MainActor
 final class LoginScreenViewModel: ObservableObject {
     
-    private let action: LoginScreenViewAction
+    private let subject: LoginScreenViewSubject = .shared
     private let session: SessionProtocol
     private let signInUseCase: SignInUseCaseProtocol
+    private let biometryManager: BiometryManagerProtocol
     
     @Published var email: String = ""
     @Published var password: String = ""
@@ -24,16 +25,18 @@ final class LoginScreenViewModel: ObservableObject {
     var onLoginFailure: ((SignInUseCaseError) -> Void)?
     
     init(
-        action: LoginScreenViewAction,
         session: SessionProtocol,
-        signInUseCase: SignInUseCaseProtocol
+        signInUseCase: SignInUseCaseProtocol,
+        biometryManager: BiometryManagerProtocol
     ) {
-        self.action = action
         self.session = session
         self.signInUseCase = signInUseCase
+        self.biometryManager = biometryManager
     }
     
-    func onViewDidLoad() async {
+    func onAppear() async {
+        let action = subject.getLoginAction()
+        
         guard case let .switchAccount(choosedSession) = action else {
             return
         }
@@ -55,10 +58,27 @@ final class LoginScreenViewModel: ObservableObject {
     }
     
     func didSelectToSwitchAccount(_ choosedSession: StoredSession) async {
-        // TODO: Adcionar face id
+        defer { subject.setLoginAction(.login) }
         
-        email = choosedSession.email
+        guard await biometryDidSuccess() else {
+            email = choosedSession.email
+            return
+        }
         
+        await evaluateSwitchAccount(choosedSession)
+    }
+    
+    private func biometryDidSuccess() async -> Bool {
+        let result: ()? = try? await biometryManager.authenticate(
+            reason: "Utilizamos a biomtria para logar na sua conta"
+        )
+        
+        try? await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        return result != nil
+    }
+    
+    private func evaluateSwitchAccount(_ choosedSession: StoredSession) async {
         do {
             try await session.switchToSession(choosedSession.userId)
             onLoginSuccess?()

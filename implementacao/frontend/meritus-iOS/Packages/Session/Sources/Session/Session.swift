@@ -8,6 +8,7 @@
 import Foundation
 import Commons
 
+
 final actor Session: SessionProtocol {
 
     // MARK: - Private Properties
@@ -15,32 +16,42 @@ final actor Session: SessionProtocol {
     private let keychain = KeychainManager.shared
     private nonisolated(unsafe) var sessions: [String: StoredSession] = [:]
     private nonisolated(unsafe) var activeUserId: String?
+    
+    // MARK: - Public Properties
+    
+    var isActive: Bool {
+        for (id, session) in sessions where session.isActive {
+            return true
+        }
+        return false
+    }
+    
+    nonisolated var unsafeIsActive: Bool {
+        for (id, session) in sessions where session.isActive {
+            return true
+        }
+        return false
+    }
 
     // MARK: - Init
 
     init() {
         Task(priority: .userInitiated) {
-            await self.loadAllSessions()
-            await self.loadActiveSession()
+            await loadAllSessions()
+            await loadActiveSession()
         }
     }
 
     // MARK: - Public Methods
     
     func getActiveToken() -> String? {
-        guard let userId = activeUserId,
-              let token = sessions[userId]?.token
-        else { return nil }
-        
-        return token
+        guard let userId = activeUserId else { return nil }
+        return sessions[userId]?.token
     }
     
     nonisolated func getUnsafeActiveToken() -> String? {
-        guard let userId = activeUserId,
-              let token = sessions[userId]?.token
-        else { return nil }
-        
-        return token
+        guard let userId = activeUserId else { return nil }
+        return sessions[userId]?.token
     }
 
     func getUserId() -> String? {
@@ -125,19 +136,56 @@ final actor Session: SessionProtocol {
 
         let expiration = Date(timeIntervalSince1970: expirationTs)
 
+        for (id, session) in sessions where session.isActive {
+            let updated = StoredSession(
+                token: session.token,
+                expiration: session.expiration,
+                userId: session.userId,
+                name: session.name,
+                email: session.email,
+                role: session.role,
+                isActive: false
+            )
+            sessions[id] = updated
+            try persistSession(updated)
+        }
+
         let session = StoredSession(
-            userId: userId,
             token: token,
+            expiration: expiration,
+            userId: userId,
             name: name,
             email: email,
             role: role,
-            expiration: expiration
+            isActive: true
         )
 
         sessions[userId] = session
+
         try persistSession(session)
         try persistSessionIDs()
-        try setActiveSession(userId)
+
+        activeUserId = userId
+    }
+    
+    func logout() {
+        guard let id = activeUserId else { return }
+        
+        for (id, session) in sessions where session.isActive {
+            let updated = StoredSession(
+                token: session.token,
+                expiration: session.expiration,
+                userId: session.userId,
+                name: session.name,
+                email: session.email,
+                role: session.role,
+                isActive: false
+            )
+            sessions[id] = updated
+            try? persistSession(updated)
+        }
+        
+        activeUserId = nil
     }
 
     func destroy() {
@@ -147,13 +195,28 @@ final actor Session: SessionProtocol {
         try? deleteSessionFromKeychain(id)
 
         activeUserId = nil
-        try? keychain.delete(forKey: SessionKeychainKey.activeSession.key)
         try? persistSessionIDs()
     }
 
     func switchToSession(_ userId: String) throws(SessionError) {
         guard sessions[userId] != nil else { throw .notFound }
-        try setActiveSession(userId)
+
+        for (id, session) in sessions {
+            let updated = StoredSession(
+                token: session.token,
+                expiration: session.expiration,
+                userId: session.userId,
+                name: session.name,
+                email: session.email,
+                role: session.role,
+                isActive: id == userId
+            )
+            sessions[id] = updated
+            try persistSession(updated)
+        }
+
+        try persistSessionIDs()
+        activeUserId = userId
     }
     
     // MARK: - Private Methods
@@ -164,8 +227,8 @@ final actor Session: SessionProtocol {
         else { return }
 
         for id in ids {
-            let dataKey = SessionKeychainKey.sessionData(id).key
-            if let data = try? keychain.readData(forKey: dataKey),
+            let key = SessionKeychainKey.sessionData(id).key
+            if let data = try? keychain.readData(forKey: key),
                let session = try? JSONDecoder().decode(StoredSession.self, from: data) {
                 sessions[id] = session
             }
@@ -173,16 +236,17 @@ final actor Session: SessionProtocol {
     }
 
     private func loadActiveSession() {
-        guard let idString = try? keychain.read(forKey: SessionKeychainKey.activeSession.key)
-        else { return }
-        activeUserId = idString
+        for (id, session) in sessions where session.isActive {
+            activeUserId = id
+            return
+        }
+        activeUserId = nil
     }
 
     private func persistSession(_ session: StoredSession) throws(SessionError) {
         do {
             let encoded = try JSONEncoder().encode(session)
             try keychain.save(encoded, forKey: SessionKeychainKey.sessionData(session.userId).key)
-            try keychain.save(session.token, forKey: SessionKeychainKey.sessionToken(session.userId).key)
         } catch {
             throw .keychainError
         }
@@ -200,17 +264,7 @@ final actor Session: SessionProtocol {
 
     private func deleteSessionFromKeychain(_ userId: String) throws(SessionError) {
         do {
-            try keychain.delete(forKey: SessionKeychainKey.sessionToken(userId).key)
             try keychain.delete(forKey: SessionKeychainKey.sessionData(userId).key)
-        } catch {
-            throw .keychainError
-        }
-    }
-
-    private func setActiveSession(_ userId: String) throws(SessionError) {
-        do {
-            activeUserId = userId
-            try keychain.save(userId, forKey: SessionKeychainKey.activeSession.key)
         } catch {
             throw .keychainError
         }

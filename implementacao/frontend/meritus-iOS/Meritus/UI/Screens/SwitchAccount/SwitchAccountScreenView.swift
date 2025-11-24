@@ -29,12 +29,7 @@ struct SwitchAccountScreenView: View {
             .navigationTitle("Trocar de Conta")
             .toolbarTitleDisplayMode(.inlineLarge)
             
-            VStack(spacing: .size16) {
-                addNewAccountButtonView()
-                logoutButtonView()
-            }
-            .padding(.horizontal, .size16)
-            .padding(.bottom, .size16)
+            addNewAccountButtonView()
         }
     }
 }
@@ -49,9 +44,10 @@ extension SwitchAccountScreenView {
             borderStyle: .regular // se selecionado aplicar dashed
         )
         .onTapGesture {
-            // TODO: e pra dar popup
-            navigator.navigate(to: AppRoutes.switchAccountLogin(chooseAccount: session))
+            viewModel.didTapToSwitchAccount(session)
+            navigator.popTo(AppRoutes.login)
         }
+        .orEmptyView(session.isActive)
     }
 }
 
@@ -62,18 +58,11 @@ extension SwitchAccountScreenView {
             style: .outline
         ) {
             // TODO: Adicionar bottom sheet avisando antes
+            await viewModel.didTapToAddNewAccount()
             navigator.popTo(AppRoutes.login)
         }
-    }
-}
-
-extension SwitchAccountScreenView {
-    private func logoutButtonView() -> some View {
-        ObsidianButton(
-            "Sair do App",
-            style: .destructiveOutline
-        ) {
-            return
-        }
+        .padding(.horizontal, .size16)
+        .padding(.bottom, .size16)
+        .orEmptyView(viewModel.shouldHideAddNewAccountButton)
     }
 }

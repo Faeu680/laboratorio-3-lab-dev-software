@@ -10,7 +10,6 @@ import Session
 
 enum AppRoutes: RouteProtocol {
     case login
-    case switchAccountLogin(chooseAccount: StoredSession)
     case signup
     case home
     case extract

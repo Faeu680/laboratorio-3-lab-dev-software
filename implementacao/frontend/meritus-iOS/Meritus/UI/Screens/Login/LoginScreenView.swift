@@ -22,7 +22,6 @@ struct LoginScreenView: View {
     var body: some View {
         VStack {
             logoView()
-                .padding(.top, .size48)
             
             Spacer()
             
@@ -47,9 +46,20 @@ struct LoginScreenView: View {
         }
         .padding(.horizontal, .size16)
         .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    navigator.navigate(to: AppRoutes.switchAccount)
+                } label: {
+                    Image(systemName: "person.2.circle")
+                }
+            }
+        }
+        .onAppear {
+            await viewModel.onAppear()
+        }
         .onViewDidLoad {
             bindActions()
-            await viewModel.onViewDidLoad()
         }
     }
 }

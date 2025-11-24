@@ -8,11 +8,12 @@
 import Foundation
 
 public struct StoredSession: Codable, Sendable, Equatable, Hashable {
+    internal let token: String
+    internal let expiration: Date
+    
     public let userId: String
-    public let token: String
     public let name: String
     public let email: String
     public let role: UserRole
-    public let expiration: Date
+    public let isActive: Bool
 }
-

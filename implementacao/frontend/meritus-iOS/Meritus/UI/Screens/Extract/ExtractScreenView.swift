@@ -27,10 +27,8 @@ struct ExtractScreenView: View {
         }
         .scrollIndicators(.never)
         .applyMeritusToolbarTitle()
-        .onAppear {
-            Task(priority: .userInitiated) {
-                await viewModel.onViewDidLoad()
-            }
+        .onViewDidLoad {
+            await viewModel.onViewDidLoad()
         }
     }
 }

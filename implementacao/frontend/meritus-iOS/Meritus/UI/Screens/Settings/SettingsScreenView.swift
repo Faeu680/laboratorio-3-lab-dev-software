@@ -19,25 +19,29 @@ struct SettingsScreenView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: .size32) {
-                avatarView()
-                
-                VStack(spacing: .size24) {
-                    nameInputView()
-                    emailInputView()
+        VStack {
+            ScrollView {
+                VStack(spacing: .size32) {
+                    avatarView()
+                    
+                    VStack(spacing: .size24) {
+                        nameInputView()
+                        emailInputView()
+                    }
+                    
+                    VStack {
+                        languageListItemView()
+                        appearanceListItemView()
+                        changeAccountListItemView()
+                    }
                 }
-                
-                VStack {
-                    languageListItemView()
-                    appearanceListItemView()
-                    changeAccountListItemView()
-                }
+                .padding(.top, .size24)
             }
-            .padding(.top, .size24)
+            .navigationTitle("Ajustes")
+            .toolbarTitleDisplayMode(.inlineLarge)
+            
+            logoutButtonView()
         }
-        .navigationTitle("Ajustes")
-        .toolbarTitleDisplayMode(.inlineLarge)
     }
 }
 
@@ -113,5 +117,18 @@ extension SettingsScreenView {
         .onTapGesture {
             navigator.navigate(to: AppRoutes.switchAccount)
         }
+    }
+}
+
+extension SettingsScreenView {
+    private func logoutButtonView() -> some View {
+        ObsidianButton(
+            "Sair do App",
+            style: .destructiveOutline
+        ) {
+            return
+        }
+        .padding(.horizontal, .size16)
+        .padding(.bottom, .size16)
     }
 }

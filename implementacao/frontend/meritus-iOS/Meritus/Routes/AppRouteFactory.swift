@@ -18,13 +18,14 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
         self.resolver = resolver
     }
     
-    func makeLogin(action: LoginScreenViewAction) -> LoginScreenView {
+    func makeLogin() -> LoginScreenView {
         let signInUseCase = resolver.resolveUnwrapping(SignInUseCaseProtocol.self)
         let session = resolver.resolveUnwrapping(SessionProtocol.self)
+        let biometryManager = resolver.resolveUnwrapping(BiometryManagerProtocol.self)
         let viewModel = LoginScreenViewModel(
-            action: action,
             session: session,
-            signInUseCase: signInUseCase
+            signInUseCase: signInUseCase,
+            biometryManager: biometryManager
         )
         return LoginScreenView(viewModel: viewModel)
     }

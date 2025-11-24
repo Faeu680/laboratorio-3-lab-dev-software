@@ -50,5 +50,9 @@ public struct ServicesDependencyInjection: DependencyModule {
             let network = resolver.resolveUnwrapping(NetworkClientProtocol.self)
             return TransactionsService(network: network)
         }
+        
+        container.register(BiometryManagerProtocol.self) { _ in
+            return BiometryManager()
+        }
     }
 }

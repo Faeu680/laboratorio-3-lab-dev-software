@@ -7,7 +7,7 @@
 
 @MainActor
 protocol AppRouteFactoryProtocol: Sendable {
-    func makeLogin(action: LoginScreenViewAction) -> LoginScreenView
+    func makeLogin() -> LoginScreenView
     
     func makeSignUp() -> SignUpScreenView
     

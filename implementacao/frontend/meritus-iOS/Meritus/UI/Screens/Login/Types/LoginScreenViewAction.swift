@@ -11,4 +11,3 @@ enum LoginScreenViewAction: Equatable, Hashable {
     case login
     case switchAccount(choosedSession: StoredSession)
 }
-

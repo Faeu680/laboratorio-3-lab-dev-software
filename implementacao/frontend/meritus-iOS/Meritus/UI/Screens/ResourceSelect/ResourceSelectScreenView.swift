@@ -17,7 +17,7 @@ struct ResourceSelectScreenView<ViewModel>: View where ViewModel: ResourceSelect
     }
     
     var body: some View {
-        ObsidianList {
+        ObsidianList(verticalPadding: .size16) {
             ForEach(Array(viewModel.availableResources.enumerated()), id: \.element) { index, resource in
                 selectItemView(
                     resource: resource,
@@ -41,7 +41,8 @@ extension ResourceSelectScreenView {
             title: resource.title,
             leading: ObsidianSelectIndicator(
                 isSelected: isSelected
-            )
+            ),
+            borderStyle: .regular
         )
         .onTapGesture {
             viewModel.select(resource)

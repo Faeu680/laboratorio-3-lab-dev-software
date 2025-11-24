@@ -8,6 +8,9 @@
 import Foundation
 
 public protocol SessionProtocol: Actor {
+    var isActive: Bool { get }
+    nonisolated var unsafeIsActive: Bool { get }
+    
     func getActiveToken() -> String?
     nonisolated func getUnsafeActiveToken() -> String?
     
@@ -34,6 +37,8 @@ public protocol SessionProtocol: Actor {
     func switchToSession(_ userId: String) throws(SessionError)
     
     func isExpired() -> Bool
+    
+    func logout()
     
     func destroy()
 }
