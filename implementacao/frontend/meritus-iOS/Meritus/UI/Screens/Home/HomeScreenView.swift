@@ -22,48 +22,43 @@ struct HomeScreenView: View {
     var body: some View {
         TabView {
             if viewModel.isCompany {
-                NavigationView {
-                    navigator.view(for: AppRoutes.benefits)
-                }
-                .tabItem {
-                    Label("Início", systemImage: "house.fill")
+                Tab("Início", systemImage: "house.fill") {
+                    NavigationView {
+                        navigator.view(for: AppRoutes.benefits)
+                    }
                 }
                 
-                NavigationView {
-                    navigator.view(for: AppRoutes.newBenefit)
-                }
-                .tabItem {
-                    Label("Novo Beneficio", systemImage: "plus")
+                Tab("Início", systemImage: "house.fill") {
+                    NavigationView {
+                        navigator.view(for: AppRoutes.newBenefit)
+                    }
                 }
             } else {
-                NavigationView {
-                    navigator.view(for: AppRoutes.extract)
-                }
-                .tabItem {
-                    Label("Início", systemImage: "house.fill")
+                Tab("Início", systemImage: "house.fill") {
+                    NavigationView {
+                        navigator.view(for: AppRoutes.extract)
+                    }
                 }
             }
             
             if viewModel.isTeacher {
-                NavigationView {
-                    navigator.view(for: AppRoutes.transfer)
-                }
-                .tabItem {
-                    Label("Transferir", systemImage: "arrow.left.arrow.right.circle.fill")
+                Tab("Transferir", systemImage: "arrow.left.arrow.right.circle.fill", role: .search) {
+                    NavigationView {
+                        navigator.view(for: AppRoutes.transfer)
+                    }
                 }
             }
             
             if viewModel.isStudent {
-                NavigationView {
-                    navigator.view(for: AppRoutes.redeem)
-                }
-                .tabItem {
-                    Label("Resgatar", systemImage: "creditcard.fill")
+                Tab("Resgatar", systemImage: "creditcard.fill") {
+                    NavigationView {
+                        navigator.view(for: AppRoutes.redeem)
+                    }
                 }
             }
         }
-        .navigationBarBackButtonHidden()
         .tabBarMinimizeBehavior(.onScrollDown)
+        .navigationBarBackButtonHidden()
     }
 }
 

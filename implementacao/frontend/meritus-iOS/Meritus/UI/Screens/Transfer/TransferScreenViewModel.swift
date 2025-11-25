@@ -22,7 +22,18 @@ final class TransferScreenViewModel: ObservableObject {
     @Published var selectedStudent: StudentModel? = nil
     @Published var transferAmount: String = ""
     @Published var showTransferModal: Bool = false
-    
+    @Published var transferResult: TransferScreenViewResultRoute?
+    @Published var searchText: String = ""
+
+    var filteredStudents: [StudentModel] {
+        guard !searchText.isEmpty else { return students }
+        
+        return students.filter {
+            $0.name.lowercased().contains(searchText.lowercased()) ||
+            $0.email.lowercased().contains(searchText.lowercased())
+        }
+    }
+
     init(
         session: SessionProtocol,
         makeTransferUseCase: MakeTransferUseCaseProtocol,
@@ -37,9 +48,7 @@ final class TransferScreenViewModel: ObservableObject {
         do {
             let students = try await getStudentsOfInstitutionUseCase.execute()
             self.students = students
-        } catch {
-            
-        }
+        } catch { }
     }
     
     func didSelectStudent(_ student: StudentModel) {
@@ -61,12 +70,14 @@ final class TransferScreenViewModel: ObservableObject {
         
         do {
             try await makeTransferUseCase.execute(model)
+            transferResult = .success
         } catch {
-            
+            transferResult = .error
         }
     }
     
     func dismissTransferModal() {
         showTransferModal = false
+        transferResult = nil
     }
 }

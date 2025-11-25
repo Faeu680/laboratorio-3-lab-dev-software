@@ -7,31 +7,24 @@
 
 import SwiftUI
 import Combine
+import Commons
 
 final class ColorSchemeSelectScreenViewModel: ResourceSelectScreenViewModelProtocol {
     private let manager: ColorSchemeManager
     
-    let toolbarTitle: String = "Aparência"
+    @Published private(set) var selectedResource: AppColorScheme
     
-    @Published var selectedResource: ColorSchemeSelectScreenViewResource
-    
-    var availableResources: [ColorSchemeSelectScreenViewResource] {
-        ColorSchemeSelectScreenViewResource.allCases
-    }
+    let availableResources = AppColorScheme.allCases
+    let toolbarTitle = "Tema do Aplicativo"
     
     init() {
         let manager = ColorSchemeManager.shared
         self.manager = manager
-        self.selectedResource = .init(from: manager.getColorScheme())
+        self.selectedResource = manager.scheme
     }
     
-    func select(_ resource: ColorSchemeSelectScreenViewResource) {
+    func select(_ resource: AppColorScheme) {
         selectedResource = resource
-        setColorScheme(resource)
-    }
-    
-    private func setColorScheme(_ resource: ColorSchemeSelectScreenViewResource) {
-        let colorScheme = resource.colorSchemeType
-        manager.setColorScheme(colorScheme)
+        manager.setScheme(resource)
     }
 }

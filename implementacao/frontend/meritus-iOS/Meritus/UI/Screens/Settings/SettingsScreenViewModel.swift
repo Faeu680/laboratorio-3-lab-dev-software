@@ -32,43 +32,11 @@ final class SettingsScreenViewModel: ObservableObject {
 
     private func refresh() {
         currentLocation = locationManager
-            .getLocale()
-            .toString()
+            .language
+            .title
         
         currentColorScheme = colorSchemeManager
-            .getColorScheme()
-            .toString()
-    }
-}
-
-fileprivate extension ColorScheme? {
-    func toString() -> String {
-        switch self {
-        case .light:
-            return "Claro"
-        case .dark:
-            return "Escuro"
-        case .none:
-            return "Sistema"
-        @unknown default:
-            return "Sistema"
-        }
-    }
-}
-
-fileprivate extension Locale {
-    func toString() -> String {
-        let id = identifier.lowercased()
-
-        switch id {
-        case "pt_br":
-            return "Português (BR)"
-        case "en_us":
-            return "Inglês"
-        case "es_es":
-            return "Espanhol"
-        default:
-            return "Sistema"
-        }
+            .scheme
+            .title
     }
 }

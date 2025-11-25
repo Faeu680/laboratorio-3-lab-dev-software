@@ -7,20 +7,28 @@
 
 import Foundation
 import Combine
+import Commons
 
 @MainActor
 final class LocalizationManager: ObservableObject {
-    @Published var locale: Locale = Locale(identifier: "pt_BR")
-    
+
+    private static let userDefaultsManager = UserDefaultsManager.shared
+    private static let userDefaultsKey = "selectedLocale"
+
     static let shared = LocalizationManager()
     
-    private init() {}
-    
-    func getLocale() -> Locale {
-        locale
+    @Published private(set) var language: AppLanguage
+
+    private init() {
+        let raw = Self.userDefaultsManager.readString(forKey: Self.userDefaultsKey)
+        self.language = raw.flatMap(AppLanguage.init(rawValue:)) ?? .system
     }
-    
-    func setLocale(_ locale: Locale) {
-        self.locale = locale
+
+    func setLanguage(_ language: AppLanguage) {
+        self.language = language
+        Self.userDefaultsManager.save(
+            language.rawValue,
+            forKey: Self.userDefaultsKey
+        )
     }
 }

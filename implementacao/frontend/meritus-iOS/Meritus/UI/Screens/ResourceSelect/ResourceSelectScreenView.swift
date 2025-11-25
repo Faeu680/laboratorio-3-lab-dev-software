@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Obsidian
+import Commons
 
 struct ResourceSelectScreenView<ViewModel>: View where ViewModel: ResourceSelectScreenViewModelProtocol {
     
@@ -38,14 +39,27 @@ extension ResourceSelectScreenView {
         isSelected: Bool
     ) -> some View {
         ObsidianListItem(
-            title: resource.title,
+            title: resourceTitle(resource),
             leading: ObsidianSelectIndicator(
                 isSelected: isSelected
             ),
             borderStyle: .regular
-        )
-        .onTapGesture {
-            viewModel.select(resource)
+        ) {
+            await viewModel.select(resource)
         }
+    }
+}
+
+extension ResourceSelectScreenView {
+    private func resourceTitle(_ resource: ViewModel.Resource) -> String {
+        if let resource = resource as? AppColorScheme {
+            return resource.title
+        }
+        
+        if let resource = resource as? AppLanguage {
+            return resource.title
+        }
+        
+        return ""
     }
 }

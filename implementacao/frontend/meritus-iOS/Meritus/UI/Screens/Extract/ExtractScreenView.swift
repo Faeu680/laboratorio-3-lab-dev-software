@@ -18,14 +18,20 @@ struct ExtractScreenView: View {
     }
     
     var body: some View {
-        ScrollView {
+        ObsidianList(
+            verticalPadding: .size8
+        ) {
             balanceCardView()
             
-            ForEach(viewModel.transactions, id: \.id) { transaction in
-                transactionListItemView(transaction)
+            ObsidianSection {
+                Text("Extrato")
+                    .obsidianBody()
+            } content: {
+                ForEach(viewModel.transactions, id: \.id) { transaction in
+                    transactionListItemView(transaction)
+                }
             }
         }
-        .scrollIndicators(.never)
         .applyMeritusToolbarTitle()
         .onViewDidLoad {
             await viewModel.onViewDidLoad()
@@ -42,7 +48,6 @@ extension ExtractScreenView {
                 amount: balance,
                 initiallyMasked: true
             )
-            .padding(.horizontal, .size16)
         }
     }
 }
@@ -56,7 +61,6 @@ extension ExtractScreenView {
             kind: transaction.origin.toTransactionKind(),
             date: .now
         )
-        .padding(.horizontal, .size16)
     }
 }
 

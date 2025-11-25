@@ -35,7 +35,7 @@ public struct ObsidianList<Content: View>: View {
                     )
                 )
         }
-        .scrollIndicators(.hidden)
+        .scrollIndicators(.never)
         .scrollContentBackground(.hidden)
         .listStyle(.plain)
         .listSectionSpacing(0)

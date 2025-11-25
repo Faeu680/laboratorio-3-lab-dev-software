@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Kingfisher
+private import Kingfisher
 
 public struct BenefitCard: View {
     

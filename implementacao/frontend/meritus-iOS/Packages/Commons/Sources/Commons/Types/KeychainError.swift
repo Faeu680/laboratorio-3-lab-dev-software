@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum KeychainError: Error, LocalizedError {
+public enum KeychainError: Error {
     case encodingError
     case decodingError
     case unhandledError(OSStatus)

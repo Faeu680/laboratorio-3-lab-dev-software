@@ -20,15 +20,21 @@ struct TransferScreenView: View {
     
     var body: some View {
         ObsidianList(verticalPadding: .size8) {
-            ForEach(viewModel.students, id: \.id) { student in
+            ForEach(viewModel.filteredStudents, id: \.id) { student in
                 userListItemView(student)
             }
         }
         .navigationTitle("Transferências")
         .navigationSubtitle("Selecione um aluno para realizar uma transferência")
         .toolbarTitleDisplayMode(.inlineLarge)
+        .searchable(
+            text: $viewModel.searchText,
+            prompt: "Buscar por nome ou email"
+        )
         .sheet(isPresented: $viewModel.showTransferModal) {
-            transferModalView()
+            NavigationStack {
+                transferModalView()
+            }
         }
         .onViewDidLoad {
             await viewModel.onViewDidLoad()
@@ -74,49 +80,75 @@ extension TransferScreenView {
 
 extension TransferScreenView {
     private func transferModalView() -> some View {
-        NavigationStack {
-            VStack {
-                transferInputView()
+        VStack {
+            transferInputView()
+            
+            VStack(spacing: .size24) {
+                fromAccountView()
                 
-                VStack(spacing: .size24) {
-                    if let currentAccount = viewModel.storedSession {
-                        selectedUserItemView(
-                            sectionTitle: "De:",
-                            isCurrentAccount: true,
-                            name: currentAccount.name,
-                            email: currentAccount.email
-                        )
-                    }
-                    
-                    if let destinationAccount = viewModel.selectedStudent {
-                        selectedUserItemView(
-                            sectionTitle: "Para:",
-                            isCurrentAccount: false,
-                            name: destinationAccount.name,
-                            email: destinationAccount.email
-                        )
-                    }
-                }
-                .padding(.top, .size24)
-                
-                Spacer()
-                
-                transferButtonView()
+                toAccountView()
             }
-            .padding(.horizontal, .size16)
-            .navigationTitle("Transferir")
-            .toolbarTitleDisplayMode(.large)
-            .presentationDetents([.large])
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        viewModel.dismissTransferModal()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.headline)
-                    }
+            .padding(.top, .size24)
+            
+            Spacer()
+            
+            transferButtonView()
+        }
+        .padding(.horizontal, .size16)
+        .navigationTitle("Transferir")
+        .toolbarTitleDisplayMode(.large)
+        .presentationDetents([.large])
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    viewModel.dismissTransferModal()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.headline)
                 }
             }
+        }
+        .navigationDestination(item: $viewModel.transferResult) { route in
+            feedbackView(route)
+        }
+    }
+}
+
+extension TransferScreenView {
+    private func feedbackView(_ route: TransferScreenViewResultRoute) -> some View {
+        ObsidianFeedbackView(
+            route.feedbackViewStyle,
+            title: "Sucesso"
+        )
+        .presentationDetents([.large])
+        .toolbar(.hidden)
+    }
+}
+
+extension TransferScreenView {
+    @ViewBuilder
+    private func fromAccountView() -> some View {
+        if let currentAccount = viewModel.storedSession {
+            selectedUserItemView(
+                sectionTitle: "De:",
+                isCurrentAccount: true,
+                name: currentAccount.name,
+                email: currentAccount.email
+            )
+        }
+    }
+}
+
+extension TransferScreenView {
+    @ViewBuilder
+    private func toAccountView() -> some View {
+        if let destinationAccount = viewModel.selectedStudent {
+            selectedUserItemView(
+                sectionTitle: "Para:",
+                isCurrentAccount: false,
+                name: destinationAccount.name,
+                email: destinationAccount.email
+            )
         }
     }
 }

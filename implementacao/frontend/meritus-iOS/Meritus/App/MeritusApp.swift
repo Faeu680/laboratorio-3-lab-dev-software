@@ -13,6 +13,7 @@ import Session
 import Services
 import Domain
 import Navigation
+import Commons
 #if DEBUG
 import TestMode
 #endif
@@ -46,11 +47,11 @@ struct MeritusApp: App {
             }
             .environmentObject(localizationManager)
             .environmentObject(colorSchemeManager)
-            .environment(\.locale, localizationManager.locale)
-            .preferredColorScheme(colorSchemeManager.colorScheme)
+            .environment(\.locale, localizationManager.language.locale)
+            .preferredColorScheme(colorSchemeManager.scheme.colorScheme)
             #if DEBUG
             .simultaneousGesture(
-                TapGesture(count: 3)
+                TapGesture(count: 5)
                     .onEnded { showRequests = true }
             )
             .sheet(isPresented: $showRequests) {

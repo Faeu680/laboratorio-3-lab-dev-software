@@ -6,14 +6,15 @@
 //
 
 import Combine
+import Commons
 
 @MainActor
-protocol ResourceSelectScreenViewModelProtocol: ObservableObject {
-    associatedtype Resource: ResourceSelectScreenViewProtocol
+protocol ResourceSelectScreenViewModelProtocol: ObservableObject, Sendable {
+    associatedtype Resource: Hashable & Sendable
     
     var toolbarTitle: String { get }
     
-    var selectedResource: Resource { get set }
+    var selectedResource: Resource { get }
     var availableResources: [Resource] { get }
     
     func select(_ resource: Resource)

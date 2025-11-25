@@ -7,20 +7,28 @@
 
 import SwiftUI
 import Combine
+import Commons
 
 @MainActor
 final class ColorSchemeManager: ObservableObject {
-    @Published var colorScheme: ColorScheme?
-    
+
+    private static let userDefaultsManager = UserDefaultsManager.shared
+    private static let userDefaultsKey = "selectedColorScheme"
+
     static let shared = ColorSchemeManager()
     
-    private init() {}
-    
-    func getColorScheme() -> ColorScheme? {
-        colorScheme
+    @Published private(set) var scheme: AppColorScheme
+
+    private init() {
+        let raw = Self.userDefaultsManager.readString(forKey: Self.userDefaultsKey)
+        self.scheme = raw.flatMap(AppColorScheme.init(rawValue:)) ?? .system
     }
-    
-    func setColorScheme(_ colorScheme: ColorScheme?) {
-        self.colorScheme = colorScheme
+
+    func setScheme(_ scheme: AppColorScheme) {
+        self.scheme = scheme
+        Self.userDefaultsManager.save(
+            scheme.rawValue,
+            forKey: Self.userDefaultsKey
+        )
     }
 }

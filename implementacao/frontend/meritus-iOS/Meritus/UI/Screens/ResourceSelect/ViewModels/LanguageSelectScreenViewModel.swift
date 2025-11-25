@@ -7,31 +7,24 @@
 
 import Foundation
 import Combine
+import Commons
 
 final class LanguageSelectScreenViewModel: ResourceSelectScreenViewModelProtocol {
     private let manager: LocalizationManager
     
-    let toolbarTitle: String = "Linguagem"
+    @Published private(set) var selectedResource: AppLanguage
     
-    @Published var selectedResource: LanguageSelectScreenViewResource
-    
-    var availableResources: [LanguageSelectScreenViewResource] {
-        LanguageSelectScreenViewResource.allCases
-    }
+    let availableResources = AppLanguage.allCases
+    let toolbarTitle = "Selecionar Idioma"
     
     init() {
         let manager = LocalizationManager.shared
         self.manager = manager
-        self.selectedResource = .init(from: manager.getLocale())
+        self.selectedResource = manager.language
     }
     
-    func select(_ resource: LanguageSelectScreenViewResource) {
+    func select(_ resource: AppLanguage) {
         selectedResource = resource
-        setLanguage(resource)
-    }
-    
-    private func setLanguage(_ resource: LanguageSelectScreenViewResource) {
-        let locale = resource.localeType
-        manager.setLocale(locale)
+        manager.setLanguage(resource)
     }
 }
