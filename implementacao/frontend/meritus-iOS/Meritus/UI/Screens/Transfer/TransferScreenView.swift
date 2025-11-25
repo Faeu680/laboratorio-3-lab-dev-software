@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AudioToolbox
 import Obsidian
 import Domain
 import Session
@@ -13,6 +14,8 @@ import Session
 struct TransferScreenView: View {
     
     @StateObject private var viewModel: TransferScreenViewModel
+    
+    private let feedbaackGenerator = UINotificationFeedbackGenerator()
     
     init(viewModel: TransferScreenViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -31,7 +34,7 @@ struct TransferScreenView: View {
             text: $viewModel.searchText,
             prompt: "Buscar por nome ou email"
         )
-        .sheet(isPresented: $viewModel.showTransferModal) {
+        .fullScreenCover(isPresented: $viewModel.showTransferModal) {
             NavigationStack {
                 transferModalView()
             }
@@ -75,38 +78,52 @@ extension TransferScreenView {
                 borderStyle: isCurrentAccount ? .regular : .dashed
             )
         }
+        .padding(.horizontal, .size16)
     }
 }
 
 extension TransferScreenView {
     private func transferModalView() -> some View {
         VStack {
-            transferInputView()
-            
-            VStack(spacing: .size24) {
-                fromAccountView()
+            ScrollView {
+                transferInputView()
                 
-                toAccountView()
+                VStack {
+                    balanceListItem(
+                        title: "Saldo Atual",
+                        balance: "1000"
+                    )
+                    
+                    balanceListItem(
+                        title: "Saldo Final",
+                        balance: "990"
+                    )
+                }
+                .padding(.top, .size16)
+                
+                VStack(spacing: .size24) {
+                    fromAccountView()
+                    
+                    toAccountView()
+                }
+                .padding(.top, .size24)
             }
-            .padding(.top, .size24)
+            .navigationTitle("Transferir")
+            .toolbarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.dismissTransferModal()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.headline)
+                    }
+                }
+            }
             
             Spacer()
             
             transferButtonView()
-        }
-        .padding(.horizontal, .size16)
-        .navigationTitle("Transferir")
-        .toolbarTitleDisplayMode(.large)
-        .presentationDetents([.large])
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    viewModel.dismissTransferModal()
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.headline)
-                }
-            }
         }
         .navigationDestination(item: $viewModel.transferResult) { route in
             feedbackView(route)
@@ -119,7 +136,9 @@ extension TransferScreenView {
         ObsidianFeedbackView(
             route.feedbackViewStyle,
             title: "Sucesso"
-        )
+        ) {
+            handleTransferUIFeedback(route)
+        }
         .presentationDetents([.large])
         .toolbar(.hidden)
     }
@@ -155,11 +174,27 @@ extension TransferScreenView {
 
 extension TransferScreenView {
     private func transferInputView() -> some View {
-        ObsidianInput(
+        ObsidianCreditInput(
             text: $viewModel.transferAmount,
-            label: "Valor",
-            placeholder: "200"
+            title: "Valor",
+            unitLabel: "MeritusCredits",
+            maxDigits: 10
         )
+        .padding(.top, .size16)
+        .padding(.horizontal, .size16)
+    }
+}
+
+extension TransferScreenView {
+    private func balanceListItem(
+        title: String,
+        balance: String
+    ) -> some View {
+        ObsidianListItem(
+            title: title,
+            trailing: Text("MC \(balance)")
+        )
+        .padding(.horizontal, .size16)
     }
 }
 
@@ -171,6 +206,26 @@ extension TransferScreenView {
             isLoading: $viewModel.isLoading
         ) {
             await viewModel.didTapTransferButton()
+        }
+        .padding(.horizontal, .size16)
+    }
+}
+
+extension TransferScreenView {
+    private func handleTransferUIFeedback(_ route: TransferScreenViewResultRoute) {
+        feedbaackGenerator.prepare()
+        
+        defer { viewModel.dismissTransferModal() }
+        
+        switch route {
+        case .success:
+            let sucessSoundId: UInt32 = 1519
+            feedbaackGenerator.notificationOccurred(.success)
+            AudioServicesPlaySystemSound(sucessSoundId)
+        case .error:
+            let errorSoundId: UInt32 = 1520
+            feedbaackGenerator.notificationOccurred(.error)
+            AudioServicesPlaySystemSound(errorSoundId)
         }
     }
 }

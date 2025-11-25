@@ -12,53 +12,55 @@ public struct ObsidianFeedbackView: View {
     public enum Style {
         case success
         case error
-        
+
         var animationName: String {
             switch self {
-            case .success:
-                return "success_animation"
-            case .error:
-                return "error_animation"
+            case .success: return "success_animation"
+            case .error: return "error_animation"
             }
         }
-        
+
         var color: Color {
             switch self {
-            case .success:
-                return .green
-            case .error:
-                return .red
+            case .success: return .green
+            case .error: return .red
             }
         }
     }
-    
+
     private let style: Style
     private let title: String
     private let message: String?
-    
+    private let onAnimationFinished: (() -> Void)?
+
     public init(
         _ style: Style,
         title: String,
-        message: String? = nil
+        message: String? = nil,
+        onAnimationFinished: (() -> Void)? = nil
     ) {
         self.style = style
         self.title = title
         self.message = message
+        self.onAnimationFinished = onAnimationFinished
     }
-    
+
     public var body: some View {
         VStack(spacing: .size24) {
             LottieView(
-                animation: .named(style.animationName, bundle: .module)
+                animation: .named(style.animationName, bundle: .module),
             )
-            .playbackMode(.playing(.fromProgress(0, toProgress: 1, loopMode: .loop)))
+            .playbackMode(.playing(.fromProgress(0, toProgress: 1, loopMode: .playOnce)))
+            .animationDidFinish { _ in
+                onAnimationFinished?()
+            }
             .frame(width: 120, height: 120)
-            
+
             Text(title)
                 .font(.system(size: 24, weight: .semibold))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(style.color)
-            
+
             if let message {
                 Text(message)
                     .font(.system(size: 16))
@@ -67,14 +69,5 @@ public struct ObsidianFeedbackView: View {
                     .padding(.horizontal, .size16)
             }
         }
-    }
-}
-
-#Preview {
-    return ObsidianPreviewContainer {
-        ObsidianFeedbackView(
-            .success,
-            title: "Teste"
-        )
     }
 }

@@ -59,14 +59,14 @@ final class TransferScreenViewModel: ObservableObject {
     func didTapTransferButton() async {
         guard let selectedStudent else { return }
         
+        isLoading = true
+        defer { isLoading = false }
+        
         let model = MakeTransferModel(
             studentId: selectedStudent.id,
             amount: transferAmount,
             message: "cavalos da transferencia"
         )
-        
-        isLoading = true
-        defer { isLoading = false }
         
         do {
             try await makeTransferUseCase.execute(model)
@@ -74,6 +74,10 @@ final class TransferScreenViewModel: ObservableObject {
         } catch {
             transferResult = .error
         }
+    }
+    
+    func handleFeedbackAnimationFinished() {
+        dismissTransferModal()
     }
     
     func dismissTransferModal() {
