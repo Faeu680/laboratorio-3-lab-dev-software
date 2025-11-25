@@ -85,11 +85,10 @@ extension SettingsScreenView {
             subtitle: viewModel.currentLocation,
             leading: Image(systemName: "globe"),
             trailing: Image(systemName: "chevron.right")
-        )
-        .padding(.horizontal, .size16)
-        .onTapGesture {
-            navigator.navigate(to: AppRoutes.selectLanguage)
+        ) {
+            await navigator.navigate(to: AppRoutes.selectLanguage)
         }
+        .padding(.horizontal, .size16)
     }
 }
 
@@ -100,11 +99,10 @@ extension SettingsScreenView {
             subtitle: viewModel.currentColorScheme,
             leading: Image(systemName: "circle.lefthalf.filled"),
             trailing: Image(systemName: "chevron.right")
-        )
-        .padding(.horizontal, .size16)
-        .onTapGesture {
-            navigator.navigate(to: AppRoutes.selectColorScheme)
+        ) {
+            await navigator.navigate(to: AppRoutes.selectColorScheme)
         }
+        .padding(.horizontal, .size16)
     }
 }
 
@@ -115,11 +113,10 @@ extension SettingsScreenView {
             subtitle: "Entrar com outro usuário",
             leading: Image(systemName: "person.crop.circle"),
             trailing: Image(systemName: "chevron.right")
-        )
-        .padding(.horizontal, .size16)
-        .onTapGesture {
-            navigator.navigate(to: AppRoutes.switchAccount)
+        ) {
+            await navigator.navigate(to: AppRoutes.switchAccount)
         }
+        .padding(.horizontal, .size16)
     }
 }
 

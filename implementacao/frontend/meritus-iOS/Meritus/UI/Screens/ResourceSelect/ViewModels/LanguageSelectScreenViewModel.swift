@@ -13,7 +13,7 @@ final class LanguageSelectScreenViewModel: ResourceSelectScreenViewModelProtocol
     
     let toolbarTitle: String = "Linguagem"
     
-    @Published var selectedResource: LanguageSelectScreenViewResource = .portuguese
+    @Published var selectedResource: LanguageSelectScreenViewResource
     
     var availableResources: [LanguageSelectScreenViewResource] {
         LanguageSelectScreenViewResource.allCases

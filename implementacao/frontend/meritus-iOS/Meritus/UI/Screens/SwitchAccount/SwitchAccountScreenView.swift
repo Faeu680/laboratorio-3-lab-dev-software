@@ -40,23 +40,46 @@ extension SwitchAccountScreenView {
             title: session.name,
             subtitle: session.email,
             leading: ObsidianAvatar(initials: "JS", size: .medium),
-            trailing: Image(systemName: "chevron.right"),
-            borderStyle: .regular // se selecionado aplicar dashed
+            trailing: session.isActive ? nil : Image(systemName: "chevron.right"),
+            badges: listItemBadgesView(session),
+            borderStyle: session.isActive ? .dashed : .regular
         )
-        .onTapGesture {
-            Task(priority: .userInitiated) {
-                await viewModel.didTapToSwitchAccount(session)
-                navigator.popTo(AppRoutes.login)
-            }
+        .if(!session.isActive) { view in
+            view
+                .onTap {
+                    await viewModel.didTapToSwitchAccount(session)
+                    await navigator.popTo(AppRoutes.login)
+                }
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        await viewModel.didSwipeToDeleteAccount(session.userId)
+                    } label: {
+                        Label("Remover", systemImage: "trash")
+                    }
+                }
         }
-        .swipeActions(edge: .trailing) {
-            Button(role: .destructive) {
-                await viewModel.didSwipeToDeleteAccount(session.userId)
-            } label: {
-                Label("Remover", systemImage: "trash")
-            }
+    }
+}
+
+extension SwitchAccountScreenView {
+    private func listItemBadgesView(_ session: StoredSession) -> [ObsidianBadge] {
+        var badges: [ObsidianBadge] = []
+        let roleBadge = ObsidianBadge(session.role.toString())
+        
+        badges.append(roleBadge)
+        
+        if session.isActive {
+            let activeBadge = ObsidianBadge("Ativa")
+            badges.append(activeBadge)
+            return badges
         }
-        .orEmptyView(session.isActive)
+        
+        if session.isExpired {
+            let expiredBadge = ObsidianBadge("Expirado")
+            badges.append(expiredBadge)
+        }
+        
+        return badges
     }
 }
 
@@ -73,5 +96,18 @@ extension SwitchAccountScreenView {
         .padding(.horizontal, .size16)
         .padding(.bottom, .size16)
         .orEmptyView(viewModel.shouldHideAddNewAccountButton)
+    }
+}
+
+fileprivate extension UserRole {
+    func toString() -> String {
+        switch self {
+        case .student:
+            return "Aluno"
+        case .teacher:
+            return "Professor"
+        case .company:
+            return "Empresa"
+        }
     }
 }

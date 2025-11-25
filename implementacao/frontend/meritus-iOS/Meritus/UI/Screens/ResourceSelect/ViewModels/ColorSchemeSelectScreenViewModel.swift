@@ -13,7 +13,7 @@ final class ColorSchemeSelectScreenViewModel: ResourceSelectScreenViewModelProto
     
     let toolbarTitle: String = "Aparência"
     
-    @Published var selectedResource: ColorSchemeSelectScreenViewResource = .system
+    @Published var selectedResource: ColorSchemeSelectScreenViewResource
     
     var availableResources: [ColorSchemeSelectScreenViewResource] {
         ColorSchemeSelectScreenViewResource.allCases

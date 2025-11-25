@@ -18,6 +18,12 @@ public struct StoredSession: Codable, Sendable, Equatable, Hashable {
     public let isActive: Bool
 }
 
+public extension StoredSession {
+    var isExpired: Bool {
+        Date() >= expiration
+    }
+}
+
 extension StoredSession {
     func with(isActive: Bool) -> StoredSession {
         StoredSession(

@@ -8,7 +8,7 @@
 import SwiftUI
 
 @MainActor
-public protocol NavigatorProtocol {
+public protocol NavigatorProtocol: Sendable {
     func view<Route: RouteProtocol>(for route: Route) -> AnyView?
     func navigate<Route: RouteProtocol>(to route: Route)
     func navigate<Route: RouteProtocol>(to routes: [Route])
