@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { randomBytes } from 'crypto';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { BenefitEntity } from '../../benefits/entities/benefit.entity';
 import { MailService } from '../../mail/mail.service';
 import { StudentEntity } from '../../students/entities/student.entity';
@@ -11,14 +10,8 @@ import { TransactionEntity, TransactionTypeEnum } from '../entities/transaction.
 @Injectable()
 export class RedeemBenefitUseCase {
   constructor(
-    @InjectRepository(TransactionEntity)
-    private readonly transactionRepository: Repository<TransactionEntity>,
-    @InjectRepository(StudentEntity)
-    private readonly studentRepository: Repository<StudentEntity>,
-    @InjectRepository(BenefitEntity)
-    private readonly benefitRepository: Repository<BenefitEntity>,
     private readonly dataSource: DataSource,
-    private readonly mailService: MailService,
+    private readonly mailService: MailService
   ) {}
 
   async execute(userId: string, dto: RedeemBenefitDto): Promise<TransactionEntity> {
@@ -81,6 +74,11 @@ export class RedeemBenefitUseCase {
         voucherCode,
         companyName: benefit.company.user.name,
       });
+
+      // biome-ignore lint/suspicious/noTsIgnore: gambs
+      // @ts-ignore
+      delete benefit.company;
+      savedTransaction.benefit = benefit;
 
       return savedTransaction;
     });

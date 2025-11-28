@@ -35,15 +35,23 @@ export class SignInUseCase {
     [RolesEnum.ADMIN]: null,
   };
 
+  private relationsOfRole = {
+    [RolesEnum.TEACHER]: ['institution'],
+    [RolesEnum.COMPANY]: [],
+    [RolesEnum.STUDENT]: ['institution'],
+    [RolesEnum.ADMIN]: [],
+  };
+
   async execute({ email, password }: Input): Promise<Output> {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user || !(await user.comparePassword(password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
     const repo = this.repoOfRole[user.role as RolesEnum];
+    const relations = this.relationsOfRole[user.role as RolesEnum];
     // @ts-expect-error
     delete user.password;
-    const profile = await repo?.findOne({ where: { user: { id: user.id } } });
+    const profile = await repo?.findOne({ where: { user: { id: user.id } }, relations });
     const payload = { sub: user.id, profile, ...user };
     const accessToken = await this.jwtService.signAsync(payload);
     return plainToClass(SignInResponseDto, { accessToken });

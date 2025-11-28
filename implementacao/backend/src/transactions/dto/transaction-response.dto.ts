@@ -9,13 +9,15 @@ export class TransactionResponseDto {
   type: TransactionTypeEnum;
 
   @ApiProperty()
-  amount: number;
+  amount: string;
 
   @ApiProperty()
-  message: string | null;
+  message: string;
 
-  @ApiProperty()
-  voucherCode: string | null;
+  @ApiProperty({
+    nullable: true,
+  })
+  voucherCode: string;
 
   @ApiProperty()
   createdAt: Date;
@@ -31,4 +33,7 @@ export class TransactionResponseDto {
 
   @ApiProperty({ required: false })
   companyName?: string;
+
+  @ApiProperty()
+  origin?: string;
 }
