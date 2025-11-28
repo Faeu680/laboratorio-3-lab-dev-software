@@ -33,7 +33,7 @@ struct ExtractScreenView: View {
             }
         }
         .applyMeritusToolbarTitle()
-        .onViewDidLoad {
+        .onAppear {
             await viewModel.onViewDidLoad()
         }
     }

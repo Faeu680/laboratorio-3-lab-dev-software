@@ -7,8 +7,12 @@
 
 import SwiftUI
 import Obsidian
+import Navigation
+import Commons
 
 struct NewBenefitScreenView: View {
+    
+    @Environment(\.navigator) private var navigator: NavigatorProtocol
     
     @StateObject private var viewModel: NewBenefitScreenViewModel
     
@@ -56,8 +60,6 @@ struct NewBenefitScreenView: View {
                 }
                 .padding(.horizontal, .size16)
             }
-            
-            
         }
         .fullScreenCover(isPresented: $viewModel.isCameraPresented) {
             CameraPicker { selectedImage in
@@ -70,6 +72,21 @@ struct NewBenefitScreenView: View {
                 viewModel.selectedImage = selectedImage
             }
             .ignoresSafeArea()
+        }
+        .onViewDidLoad {
+            bindActions()
+        }
+    }
+}
+
+extension NewBenefitScreenView {
+    private func bindActions() {
+        viewModel.createNewBenefitDidSuccess = {
+            navigator.navigate(to: AppRoutes.feedback(style: .success))
+            
+            delayOnMain(1) {
+                await navigator.popTo(AppRoutes.home)
+            }
         }
     }
 }
@@ -153,6 +170,7 @@ extension NewBenefitScreenView {
         ObsidianButton(
             "Criar Beneficio",
             style: .primary,
+            isLoading: $viewModel.isLoading
         ) {
             Task {
                 await viewModel.didTapCreateBenefit()

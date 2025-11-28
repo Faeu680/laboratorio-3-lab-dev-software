@@ -8,6 +8,7 @@
 import DependencyInjection
 import Session
 import Domain
+import Obsidian
 
 @MainActor
 final class AppRouteFactory: AppRouteFactoryProtocol {
@@ -76,12 +77,25 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
         let session = resolver.resolveUnwrapping(SessionProtocol.self)
         let getBalanceUseCase = resolver.resolveUnwrapping(GetBalanceUseCaseProtocol.self)
         let getBenefitsUseCase = resolver.resolveUnwrapping(GetBenefitsUseCaseProtocol.self)
+        let redeemBenefitUseCase = resolver.resolveUnwrapping(RedeemBenefitUseCaseProtocol.self)
         let viewModel = BenefitsScreenViewModel(
             session: session,
             getBalanceUseCase: getBalanceUseCase,
-            getBenefitsUseCase: getBenefitsUseCase
+            getBenefitsUseCase: getBenefitsUseCase,
+            redeemBenefitUseCase: redeemBenefitUseCase
         )
         return BenefitsScreenView(viewModel: viewModel)
+    }
+    
+    func makeMyBenefits() -> MyBenefitsScreenView {
+        let getMyBenefitsUseCase = resolver.resolveUnwrapping(GetMyBenefitsUseCaseProtocol.self)
+        let viewModel = MyBenefitsScreenViewModel(getMyBenefitsUseCase: getMyBenefitsUseCase)
+        return MyBenefitsScreenView(viewModel: viewModel)
+    }
+    
+    func makeBenefitInfo(benefit: RedeemBenefitModel) -> BenefitInfoScreenView {
+        let viewModel = BenefitInfoScreenViewModel(benefit: benefit)
+        return BenefitInfoScreenView(viewModel: viewModel)
     }
     
     func makeNewBenefit() -> NewBenefitScreenView {
@@ -102,11 +116,6 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
         return SettingsScreenView(viewModel: viewModel)
     }
     
-    func makeSelectLanguage() -> ResourceSelectScreenView<LanguageSelectScreenViewModel> {
-        let viewModel = LanguageSelectScreenViewModel()
-        return ResourceSelectScreenView(viewModel: viewModel)
-    }
-    
     func makeSelectColorScheme() -> ResourceSelectScreenView<ColorSchemeSelectScreenViewModel> {
         let viewModel = ColorSchemeSelectScreenViewModel()
         return ResourceSelectScreenView(viewModel: viewModel)
@@ -116,5 +125,9 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
         let session = resolver.resolveUnwrapping(SessionProtocol.self)
         let viewModel = SwitchAccountScreenViewModel(session: session)
         return SwitchAccountScreenView(viewModel: viewModel)
+    }
+    
+    func makeFeedback(style: ObsidianFeedbackView.Style) -> ObsidianFeedbackView {
+        return ObsidianFeedbackView(style)
     }
 }

@@ -16,6 +16,9 @@
     "Aluno" : {
 
     },
+    "Benefício" : {
+
+    },
     "Buscar beneficio" : {
 
     },
@@ -158,6 +161,12 @@
     "MeritusCredits" : {
 
     },
+    "Meus benefícios" : {
+
+    },
+    "Meus Benefícios" : {
+
+    },
     "Novo Beneficio" : {
 
     },
@@ -177,6 +186,9 @@
 
     },
     "Saldo Disponível" : {
+
+    },
+    "Selecione o benefício que deseja utilizar" : {
 
     },
     "Selecione um aluno para realizar uma transferência" : {

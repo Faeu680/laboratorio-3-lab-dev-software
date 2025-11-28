@@ -39,7 +39,7 @@ struct TransferScreenView: View {
                 transferModalView()
             }
         }
-        .onViewDidLoad {
+        .onAppear {
             await viewModel.onViewDidLoad()
         }
     }
@@ -243,8 +243,7 @@ extension TransferScreenView {
 extension TransferScreenView {
     private func feedbackView(_ route: TransferScreenViewResultRoute) -> some View {
         ObsidianFeedbackView(
-            route.feedbackViewStyle,
-            title: "Sucesso"
+            route.feedbackViewStyle
         ) {
             handleTransferUIFeedback(route)
         }

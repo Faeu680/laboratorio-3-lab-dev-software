@@ -12,20 +12,31 @@ enum BenefitsRequest: APIRequest {
         name: String,
         description: String,
         photo: String,
-        cost: Double
+        cost: String
     )
     
     case getBenefits
     
+    case getMyBenefits
+    
+    static let basePath = "/benefits"
+    
     var scope: APIScope { .authenticated }
     
-    var path: String { "/benefits" }
+    var path: String {
+        switch self {
+        case .createBenefit, .getBenefits:
+            Self.basePath
+        case .getMyBenefits:
+            Self.basePath + "/my-benefits"
+        }
+    }
     
     var method: HTTPMethod {
         switch self {
         case .createBenefit:
             return .post
-        case .getBenefits:
+        case .getBenefits, .getMyBenefits:
             return .get
         }
     }
@@ -41,7 +52,7 @@ enum BenefitsRequest: APIRequest {
                     cost: cost
                 )
             )
-        case .getBenefits:
+        case .getBenefits, .getMyBenefits:
             return .none
         }
     }
@@ -50,6 +61,6 @@ enum BenefitsRequest: APIRequest {
         let name: String
         let description: String
         let photo: String
-        let cost: Double
+        let cost: String
     }
 }

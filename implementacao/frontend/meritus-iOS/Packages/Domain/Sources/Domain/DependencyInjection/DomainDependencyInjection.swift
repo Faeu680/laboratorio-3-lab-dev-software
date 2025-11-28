@@ -83,5 +83,15 @@ public struct DomainDependencyInjection: DependencyModule {
             let service = resolver.resolveUnwrapping(TransactionsServiceProtocol.self)
             return GetBalanceUseCase(service: service)
         }
+        
+        container.register(GetMyBenefitsUseCaseProtocol.self) { resolver in
+            let service = resolver.resolveUnwrapping(BenefitsServiceProtocol.self)
+            return GetMyBenefitsUseCase(service: service)
+        }
+        
+        container.register(RedeemBenefitUseCaseProtocol.self) { resolver in
+            let service = resolver.resolveUnwrapping(TransactionsServiceProtocol.self)
+            return RedeemBenefitUseCase(service: service)
+        }
     }
 }

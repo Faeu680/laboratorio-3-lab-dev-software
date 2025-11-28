@@ -10,8 +10,10 @@ public protocol BenefitsServiceProtocol: Sendable {
         name: String,
         description: String,
         photo: String,
-        cost: Double
+        cost: String
     ) async throws(ServiceError)
     
     func getBenefits() async throws(ServiceError) -> [BenefitModel]
+    
+    func getMyBenefits() async throws(ServiceError) -> [RedeemBenefitModel]
 }

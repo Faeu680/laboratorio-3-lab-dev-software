@@ -20,7 +20,7 @@ final class BenefitsService: BenefitsServiceProtocol {
         name: String,
         description: String,
         photo: String,
-        cost: Double
+        cost: String
     ) async throws(ServiceError) {
         do {
             let request = BenefitsRequest.createBenefit(
@@ -45,10 +45,26 @@ final class BenefitsService: BenefitsServiceProtocol {
             throw ServiceError(from: error)
         }
     }
+    
+    func getMyBenefits() async throws(ServiceError) -> [RedeemBenefitModel] {
+        do {
+            let request = BenefitsRequest.getMyBenefits
+            let response: NetworkResponse<[GetMyBenefitsResponse]> = try await network.request(request)
+            let mapped = response.data.toDomain()
+            return mapped
+        } catch {
+            throw ServiceError(from: error)
+        }
+    }
 }
 
 fileprivate extension Array where Element == GetBenefitsResponse {
     func toDomain() -> [BenefitModel] {
+        map { $0.toDomain() }
+    }
+}
+fileprivate extension Array where Element == GetMyBenefitsResponse {
+    func toDomain() -> [RedeemBenefitModel] {
         map { $0.toDomain() }
     }
 }

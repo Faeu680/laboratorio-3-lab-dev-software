@@ -15,11 +15,14 @@ final class BenefitsScreenViewModel: ObservableObject {
     private let session: SessionProtocol
     private let getBalanceUseCase: GetBalanceUseCaseProtocol
     private let getBenefitsUseCase: GetBenefitsUseCaseProtocol
+    private let redeemBenefitUseCase: RedeemBenefitUseCaseProtocol
     
     let userRole: UserRole
+    var redeemBenefitDidSuccess: ((RedeemBenefitModel) -> Void)?
     private(set) var selectedBenefit: BenefitModel?
     private(set) var balance: String = ""
     
+    @Published var isLoading: Bool = false
     @Published var benefits: [BenefitModel] = []
     @Published var showRedeemSheet: Bool = false
     
@@ -32,11 +35,13 @@ final class BenefitsScreenViewModel: ObservableObject {
     init(
         session: SessionProtocol,
         getBalanceUseCase: GetBalanceUseCaseProtocol,
-        getBenefitsUseCase: GetBenefitsUseCaseProtocol
+        getBenefitsUseCase: GetBenefitsUseCaseProtocol,
+        redeemBenefitUseCase: RedeemBenefitUseCaseProtocol
     ) {
         self.session = session
         self.getBalanceUseCase = getBalanceUseCase
         self.getBenefitsUseCase = getBenefitsUseCase
+        self.redeemBenefitUseCase = redeemBenefitUseCase
         self.userRole = session.unsafeGetRole() ?? .student
     }
     
@@ -52,6 +57,20 @@ final class BenefitsScreenViewModel: ObservableObject {
     
     func dismissRedeemSheet() {
         showRedeemSheet = false
+        selectedBenefit = nil
+    }
+    
+    func didTapToRedeemBenefit() async {
+        guard let selectedBenefit else { return }
+        
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            let redeemBenefit = try await redeemBenefitUseCase.execute(benefitId: selectedBenefit.id)
+            dismissRedeemSheet()
+            redeemBenefitDidSuccess?(redeemBenefit)
+        } catch {}
     }
     
     private func getBalance() async {

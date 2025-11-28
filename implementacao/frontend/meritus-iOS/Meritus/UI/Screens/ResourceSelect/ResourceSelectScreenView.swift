@@ -56,10 +56,6 @@ extension ResourceSelectScreenView {
             return resource.title
         }
         
-        if let resource = resource as? AppLanguage {
-            return resource.title
-        }
-        
         return ""
     }
 }

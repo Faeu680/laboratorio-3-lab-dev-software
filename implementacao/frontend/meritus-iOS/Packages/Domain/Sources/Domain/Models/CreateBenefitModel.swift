@@ -9,13 +9,13 @@ public struct CreateBenefitModel {
     let name: String
     let description: String
     let photo: String
-    let cost: Double
+    let cost: String
     
     public init(
         name: String,
         description: String,
         photo: String,
-        cost: Double
+        cost: String
     ) {
         self.name = name
         self.description = description

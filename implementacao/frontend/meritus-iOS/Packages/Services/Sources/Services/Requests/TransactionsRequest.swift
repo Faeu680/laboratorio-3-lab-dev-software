@@ -18,6 +18,8 @@ enum TransactionsRequest: APIRequest {
     
     case getBalance
     
+    case redeemBenefit(benefitId: String)
+    
     static let basePath = "/transactions"
     
     var scope: APIScope {
@@ -32,16 +34,16 @@ enum TransactionsRequest: APIRequest {
             return Self.basePath + "/extract"
         case .getBalance:
             return Self.basePath + "/balance"
+        case .redeemBenefit:
+            return Self.basePath + "/redeem"
         }
     }
     
     var method: HTTPMethod {
         switch self {
-        case .transfer:
+        case .transfer, .redeemBenefit:
             return .post
-        case .getExtract:
-            return .get
-        case .getBalance:
+        case .getExtract, .getBalance:
             return .get
         }
     }
@@ -56,6 +58,10 @@ enum TransactionsRequest: APIRequest {
                     message: message
                 )
             )
+        case let .redeemBenefit(benefitId):
+            return .json(
+                RedeemBenefitBody(benefitId: benefitId)
+            )
         case .getExtract, .getBalance:
             return .none
         }
@@ -65,5 +71,9 @@ enum TransactionsRequest: APIRequest {
         let studentId: String
         let amount: String
         let message: String
+    }
+    
+    private struct RedeemBenefitBody: Encodable {
+        let benefitId: String
     }
 }

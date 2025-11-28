@@ -22,6 +22,9 @@ final class NewBenefitScreenViewModel: ObservableObject {
     
     // MARK: - Public Properties
     
+    var createNewBenefitDidSuccess: (() -> Void)?
+    
+    @Published var isLoading: Bool = false
     @Published var name: String = ""
     @Published var description: String = ""
     @Published var cost: String = ""
@@ -62,9 +65,9 @@ final class NewBenefitScreenViewModel: ObservableObject {
         isCameraPresented = hasCamera
     }
     
-    // TODO: Olhar esses metodos encadeados
-    
     func didTapCreateBenefit() async {
+        isLoading = true
+        defer { isLoading = false }
         await getPresignedUrl()
     }
     
@@ -117,11 +120,12 @@ final class NewBenefitScreenViewModel: ObservableObject {
             name: name,
             description: description,
             photo: path,
-            cost: 10.0
+            cost: cost
         )
         
         do {
             try await createBenefitUseCase.execute(model)
+            createNewBenefitDidSuccess?()
         } catch {
             // TODO: Mostar erro
         }

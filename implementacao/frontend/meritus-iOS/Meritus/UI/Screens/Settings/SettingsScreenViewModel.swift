@@ -12,13 +12,11 @@ import Session
 @MainActor
 final class SettingsScreenViewModel: ObservableObject {
 
-    private let locationManager = LocalizationManager.shared
     private let colorSchemeManager = ColorSchemeManager.shared
 
     let name: String
     let email: String
 
-    @Published var currentLocation: String = ""
     @Published var currentColorScheme: String = ""
 
     init(session: SessionProtocol) {
@@ -31,10 +29,6 @@ final class SettingsScreenViewModel: ObservableObject {
     }
 
     private func refresh() {
-        currentLocation = locationManager
-            .language
-            .title
-        
         currentColorScheme = colorSchemeManager
             .scheme
             .title

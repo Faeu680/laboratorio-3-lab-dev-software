@@ -15,4 +15,6 @@ public protocol TransactionsServiceProtocol: Sendable {
     func getExtract() async throws(ServiceError) -> [TransactionModel]
     
     func getBalance() async throws(ServiceError) -> String
+    
+    func redeemBenefit(benefitId: String) async throws(ServiceError) -> RedeemBenefitModel
 }

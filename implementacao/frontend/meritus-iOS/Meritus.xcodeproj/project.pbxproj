@@ -145,10 +145,8 @@
 			developmentRegion = "pt-BR";
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
 				Base,
 				"pt-BR",
-				es,
 			);
 			mainGroup = 76C565582E9CEB7D00B90630;
 			minimizedProjectReferenceProxies = 1;

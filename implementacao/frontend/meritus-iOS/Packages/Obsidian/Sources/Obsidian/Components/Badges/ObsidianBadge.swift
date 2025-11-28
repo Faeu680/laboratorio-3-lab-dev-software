@@ -70,10 +70,10 @@ public struct ObsidianBadge: View {
         }
     }
 
-    private var background: some View {
+    private var background: Color {
         switch style {
         case .primary:
-            return Color.accentColor.opacity(0.90)
+            return .obsidianGold.opacity(0.5)
         case .secondary:
             return Color.secondary.opacity(0.12)
         case .outline:

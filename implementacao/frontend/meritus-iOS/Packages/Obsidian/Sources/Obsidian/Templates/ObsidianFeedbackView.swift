@@ -29,19 +29,13 @@ public struct ObsidianFeedbackView: View {
     }
 
     private let style: Style
-    private let title: String
-    private let message: String?
     private let onAnimationFinished: (() -> Void)?
 
     public init(
         _ style: Style,
-        title: String,
-        message: String? = nil,
         onAnimationFinished: (() -> Void)? = nil
     ) {
         self.style = style
-        self.title = title
-        self.message = message
         self.onAnimationFinished = onAnimationFinished
     }
 
@@ -55,19 +49,7 @@ public struct ObsidianFeedbackView: View {
                 onAnimationFinished?()
             }
             .frame(width: 120, height: 120)
-
-            Text(title)
-                .font(.system(size: 24, weight: .semibold))
-                .multilineTextAlignment(.center)
-                .foregroundStyle(style.color)
-
-            if let message {
-                Text(message)
-                    .font(.system(size: 16))
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, .size16)
-            }
         }
+        .navigationBarBackButtonHidden()
     }
 }

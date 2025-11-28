@@ -56,6 +56,20 @@ final class TransactionsService: TransactionsServiceProtocol {
             throw ServiceError(from: error)
         }
     }
+    
+    func redeemBenefit(benefitId: String) async throws(ServiceError) -> RedeemBenefitModel {
+        let request = TransactionsRequest.redeemBenefit(
+            benefitId: benefitId
+        )
+        
+        do {
+            let response: NetworkResponse<GetMyBenefitsResponse> = try await network.request(request)
+            let balance = response.data.toDomain()
+            return balance
+        } catch {
+            throw ServiceError(from: error)
+        }
+    }
 }
 
 fileprivate extension Array where Element == GetExtractResponse {

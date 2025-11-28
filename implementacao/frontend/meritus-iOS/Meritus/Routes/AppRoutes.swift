@@ -7,6 +7,8 @@
 
 import Navigation
 import Session
+import Domain
+import Obsidian
 
 enum AppRoutes: RouteProtocol {
     case login
@@ -15,9 +17,11 @@ enum AppRoutes: RouteProtocol {
     case extract
     case transfer
     case benefits
+    case myBenefits
+    case benefitInfo(benefit: RedeemBenefitModel)
     case newBenefit
     case settings
-    case selectLanguage
     case selectColorScheme
     case switchAccount
+    case feedback(style: ObsidianFeedbackView.Style)
 }

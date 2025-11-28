@@ -15,7 +15,7 @@ final class ColorSchemeSelectScreenViewModel: ResourceSelectScreenViewModelProto
     @Published private(set) var selectedResource: AppColorScheme
     
     let availableResources = AppColorScheme.allCases
-    let toolbarTitle = "Tema do Aplicativo"
+    let toolbarTitle = "Aparência"
     
     init() {
         let manager = ColorSchemeManager.shared

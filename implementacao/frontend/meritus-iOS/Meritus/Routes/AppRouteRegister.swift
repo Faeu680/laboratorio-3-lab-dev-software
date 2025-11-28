@@ -30,16 +30,20 @@ final class AppRouteRegister: RouteRegisterProtocol {
             factory.makeTransfer()
         case .benefits:
             factory.makeBenefits()
+        case .myBenefits:
+            factory.makeMyBenefits()
+        case let .benefitInfo(benefit):
+            factory.makeBenefitInfo(benefit: benefit)
         case .newBenefit:
             factory.makeNewBenefit()
         case .settings:
             factory.makeSettings()
-        case .selectLanguage:
-            factory.makeSelectLanguage()
         case .selectColorScheme:
             factory.makeSelectColorScheme()
         case .switchAccount:
             factory.makeSwitchAccount()
+        case let .feedback(style):
+            factory.makeFeedback(style: style)
         }
     }
 }

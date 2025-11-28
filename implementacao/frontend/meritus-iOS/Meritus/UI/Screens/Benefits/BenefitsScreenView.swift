@@ -51,7 +51,18 @@ struct BenefitsScreenView: View {
             }
         }
         .onViewDidLoad {
+            bindActions()
+        }
+        .onAppear {
             await viewModel.onViewDidLoad()
+        }
+    }
+}
+
+extension BenefitsScreenView {
+    private func bindActions() {
+        viewModel.redeemBenefitDidSuccess = { benefit in
+            navigator.navigate(to: AppRoutes.benefitInfo(benefit: benefit))
         }
     }
 }
@@ -166,10 +177,9 @@ extension BenefitsScreenView {
         ObsidianButton(
             "Resgatar",
             style: .primary,
-//            isLoading: $viewModel.isLoading,
-//            isDisabled: .constant(!viewModel.isTransferButtonEnabled)
+            isLoading: $viewModel.isLoading,
         ) {
-//            await viewModel.didTapTransferButton()
+            await viewModel.didTapToRedeemBenefit()
         }
         .padding(.horizontal, .size16)
         .padding(.bottom, .size16)

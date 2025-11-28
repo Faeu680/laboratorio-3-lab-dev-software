@@ -44,6 +44,13 @@ struct HomeScreenView: View {
             }
             
             if viewModel.isStudent {
+                Tab("Meus benefícios", systemImage: "gift") {
+                    NavigationView {
+                        navigator.view(for: AppRoutes.myBenefits)
+                    }
+                }
+                
+                
                 Tab("Resgatar", systemImage: "creditcard.fill", role: .search) {
                     NavigationView {
                         navigator.view(for: AppRoutes.benefits)

@@ -30,7 +30,6 @@ struct SettingsScreenView: View {
                     }
                     
                     VStack {
-                        languageListItemView()
                         appearanceListItemView()
                         changeAccountListItemView()
                     }
@@ -75,20 +74,6 @@ extension SettingsScreenView {
         )
         .padding(.horizontal, .size16)
         .disabled(true)
-    }
-}
-
-extension SettingsScreenView {
-    private func languageListItemView() -> some View {
-        ObsidianListItem(
-            title: "Idioma",
-            subtitle: viewModel.currentLocation,
-            leading: Image(systemName: "globe"),
-            trailing: Image(systemName: "chevron.right")
-        ) {
-            await navigator.navigate(to: AppRoutes.selectLanguage)
-        }
-        .padding(.horizontal, .size16)
     }
 }
 
