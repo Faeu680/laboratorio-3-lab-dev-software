@@ -22,15 +22,9 @@ struct HomeScreenView: View {
     var body: some View {
         TabView {
             if viewModel.isCompany {
-                Tab("Início", systemImage: "house.fill") {
+                Tab("Início", systemImage: "house.fill", role: .search) {
                     NavigationView {
                         navigator.view(for: AppRoutes.benefits)
-                    }
-                }
-                
-                Tab("Início", systemImage: "house.fill") {
-                    NavigationView {
-                        navigator.view(for: AppRoutes.newBenefit)
                     }
                 }
             } else {
@@ -50,7 +44,7 @@ struct HomeScreenView: View {
             }
             
             if viewModel.isStudent {
-                Tab("Resgatar", systemImage: "creditcard.fill") {
+                Tab("Resgatar", systemImage: "creditcard.fill", role: .search) {
                     NavigationView {
                         navigator.view(for: AppRoutes.benefits)
                     }

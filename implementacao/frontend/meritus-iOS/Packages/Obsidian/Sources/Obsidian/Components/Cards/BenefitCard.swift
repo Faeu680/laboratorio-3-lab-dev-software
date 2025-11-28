@@ -18,8 +18,9 @@ public struct BenefitCard: View {
     private let id: UUID
     private let title: String
     private let description: String
-    private let price: Decimal
+    private let price: String
     private let headerSource: ImageSource
+    private var action: (@Sendable () async -> Void)?
 
     // MARK: - Inits
 
@@ -27,69 +28,72 @@ public struct BenefitCard: View {
         id: UUID = UUID(),
         title: String,
         description: String,
-        price: Decimal,
-        imageURL: String?
+        price: String,
+        imageURL: String?,
+        onTap action: (@Sendable () async -> Void)? = nil
     ) {
         self.id = id
         self.title = title
         self.description = description
         self.price = price
-
         if let imageURL {
             self.headerSource = .remote(imageURL)
         } else {
             self.headerSource = .remote("")
         }
+        self.action = action
     }
 
     public init(
         id: UUID = UUID(),
         title: String,
         description: String,
-        price: Decimal,
-        image: Image
+        price: String,
+        image: Image,
+        onTap action: (@Sendable () async -> Void)? = nil
     ) {
         self.id = id
         self.title = title
         self.description = description
         self.price = price
         self.headerSource = .local(image)
+        self.action = action
     }
 
     // MARK: - Body
 
     public var body: some View {
-        content
-            .background(
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(Color.black.opacity(0.04))
-            )
-            .shadow(color: Color.black.opacity(0.35), radius: 18, x: 0, y: 10)
-    }
-
-    private var content: some View {
         VStack(spacing: 0) {
             headerImage
-
+            
             VStack(alignment: .leading, spacing: 8) {
                 Text(title)
                     .obsidianBody()
                     .foregroundStyle(.primary)
                     .lineLimit(1)
-
+                
                 Text(description)
                     .obsidianBody()
                     .foregroundStyle(.secondary)
                     .lineLimit(3)
-
+                
                 pricePill
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.all, .size16)
         }
+        .background(
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .fill(Color.black.opacity(0.04))
+        )
+        .shadow(color: Color.black.opacity(0.35), radius: 18, x: 0, y: 10)
+        .if(action != nil) { view in
+            Button(async: action) {
+                view
+            }
+            .buttonStyle(.plain)
+        }
     }
-
-    // MARK: - Header Image
 
     private var headerImage: some View {
         Group {
@@ -134,30 +138,10 @@ public struct BenefitCard: View {
     }
 }
 
-// MARK: - Preview
+// MARK: - Builders
 
-#Preview("BenefitCard") {
-    ObsidianPreviewContainer {
-        ScrollView {
-            VStack(spacing: 24) {
-
-                // Usando imagem remota
-                BenefitCard(
-                    title: "Spa Premium Experience",
-                    description: "Dia completo de relaxamento em spa 5 estrelas.",
-                    price: 850,
-                    imageURL: "https://picsum.photos/600"
-                )
-
-                // Usando imagem local
-                BenefitCard(
-                    title: "Jantar Michelin",
-                    description: "Menu degustação harmonizado.",
-                    price: 1250,
-                    image: Image("michelin_dinner")
-                )
-            }
-            .padding(16)
-        }
+public extension BenefitCard {
+    func onTap(action: (@Sendable () async -> Void)?) -> Self {
+        then{ $0.action = action }
     }
 }

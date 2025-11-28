@@ -5,7 +5,7 @@
 //  Created by Arthur Porto on 07/11/25.
 //
 
-public struct BenefitModel: Hashable {
+public struct BenefitModel: Hashable, Sendable {
     public let id: String
     public let name: String
     public let description: String

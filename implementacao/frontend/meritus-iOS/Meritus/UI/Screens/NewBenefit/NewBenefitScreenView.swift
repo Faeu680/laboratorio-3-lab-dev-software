@@ -115,7 +115,7 @@ extension NewBenefitScreenView {
         BenefitCard(
             title: viewModel.name,
             description: viewModel.description,
-            price: 850,
+            price: viewModel.cost,
             image: cardImage
         )
         .padding(.horizontal, .size16)

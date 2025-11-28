@@ -73,8 +73,14 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
     }
     
     func makeBenefits() -> BenefitsScreenView {
+        let session = resolver.resolveUnwrapping(SessionProtocol.self)
+        let getBalanceUseCase = resolver.resolveUnwrapping(GetBalanceUseCaseProtocol.self)
         let getBenefitsUseCase = resolver.resolveUnwrapping(GetBenefitsUseCaseProtocol.self)
-        let viewModel = BenefitsScreenViewModel(getBenefitsUseCase: getBenefitsUseCase)
+        let viewModel = BenefitsScreenViewModel(
+            session: session,
+            getBalanceUseCase: getBalanceUseCase,
+            getBenefitsUseCase: getBenefitsUseCase
+        )
         return BenefitsScreenView(viewModel: viewModel)
     }
     

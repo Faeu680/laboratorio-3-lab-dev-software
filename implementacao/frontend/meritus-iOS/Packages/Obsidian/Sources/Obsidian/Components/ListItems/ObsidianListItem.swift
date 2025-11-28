@@ -162,30 +162,3 @@ public extension ObsidianListItem {
         then{ $0.action = action }
     }
 }
-
-#Preview {
-    ObsidianPreviewContainer {
-        
-        ObsidianListItem(
-            title: "Teste",
-            subtitle: "Teste"
-        )
-        
-        ObsidianListItem(
-            title: "Teste",
-            subtitle: "Teste"
-        )
-        
-        ObsidianListItem(
-            title: "Teste",
-            subtitle: "Teste",
-            borderStyle: .dashed
-        )
-        
-        ObsidianListItem(
-            title: "Teste",
-            subtitle: "Teste",
-            borderStyle: .regular
-        )
-    }
-}
