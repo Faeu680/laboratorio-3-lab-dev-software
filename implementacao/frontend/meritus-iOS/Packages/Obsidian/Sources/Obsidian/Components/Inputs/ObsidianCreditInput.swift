@@ -9,22 +9,20 @@ import SwiftUI
 
 public struct ObsidianCreditInput: View {
     @Binding private var text: String
-    @FocusState private var isFocused: Bool
+    @State private var isFocused: Bool = false
     
     private let title: LocalizedStringKey
     private let unitLabel: LocalizedStringKey
-    private let maxDigits: Int
+    private let maxDigits: Int = 7
     
     public init(
         text: Binding<String>,
         title: LocalizedStringKey,
-        unitLabel: LocalizedStringKey = "Meritus Credits",
-        maxDigits: Int = 10
+        unitLabel: LocalizedStringKey
     ) {
         self._text = text
         self.title = title
         self.unitLabel = unitLabel
-        self.maxDigits = maxDigits
     }
     
     public var body: some View {
@@ -35,12 +33,10 @@ public struct ObsidianCreditInput: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             
             Text(displayText)
-                .font(.system(size: 64, weight: .bold, design: .default))
-                .minimumScaleFactor(0.5)
+                .obsidianTitle()
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .contentShape(Rectangle())
-                .onTapGesture { isFocused = true }
             
             LinearGradient(
                 colors: [
@@ -50,69 +46,150 @@ public struct ObsidianCreditInput: View {
                 startPoint: .leading,
                 endPoint: .trailing
             )
-            .frame(height: 4)
+            .frame(height: 2)
             .cornerRadius(2)
-            .padding(.horizontal, .size32)
+            .padding(.horizontal, .size48)
             
             Text(unitLabel)
                 .obsidianLabel()
                 .foregroundColor(.secondary)
         }
+        .onTapGesture { isFocused = true }
         .overlay {
-            HiddenNumericField(
+            NumericTextFieldWithToolbar(
                 text: $text,
-                isFocused: _isFocused,
+                isFocused: $isFocused,
                 maxDigits: maxDigits
             )
-            .background(Color.red)
-        }
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button("Concluir") { isFocused = false }
-            }
         }
     }
     
     private var displayText: String {
         text.isEmpty ? "0" : text
     }
-}
-
-// MARK: - Hidden field to capture numeric input
-private struct HiddenNumericField: View {
-    @Binding var text: String
-    @FocusState var isFocused: Bool
     
-    let maxDigits: Int
-    
-    var body: some View {
-        // Mantém o campo fora de vista, mas focável
-        TextField("", text: Binding(
-            get: { text },
-            set: { newValue in
-                let digitsOnly = newValue.filter { $0.isNumber }
-                let limited = String(digitsOnly.prefix(maxDigits))
-                if limited != text { text = limited }
-            }
-        ))
-        .keyboardType(.numberPad)
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled()
-        .focused($isFocused)
-        .frame(width: 0, height: 0)
-        .opacity(0.01)
+    private struct NumericTextFieldWithToolbar: UIViewRepresentable {
+        @Binding var text: String
+        @Binding var isFocused: Bool
+        let maxDigits: Int
         
-    }
-}
-
-#Preview {
-    @Previewable @State var amount: String = ""
-    
-    ObsidianPreviewContainer {
-        VStack(spacing: .size24) {
-            ObsidianCreditInput(text: $amount, title: "Valor")
+        func makeUIView(context: Context) -> UITextField {
+            let textField = UITextField()
+            textField.keyboardType = .numberPad
+            textField.autocorrectionType = .no
+            textField.autocapitalizationType = .none
+            textField.delegate = context.coordinator
+            
+            let toolbar = UIToolbar()
+            toolbar.sizeToFit()
+            
+            let flexSpace = UIBarButtonItem(
+                barButtonSystemItem: .flexibleSpace,
+                target: nil,
+                action: nil
+            )
+            
+            let doneButton = UIBarButtonItem(
+                barButtonSystemItem: .close,
+                target: context.coordinator,
+                action: #selector(Coordinator.dismissKeyboard)
+            )
+            
+            toolbar.items = [flexSpace, doneButton]
+            
+            let containerView = UIView()
+            containerView.addSubview(toolbar)
+            toolbar.translatesAutoresizingMaskIntoConstraints = false
+            
+            NSLayoutConstraint.activate([
+                toolbar.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+                toolbar.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+                toolbar.topAnchor.constraint(equalTo: containerView.topAnchor),
+                toolbar.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -16)
+            ])
+            
+            let toolbarHeight = toolbar.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
+            containerView.frame = CGRect(x: 0, y: 0, width: 0, height: toolbarHeight + 16)
+            
+            textField.inputAccessoryView = containerView
+            textField.alpha = 0.01
+            textField.isUserInteractionEnabled = true
+            
+            // Adicionar observers para notificações do teclado
+            NotificationCenter.default.addObserver(
+                context.coordinator,
+                selector: #selector(Coordinator.keyboardWillHide),
+                name: UIResponder.keyboardWillHideNotification,
+                object: nil
+            )
+            
+            return textField
         }
-        .padding()
+        
+        func updateUIView(_ uiView: UITextField, context: Context) {
+            uiView.text = text
+            
+            DispatchQueue.main.async {
+                if isFocused && !uiView.isFirstResponder {
+                    uiView.becomeFirstResponder()
+                } else if !isFocused && uiView.isFirstResponder {
+                    uiView.resignFirstResponder()
+                }
+            }
+        }
+        
+        func makeCoordinator() -> Coordinator {
+            Coordinator(text: $text, isFocused: $isFocused, maxDigits: maxDigits)
+        }
+        
+        static func dismantleUIView(_ uiView: UITextField, coordinator: Coordinator) {
+            // Remover observers quando a view for destruída
+            NotificationCenter.default.removeObserver(
+                coordinator,
+                name: UIResponder.keyboardWillHideNotification,
+                object: nil
+            )
+        }
+        
+        final class Coordinator: NSObject, UITextFieldDelegate {
+            @Binding var text: String
+            @Binding var isFocused: Bool
+            let maxDigits: Int
+            
+            init(text: Binding<String>, isFocused: Binding<Bool>, maxDigits: Int) {
+                self._text = text
+                self._isFocused = isFocused
+                self.maxDigits = maxDigits
+            }
+            
+            @objc func dismissKeyboard() {
+                isFocused = false
+            }
+            
+            @objc func keyboardWillHide() {
+                // Atualizar o estado quando o teclado for fechado por scroll
+                if isFocused {
+                    isFocused = false
+                }
+            }
+            
+            func textField(
+                _ textField: UITextField,
+                shouldChangeCharactersIn range: NSRange,
+                replacementString string: String
+            ) -> Bool {
+                let currentText = textField.text ?? ""
+                guard let stringRange = Range(range, in: currentText) else { return false }
+                
+                let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+                let digitsOnly = updatedText.filter { $0.isNumber }
+                let limited = String(digitsOnly.prefix(maxDigits))
+                
+                text = limited
+                textField.text = limited
+                
+                return false
+            }
+        }
     }
 }

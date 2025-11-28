@@ -15,6 +15,13 @@ public extension Text {
             .textCase(.uppercase)
     }
     
+    func obsidianTitle() -> some View {
+        self
+            .font(.obsidianTitle)
+            .tracking(1.5)
+            .textCase(.uppercase)
+    }
+    
     func obsidianLabel() -> some View {
         self
             .font(.obsidianCaption)

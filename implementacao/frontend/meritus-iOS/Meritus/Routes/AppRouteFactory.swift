@@ -60,10 +60,12 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
         let session = resolver.resolveUnwrapping(SessionProtocol.self)
         let getStudentsOfInstitutionUseCase = resolver.resolveUnwrapping(GetStudentsOfInstitutionUseCaseProtocol.self)
         let makeTransferUseCase = resolver.resolveUnwrapping(MakeTransferUseCaseProtocol.self)
+        let biometryManager = resolver.resolveUnwrapping(BiometryManagerProtocol.self)
         let viewModel = TransferScreenViewModel(
             session: session,
             makeTransferUseCase: makeTransferUseCase,
-            getStudentsOfInstitutionUseCase: getStudentsOfInstitutionUseCase
+            getStudentsOfInstitutionUseCase: getStudentsOfInstitutionUseCase,
+            biometryManager: biometryManager
         )
         return TransferScreenView(viewModel: viewModel)
     }

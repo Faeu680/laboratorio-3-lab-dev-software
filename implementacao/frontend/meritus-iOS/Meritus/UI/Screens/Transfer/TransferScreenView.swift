@@ -108,6 +108,7 @@ extension TransferScreenView {
                 }
                 .padding(.top, .size24)
             }
+            .scrollDismissesKeyboard(.immediately)
             .navigationTitle("Transferir")
             .toolbarTitleDisplayMode(.large)
             .toolbar {
@@ -125,6 +126,7 @@ extension TransferScreenView {
             
             transferButtonView()
         }
+        .ignoresSafeArea(.keyboard)
         .navigationDestination(item: $viewModel.transferResult) { route in
             feedbackView(route)
         }
@@ -139,7 +141,6 @@ extension TransferScreenView {
         ) {
             handleTransferUIFeedback(route)
         }
-        .presentationDetents([.large])
         .toolbar(.hidden)
     }
 }
@@ -177,8 +178,7 @@ extension TransferScreenView {
         ObsidianCreditInput(
             text: $viewModel.transferAmount,
             title: "Valor",
-            unitLabel: "MeritusCredits",
-            maxDigits: 10
+            unitLabel: "MeritusCredits"
         )
         .padding(.top, .size16)
         .padding(.horizontal, .size16)
@@ -193,6 +193,7 @@ extension TransferScreenView {
         ObsidianListItem(
             title: title,
             trailing: Text("MC \(balance)")
+                .obsidianBody()
         )
         .padding(.horizontal, .size16)
     }
