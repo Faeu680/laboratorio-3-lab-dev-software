@@ -132,7 +132,6 @@ extension TransferScreenView {
                 .padding(.top, .size24)
         }
         .scrollIndicators(.never)
-        .ignoresSafeArea(.keyboard)
         .scrollDismissesKeyboard(.immediately)
         .navigationTitle("Transferir")
         .toolbarTitleDisplayMode(.large)
@@ -213,7 +212,14 @@ extension TransferScreenView {
             label: "Descrição",
             placeholder: "Escreva uma mensagem...",
             minHeight: 120,
-            maxHeight: 120
+            maxHeight: 120,
+            isError: $viewModel.showDescriptionError,
+            errorMessage: .constant("A descrição é obrigatória."),
+            onFocusChanged: { focused in
+                if focused {
+                    viewModel.markDescriptionFieldAsTouched()
+                }
+            }
         )
         .padding(.horizontal, .size16)
     }
@@ -225,11 +231,12 @@ extension TransferScreenView {
             "Transferir",
             style: .primary,
             isLoading: $viewModel.isLoading,
-            isDisabled: $viewModel.isDisabled
+            isDisabled: .constant(!viewModel.isTransferButtonEnabled)
         ) {
             await viewModel.didTapTransferButton()
         }
         .padding(.horizontal, .size16)
+        .padding(.bottom, .size16)
     }
 }
 

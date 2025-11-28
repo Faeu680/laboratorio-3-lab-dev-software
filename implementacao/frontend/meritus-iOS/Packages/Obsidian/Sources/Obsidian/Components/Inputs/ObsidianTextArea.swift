@@ -11,12 +11,13 @@ public struct ObsidianTextArea: View {
     @Binding private var text: String
     @Binding private var isError: Bool
     @Binding private var errorMessage: String?
-    @FocusState private var isFocused: Bool
-    
+    @State private var isFocused: Bool = false
+
     private let label: LocalizedStringKey
     private let placeholder: LocalizedStringKey
     private let minHeight: CGFloat
     private let maxHeight: CGFloat?
+    private let onFocusChanged: ((Bool) -> Void)?
     
     // MARK: - Inits
     
@@ -27,7 +28,8 @@ public struct ObsidianTextArea: View {
         minHeight: CGFloat = 120,
         maxHeight: CGFloat? = nil,
         isError: Binding<Bool> = .constant(false),
-        errorMessage: Binding<String?> = .constant(nil)
+        errorMessage: Binding<String?> = .constant(nil),
+        onFocusChanged: ((Bool) -> Void)? = nil
     ) {
         self._text = text
         self.label = label
@@ -36,6 +38,7 @@ public struct ObsidianTextArea: View {
         self.maxHeight = maxHeight
         self._isError = isError
         self._errorMessage = errorMessage
+        self.onFocusChanged = onFocusChanged
     }
     
     // MARK: - Body
@@ -54,15 +57,15 @@ public struct ObsidianTextArea: View {
                         .padding(.size16)
                 }
                 
-                TextEditor(text: $text)
-                    .scrollContentBackground(.hidden)
-                    .padding(.size16)
-                    .frame(minHeight: minHeight)
-                    .frame(maxHeight: maxHeight)
-                    .background(Color(.systemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .font(.custom("Montserrat-SemiBold", size: 16))
-                    .focused($isFocused)
+                TextViewWithToolbar(
+                    text: $text,
+                    isFocused: $isFocused
+                )
+                .frame(minHeight: minHeight)
+                .frame(maxHeight: maxHeight)
+                .onChange(of: isFocused) { focused in
+                    onFocusChanged?(focused)
+                }
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 12)
@@ -91,5 +94,95 @@ public struct ObsidianTextArea: View {
     
     private var borderWidth: CGFloat {
         isError ? 2 : (isFocused ? 2 : 1)
+    }
+    
+    private struct TextViewWithToolbar: UIViewRepresentable {
+        @Binding var text: String
+        @Binding var isFocused: Bool
+        
+        func makeUIView(context: Context) -> UITextView {
+            let tv = UITextView()
+            tv.font = UIFont(name: "Montserrat-SemiBold", size: 16)
+            tv.backgroundColor = .clear
+            tv.delegate = context.coordinator
+            tv.isScrollEnabled = true
+            tv.textContainerInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+
+            let toolbar = UIToolbar()
+            toolbar.sizeToFit()
+
+            let flex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+
+            let doneButton = UIBarButtonItem(
+                barButtonSystemItem: .done,
+                target: context.coordinator,
+                action: #selector(Coordinator.dismissKeyboard)
+            )
+
+            toolbar.items = [flex, doneButton]
+
+            tv.inputAccessoryView = toolbar
+
+            NotificationCenter.default.addObserver(
+                context.coordinator,
+                selector: #selector(Coordinator.keyboardWillHide),
+                name: UIResponder.keyboardWillHideNotification,
+                object: nil
+            )
+
+            return tv
+        }
+
+        func updateUIView(_ uiView: UITextView, context: Context) {
+            if uiView.text != text {
+                uiView.text = text
+            }
+
+            DispatchQueue.main.async {
+                if isFocused && !uiView.isFirstResponder {
+                    uiView.becomeFirstResponder()
+                } else if !isFocused && uiView.isFirstResponder {
+                    uiView.resignFirstResponder()
+                }
+            }
+        }
+
+        func makeCoordinator() -> Coordinator {
+            Coordinator(text: $text, isFocused: $isFocused)
+        }
+
+        static func dismantleUIView(_ uiView: UITextView, coordinator: Coordinator) {
+            NotificationCenter.default.removeObserver(coordinator)
+        }
+
+        final class Coordinator: NSObject, UITextViewDelegate {
+            @Binding var text: String
+            @Binding var isFocused: Bool
+
+            init(text: Binding<String>, isFocused: Binding<Bool>) {
+                self._text = text
+                self._isFocused = isFocused
+            }
+
+            @objc func dismissKeyboard() {
+                isFocused = false
+            }
+
+            @objc func cancelEditing() {
+                isFocused = false
+            }
+
+            @objc func keyboardWillHide() {
+                isFocused = false
+            }
+
+            func textViewDidChange(_ textView: UITextView) {
+                text = textView.text
+            }
+
+            func textViewDidBeginEditing(_ textView: UITextView) {
+                isFocused = true
+            }
+        }
     }
 }
