@@ -41,7 +41,11 @@ export class TransactionsController {
     @GetUser() user: AuthUser,
     @Body() dto: TransferCoinsDto
   ): Promise<TransactionResponseDto> {
-    return this.transferCoinsUseCase.execute(user.id, dto);
+    const tr = await this.transferCoinsUseCase.execute(user.id, dto);
+    return {
+      ...tr,
+      amount: tr.amount.toString(),
+    }
   }
 
   @Roles(RolesEnum.STUDENT)
@@ -61,7 +65,11 @@ export class TransactionsController {
     @GetUser() user: AuthUser,
     @Body() dto: RedeemBenefitDto
   ): Promise<TransactionResponseDto> {
-    return this.redeemBenefitUseCase.execute(user.id, dto);
+    const tr = await this.redeemBenefitUseCase.execute(user.id, dto);
+    return {
+      ...tr,
+      amount: tr.amount.toString(),
+    }
   }
 
   @Get('extract')
@@ -87,6 +95,10 @@ export class TransactionsController {
   })
   @ApiWrappedResponse({ status: 401, description: 'Não autorizado' })
   async getBalance(@GetUser() user: AuthUser): Promise<BalanceDto> {
-    return this.getBalanceUseCase.execute(user);
+    const balance = await this.getBalanceUseCase.execute(user);
+
+    return {
+      balance: balance.balance.toString(),
+    }
   }
 }

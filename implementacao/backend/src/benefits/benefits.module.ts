@@ -6,11 +6,16 @@ import { BenefitEntity } from './entities/benefit.entity';
 import { CreateBenefitUseCase } from './usecases/create-benefit.usecase';
 import { ListBenefitsUseCase } from './usecases/list-benefits.usecase';
 import { UploadModule } from 'src/upload/upload.module';
+import { TransactionEntity } from 'src/transactions/entities/transaction.entity';
+import { ListMyBenefitsUseCase } from './usecases/list-my-benefits.usecase';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BenefitEntity, CompanyEntity]), UploadModule],
+  imports: [
+    TypeOrmModule.forFeature([BenefitEntity, CompanyEntity, TransactionEntity]),
+    UploadModule,
+  ],
   controllers: [BenefitsController],
-  providers: [CreateBenefitUseCase, ListBenefitsUseCase],
+  providers: [CreateBenefitUseCase, ListBenefitsUseCase, ListMyBenefitsUseCase],
   exports: [TypeOrmModule],
 })
 export class BenefitsModule {}

@@ -14,7 +14,7 @@ export class BenefitResponseDto {
   photo?: string;
 
   @ApiProperty({ description: 'Custo em moedas' })
-  cost: number;
+  cost: string;
 
   @ApiProperty({ description: 'Se a vantagem está ativa' })
   active: boolean;

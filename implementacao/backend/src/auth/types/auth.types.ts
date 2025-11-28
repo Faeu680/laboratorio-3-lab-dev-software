@@ -25,6 +25,7 @@ export interface JwtPayload {
 export interface AuthUser {
   id: string;
   role: RolesEnum;
+  profileId: string;
   name: string;
   email: string;
   institutionId?: string;

@@ -5,7 +5,12 @@ import { RolesEnum } from '../../auth/consts/roles.enum';
 import { StudentEntity } from '../../students/entities/student.entity';
 import { TeacherEntity } from '../../teachers/entities/teacher.entity';
 import { TransactionResponseDto } from '../dto/transaction-response.dto';
-import { TransactionEntity } from '../entities/transaction.entity';
+import { TransactionEntity, TransactionTypeEnum } from '../entities/transaction.entity';
+
+enum TransactionCalculatedType {
+  INCOME = "INCOME",
+  OUTCOME = "OUTCOME"
+}
 
 @Injectable()
 export class GetExtractUseCase {
@@ -26,7 +31,7 @@ export class GetExtractUseCase {
       if (student) {
         transactions = await this.transactionRepository.find({
           where: { studentId: student.id },
-          relations: ['teacher', 'teacher.user', 'benefit', 'benefit.company', 'benefit.company.user'],
+          relations: ['teacher', 'teacher.user', 'benefit', 'benefit.company', 'benefit.company.user', 'student', 'student.user'],
           order: { createdAt: 'DESC' },
         });
       }
@@ -35,7 +40,7 @@ export class GetExtractUseCase {
       if (teacher) {
         transactions = await this.transactionRepository.find({
           where: { teacherId: teacher.id },
-          relations: ['student', 'student.user'],
+          relations: ['student', 'student.user', 'teacher', 'teacher.user'],
           order: { createdAt: 'DESC' },
         });
       }
@@ -44,7 +49,7 @@ export class GetExtractUseCase {
     return transactions.map((t) => ({
       id: t.id,
       type: t.type,
-      amount: Number(t.amount),
+      amount: t.amount.toString(),
       message: t.message,
       voucherCode: t.voucherCode,
       createdAt: t.createdAt,
@@ -52,6 +57,25 @@ export class GetExtractUseCase {
       teacherName: t.teacher?.user?.name,
       benefitName: t.benefit?.name,
       companyName: t.benefit?.company?.user?.name,
+      origin: this.calculateTransactionType(t, userId),
     }));
+  }
+
+  private calculateTransactionType(transaction: TransactionEntity, userId: string): TransactionCalculatedType {
+    if (transaction.type === TransactionTypeEnum.TRANSFER) {
+      if (transaction.teacher.userId === userId) {
+        return TransactionCalculatedType.OUTCOME;
+      }
+
+      if (transaction.student.userId === userId) {
+        return TransactionCalculatedType.INCOME;
+      }
+    }
+
+    if (transaction.type === TransactionTypeEnum.REDEMPTION) {
+      return TransactionCalculatedType.OUTCOME;
+    }
+
+    return TransactionCalculatedType.INCOME;
   }
 }
