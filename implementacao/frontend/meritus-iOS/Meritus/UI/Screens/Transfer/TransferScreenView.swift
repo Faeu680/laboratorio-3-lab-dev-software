@@ -47,13 +47,31 @@ struct TransferScreenView: View {
 
 extension TransferScreenView {
     private func userListItemView(_ student: StudentModel) -> some View {
-        UserListItem(
-            name: student.name,
-            email: student.email
-        )
-        .onTapGesture {
-            viewModel.didSelectStudent(student)
+        ObsidianListItem(
+            title: student.name,
+            subtitle: student.email,
+            leading: userListItemAvatarView(),
+            trailing: Image(systemName: "chevron.right")
+        ) {
+            await viewModel.didSelectStudent(student)
         }
+    }
+}
+
+extension TransferScreenView {
+    private func userListItemAvatarView() -> some View {
+        ZStack {
+            Circle()
+                .fill(Color.obsidianGold.opacity(0.18))
+
+            Image(systemName: "person.crop.circle")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(Color.obsidianGold)
+        }
+        .frame(width: 44, height: 44)
+        .overlay(
+            Circle().stroke(Color.white.opacity(0.05), lineWidth: 0.5)
+        )
     }
 }
 
@@ -84,49 +102,50 @@ extension TransferScreenView {
 
 extension TransferScreenView {
     private func transferModalView() -> some View {
-        VStack {
-            ScrollView {
-                transferInputView()
-                
-                VStack {
-                    balanceListItem(
-                        title: "Saldo Atual",
-                        balance: "1000"
-                    )
-                    
-                    balanceListItem(
-                        title: "Saldo Final",
-                        balance: "990"
-                    )
-                }
-                .padding(.top, .size16)
-                
-                VStack(spacing: .size24) {
-                    fromAccountView()
-                    
-                    toAccountView()
-                }
-                .padding(.top, .size24)
-            }
-            .scrollDismissesKeyboard(.immediately)
-            .navigationTitle("Transferir")
-            .toolbarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        viewModel.dismissTransferModal()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.headline)
-                    }
-                }
-            }
+        ScrollView {
+            transferInputView()
             
-            Spacer()
+            VStack {
+                balanceListItem(
+                    title: "Saldo Atual",
+                    balance: viewModel.balance
+                )
+                
+                balanceListItem(
+                    title: "Saldo Final",
+                    balance: viewModel.finalBalance
+                )
+            }
+            .padding(.top, .size16)
+            
+            VStack(spacing: .size24) {
+                fromAccountView()
+                
+                toAccountView()
+            }
+            .padding(.top, .size24)
+            
+            descriptionTextAreaView()
+                .padding(.top, .size24)
             
             transferButtonView()
+                .padding(.top, .size24)
         }
+        .scrollIndicators(.never)
         .ignoresSafeArea(.keyboard)
+        .scrollDismissesKeyboard(.immediately)
+        .navigationTitle("Transferir")
+        .toolbarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    viewModel.dismissTransferModal()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.headline)
+                }
+            }
+        }
         .navigationDestination(item: $viewModel.transferResult) { route in
             feedbackView(route)
         }
@@ -134,14 +153,28 @@ extension TransferScreenView {
 }
 
 extension TransferScreenView {
-    private func feedbackView(_ route: TransferScreenViewResultRoute) -> some View {
-        ObsidianFeedbackView(
-            route.feedbackViewStyle,
-            title: "Sucesso"
-        ) {
-            handleTransferUIFeedback(route)
-        }
-        .toolbar(.hidden)
+    private func transferInputView() -> some View {
+        ObsidianCreditInput(
+            text: $viewModel.transferAmount,
+            title: "Valor",
+            unitLabel: "MeritusCredits"
+        )
+        .padding(.top, .size16)
+        .padding(.horizontal, .size16)
+    }
+}
+
+extension TransferScreenView {
+    private func balanceListItem(
+        title: String,
+        balance: String
+    ) -> some View {
+        ObsidianListItem(
+            title: title,
+            trailing: Text("MC \(balance)")
+                .obsidianBody()
+        )
+        .padding(.horizontal, .size16)
     }
 }
 
@@ -174,26 +207,13 @@ extension TransferScreenView {
 }
 
 extension TransferScreenView {
-    private func transferInputView() -> some View {
-        ObsidianCreditInput(
-            text: $viewModel.transferAmount,
-            title: "Valor",
-            unitLabel: "MeritusCredits"
-        )
-        .padding(.top, .size16)
-        .padding(.horizontal, .size16)
-    }
-}
-
-extension TransferScreenView {
-    private func balanceListItem(
-        title: String,
-        balance: String
-    ) -> some View {
-        ObsidianListItem(
-            title: title,
-            trailing: Text("MC \(balance)")
-                .obsidianBody()
+    private func descriptionTextAreaView() -> some View {
+        ObsidianTextArea(
+            text: $viewModel.description,
+            label: "Descrição",
+            placeholder: "Escreva uma mensagem...",
+            minHeight: 120,
+            maxHeight: 120
         )
         .padding(.horizontal, .size16)
     }
@@ -204,11 +224,24 @@ extension TransferScreenView {
         ObsidianButton(
             "Transferir",
             style: .primary,
-            isLoading: $viewModel.isLoading
+            isLoading: $viewModel.isLoading,
+            isDisabled: $viewModel.isDisabled
         ) {
             await viewModel.didTapTransferButton()
         }
         .padding(.horizontal, .size16)
+    }
+}
+
+extension TransferScreenView {
+    private func feedbackView(_ route: TransferScreenViewResultRoute) -> some View {
+        ObsidianFeedbackView(
+            route.feedbackViewStyle,
+            title: "Sucesso"
+        ) {
+            handleTransferUIFeedback(route)
+        }
+        .toolbar(.hidden)
     }
 }
 

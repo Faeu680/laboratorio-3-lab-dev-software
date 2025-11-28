@@ -1,5 +1,5 @@
 //
-//  RedeemScreenView.swift
+//  BenefitsScreenView.swift
 //  Meritus
 //
 //  Created by Arthur Porto on 03/11/25.
@@ -9,10 +9,10 @@ import SwiftUI
 import Obsidian
 import Domain
 
-struct RedeemScreenView: View {
-    @StateObject private var viewModel: RedeemScreenViewModel
+struct BenefitsScreenView: View {
+    @StateObject private var viewModel: BenefitsScreenViewModel
     
-    init(viewModel: RedeemScreenViewModel) {
+    init(viewModel: BenefitsScreenViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
     
@@ -36,7 +36,7 @@ struct RedeemScreenView: View {
     }
 }
 
-extension RedeemScreenView {
+extension BenefitsScreenView {
     private func benefitCardView(
         title: String,
         description: String,

@@ -52,7 +52,7 @@ struct HomeScreenView: View {
             if viewModel.isStudent {
                 Tab("Resgatar", systemImage: "creditcard.fill") {
                     NavigationView {
-                        navigator.view(for: AppRoutes.redeem)
+                        navigator.view(for: AppRoutes.benefits)
                     }
                 }
             }

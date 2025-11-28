@@ -5,7 +5,7 @@
 //  Created by Arthur Porto on 21/11/25.
 //
 
-public struct StudentModel {
+public struct StudentModel: Sendable {
     public let id: String
     public let name: String
     public let email: String

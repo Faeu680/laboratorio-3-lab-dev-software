@@ -58,11 +58,13 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
     
     func makeTransfer() -> TransferScreenView {
         let session = resolver.resolveUnwrapping(SessionProtocol.self)
-        let getStudentsOfInstitutionUseCase = resolver.resolveUnwrapping(GetStudentsOfInstitutionUseCaseProtocol.self)
+        let getBalanceUseCase = resolver.resolveUnwrapping(GetBalanceUseCaseProtocol.self)
         let makeTransferUseCase = resolver.resolveUnwrapping(MakeTransferUseCaseProtocol.self)
+        let getStudentsOfInstitutionUseCase = resolver.resolveUnwrapping(GetStudentsOfInstitutionUseCaseProtocol.self)
         let biometryManager = resolver.resolveUnwrapping(BiometryManagerProtocol.self)
         let viewModel = TransferScreenViewModel(
             session: session,
+            getBalanceUseCase: getBalanceUseCase,
             makeTransferUseCase: makeTransferUseCase,
             getStudentsOfInstitutionUseCase: getStudentsOfInstitutionUseCase,
             biometryManager: biometryManager
@@ -71,8 +73,8 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
     }
     
     func makeBenefits() -> BenefitsScreenView {
-        let createBenefitUseCase = resolver.resolveUnwrapping(CreateBenefitUseCaseProtocol.self)
-        let viewModel = BenefitsScreenViewModel(createBenefitUseCase: createBenefitUseCase)
+        let getBenefitsUseCase = resolver.resolveUnwrapping(GetBenefitsUseCaseProtocol.self)
+        let viewModel = BenefitsScreenViewModel(getBenefitsUseCase: getBenefitsUseCase)
         return BenefitsScreenView(viewModel: viewModel)
     }
     
@@ -86,12 +88,6 @@ final class AppRouteFactory: AppRouteFactoryProtocol {
             createBenefitUseCase: createBenefitUseCase
         )
         return NewBenefitScreenView(viewModel: viewModel)
-    }
-    
-    func makeRedeem() -> RedeemScreenView {
-        let getBenefitsUseCase = resolver.resolveUnwrapping(GetBenefitsUseCaseProtocol.self)
-        let viewModel = RedeemScreenViewModel(getBenefitsUseCase: getBenefitsUseCase)
-        return RedeemScreenView(viewModel: viewModel)
     }
     
     func makeSettings() -> SettingsScreenView {

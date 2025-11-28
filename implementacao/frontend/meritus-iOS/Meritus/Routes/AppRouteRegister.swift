@@ -32,8 +32,6 @@ final class AppRouteRegister: RouteRegisterProtocol {
             factory.makeBenefits()
         case .newBenefit:
             factory.makeNewBenefit()
-        case .redeem:
-            factory.makeRedeem()
         case .settings:
             factory.makeSettings()
         case .selectLanguage:

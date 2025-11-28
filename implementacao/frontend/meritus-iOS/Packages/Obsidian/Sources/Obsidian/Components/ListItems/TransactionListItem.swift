@@ -7,14 +7,6 @@
 
 import SwiftUI
 
-private extension Color {
-    static var obsidianGold: Color {
-        Color(red: 212/255, green: 175/255, blue: 55/255)
-    }
-}
-
-// MARK: - View
-
 public struct TransactionListItem: View {
     public enum Kind {
         case income

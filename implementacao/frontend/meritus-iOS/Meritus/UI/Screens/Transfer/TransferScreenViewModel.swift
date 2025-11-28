@@ -12,19 +12,27 @@ import Session
 
 @MainActor
 final class TransferScreenViewModel: ObservableObject {
+    private let getBalanceUseCase: GetBalanceUseCaseProtocol
     private let makeTransferUseCase: MakeTransferUseCaseProtocol
     private let getStudentsOfInstitutionUseCase: GetStudentsOfInstitutionUseCaseProtocol
     private let biometryManager: BiometryManagerProtocol
     
     let storedSession: StoredSession?
+    var balance: String = ""
     
+    @Published var isDisabled: Bool = true
     @Published var isLoading: Bool = false
     @Published var students: [StudentModel]  = []
     @Published var selectedStudent: StudentModel? = nil
-    @Published var transferAmount: String = ""
     @Published var showTransferModal: Bool = false
     @Published var transferResult: TransferScreenViewResultRoute?
     @Published var searchText: String = ""
+    @Published var description: String = ""
+    @Published var transferAmount: String = "" {
+        didSet {
+            handleTransferAmountChange(transferAmount)
+        }
+    }
 
     var filteredStudents: [StudentModel] {
         guard !searchText.isEmpty else { return students }
@@ -34,24 +42,29 @@ final class TransferScreenViewModel: ObservableObject {
             $0.email.lowercased().contains(searchText.lowercased())
         }
     }
+    
+    var finalBalance: String {
+        let finalBalance = (Int(balance) ?? 0) - (Int(transferAmount) ?? 0)
+        return "\(finalBalance)"
+    }
 
     init(
         session: SessionProtocol,
+        getBalanceUseCase: GetBalanceUseCaseProtocol,
         makeTransferUseCase: MakeTransferUseCaseProtocol,
         getStudentsOfInstitutionUseCase: GetStudentsOfInstitutionUseCaseProtocol,
         biometryManager: BiometryManagerProtocol
     ) {
         self.storedSession = session.unsafeGetActiveSession()
+        self.getBalanceUseCase = getBalanceUseCase
         self.makeTransferUseCase = makeTransferUseCase
         self.getStudentsOfInstitutionUseCase = getStudentsOfInstitutionUseCase
         self.biometryManager = biometryManager
     }
     
     func onViewDidLoad() async {
-        do {
-            let students = try await getStudentsOfInstitutionUseCase.execute()
-            self.students = students
-        } catch { }
+        await getStudents()
+        await getBalance()
     }
     
     func didSelectStudent(_ student: StudentModel) {
@@ -81,13 +94,50 @@ final class TransferScreenViewModel: ObservableObject {
         }
     }
     
-    func handleFeedbackAnimationFinished() {
-        dismissTransferModal()
+    func dismissTransferModal() {
+        guard !isLoading else { return }
+        
+        showTransferModal = false
+        clearInputs()
     }
     
-    func dismissTransferModal() {
-        showTransferModal = false
+    private func getStudents() async {
+        do {
+            let students = try await getStudentsOfInstitutionUseCase.execute()
+            self.students = students
+        } catch { }
+    }
+    
+    private func getBalance() async {
+        do {
+            let balance = try await getBalanceUseCase.execute()
+            self.balance = balance
+        } catch { }
+    }
+    
+    private func clearInputs() {
+        isDisabled = true
+        isLoading = false
+        transferAmount = ""
+        selectedStudent = nil
         transferResult = nil
+    }
+    
+    private func handleTransferAmountChange(_ amount: String) {
+        let intAmount = Int(amount) ?? 0
+        let intBalance = Int(balance) ?? 067
+        
+        guard intAmount > 0 else {
+            self.isDisabled = true
+            return
+        }
+        
+        guard intBalance > intAmount else {
+            self.isDisabled = true
+            return
+        }
+        
+        self.isDisabled = false
     }
     
     private func evaluateBiometry() async -> Bool {

@@ -4,10 +4,37 @@
     "Acesso exclusivo" : {
 
     },
+    "Adicionar Conta" : {
+
+    },
+    "Adicionar Foto" : {
+
+    },
     "Ajustes" : {
 
     },
+    "Aluno" : {
+
+    },
     "Buscar por nome ou email" : {
+
+    },
+    "Cadastro" : {
+
+    },
+    "Criar Beneficio" : {
+
+    },
+    "Descrição" : {
+
+    },
+    "Empresa" : {
+
+    },
+    "Entrar" : {
+
+    },
+    "Escreva uma mensagem..." : {
 
     },
     "Experiencia Premium" : {
@@ -134,7 +161,13 @@
     "Remover" : {
 
     },
+    "Remover Foto" : {
+
+    },
     "Resgatar" : {
+
+    },
+    "Sair do App" : {
 
     },
     "Saldo Disponível" : {
@@ -590,6 +623,9 @@
 
     },
     "Splash Screen" : {
+
+    },
+    "Tirar Foto" : {
 
     },
     "Transferências" : {

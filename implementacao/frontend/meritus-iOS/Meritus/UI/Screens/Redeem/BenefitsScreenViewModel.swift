@@ -1,5 +1,5 @@
 //
-//  RedeemScreenViewModel.swift
+//  BenefitsScreenViewModel.swift
 //  Meritus
 //
 //  Created by Arthur Porto on 03/11/25.
@@ -10,7 +10,7 @@ import Combine
 import Domain
 
 @MainActor
-final class RedeemScreenViewModel: ObservableObject {
+final class BenefitsScreenViewModel: ObservableObject {
     private let getBenefitsUseCase: GetBenefitsUseCaseProtocol
     
     @Published var benefits: [BenefitModel] = []

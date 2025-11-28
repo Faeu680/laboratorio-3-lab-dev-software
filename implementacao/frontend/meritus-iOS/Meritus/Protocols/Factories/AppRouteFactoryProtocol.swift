@@ -21,8 +21,6 @@ protocol AppRouteFactoryProtocol: Sendable {
     
     func makeNewBenefit() -> NewBenefitScreenView
     
-    func makeRedeem() -> RedeemScreenView
-    
     func makeSettings() -> SettingsScreenView
     
     func makeSelectLanguage() -> ResourceSelectScreenView<LanguageSelectScreenViewModel>

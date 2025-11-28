@@ -65,7 +65,20 @@ public struct ObsidianCreditInput: View {
     }
     
     private var displayText: String {
-        text.isEmpty ? "0" : text
+        guard !text.isEmpty else { return "0" }
+        return formatWithThousands(text)
+    }
+    
+    private func formatWithThousands(_ raw: String) -> String {
+        guard let number = Int(raw) else { return raw }
+
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.groupingSeparator = "."
+        formatter.decimalSeparator = ","
+        formatter.maximumFractionDigits = 0
+
+        return formatter.string(from: NSNumber(value: number)) ?? raw
     }
     
     private struct NumericTextFieldWithToolbar: UIViewRepresentable {
@@ -79,6 +92,8 @@ public struct ObsidianCreditInput: View {
             textField.autocorrectionType = .no
             textField.autocapitalizationType = .none
             textField.delegate = context.coordinator
+            textField.alpha = 0.01
+            textField.isUserInteractionEnabled = true
             
             let toolbar = UIToolbar()
             toolbar.sizeToFit()
@@ -90,7 +105,7 @@ public struct ObsidianCreditInput: View {
             )
             
             let doneButton = UIBarButtonItem(
-                barButtonSystemItem: .close,
+                barButtonSystemItem: .done,
                 target: context.coordinator,
                 action: #selector(Coordinator.dismissKeyboard)
             )
@@ -100,7 +115,7 @@ public struct ObsidianCreditInput: View {
             let containerView = UIView()
             containerView.addSubview(toolbar)
             toolbar.translatesAutoresizingMaskIntoConstraints = false
-            
+
             NSLayoutConstraint.activate([
                 toolbar.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
                 toolbar.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
@@ -110,12 +125,9 @@ public struct ObsidianCreditInput: View {
             
             let toolbarHeight = toolbar.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
             containerView.frame = CGRect(x: 0, y: 0, width: 0, height: toolbarHeight + 16)
-            
+
             textField.inputAccessoryView = containerView
-            textField.alpha = 0.01
-            textField.isUserInteractionEnabled = true
             
-            // Adicionar observers para notificações do teclado
             NotificationCenter.default.addObserver(
                 context.coordinator,
                 selector: #selector(Coordinator.keyboardWillHide),
@@ -143,7 +155,6 @@ public struct ObsidianCreditInput: View {
         }
         
         static func dismantleUIView(_ uiView: UITextField, coordinator: Coordinator) {
-            // Remover observers quando a view for destruída
             NotificationCenter.default.removeObserver(
                 coordinator,
                 name: UIResponder.keyboardWillHideNotification,
@@ -167,7 +178,6 @@ public struct ObsidianCreditInput: View {
             }
             
             @objc func keyboardWillHide() {
-                // Atualizar o estado quando o teclado for fechado por scroll
                 if isFocused {
                     isFocused = false
                 }
@@ -179,6 +189,7 @@ public struct ObsidianCreditInput: View {
                 replacementString string: String
             ) -> Bool {
                 let currentText = textField.text ?? ""
+                
                 guard let stringRange = Range(range, in: currentText) else { return false }
                 
                 let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
