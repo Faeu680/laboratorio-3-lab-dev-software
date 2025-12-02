@@ -18,9 +18,7 @@ struct ExtractScreenView: View {
     }
     
     var body: some View {
-        ObsidianList(
-            verticalPadding: .size8
-        ) {
+        ObsidianList(verticalPadding: .size8) {
             balanceCardView()
             
             ObsidianSection {
@@ -54,23 +52,47 @@ extension ExtractScreenView {
 
 extension ExtractScreenView {
     private func transactionListItemView(_ transaction: TransactionModel) -> some View {
-        TransactionListItem(
+        ObsidianListItem(
             title: transaction.message,
-            subtitle: "Alguma descrição",
-            amount: transaction.amount,
-            kind: transaction.origin.toTransactionKind(),
-            date: .now
+            subtitle: transaction.createdAt.shortBRDate,
+            leading: leadingListItemView(transaction),
+            trailing: trailingListItemView(transaction)
         )
     }
 }
 
-fileprivate extension TransactionOrigin {
-    func toTransactionKind() -> TransactionListItem.Kind {
-        switch self {
-        case .income:
-            return .income
-        case .outcome:
-            return .expense
+extension ExtractScreenView {
+    private func leadingListItemView(_ transaction: TransactionModel) -> some View {
+        ZStack {
+            Circle()
+                .fill(transaction.origin == .income ? Color.obsidianGold.opacity(0.18) : Color.red.opacity(0.18))
+            
+            Image(systemName: transaction.origin == .income ? "arrow.down.left" : "arrow.up.right")
+                .foregroundStyle(transaction.origin == .income ? Color.obsidianGold : Color.red)
+                .font(.system(size: 16, weight: .semibold))
         }
+        .frame(width: 44, height: 44)
+    }
+}
+
+extension ExtractScreenView {
+    private func trailingListItemView(_ transaction: TransactionModel) -> some View {
+        Text(transaction.amount)
+            .obsidianBody()
+            .foregroundStyle(transaction.origin == .income ? Color.obsidianGold : Color.red.opacity(0.9))
+            .lineLimit(1)
+    }
+}
+
+fileprivate extension String {
+    var shortBRDate: String {
+        let f = ISO8601DateFormatter()
+        f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        guard let date = f.date(from: self) else { return self }
+
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "pt_BR")
+        formatter.dateFormat = "d 'de' MMM"
+        return formatter.string(from: date).uppercased()
     }
 }

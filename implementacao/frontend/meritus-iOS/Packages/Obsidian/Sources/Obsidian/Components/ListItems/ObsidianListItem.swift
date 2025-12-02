@@ -103,7 +103,7 @@ public struct ObsidianListItem: View {
             
             VStack(alignment: .leading, spacing: .size4) {
                 Text(title)
-                    .font(.obsidianBody.weight(.semibold))
+                    .obsidianBody()
                 
                 if let subtitle {
                     Text(subtitle)
