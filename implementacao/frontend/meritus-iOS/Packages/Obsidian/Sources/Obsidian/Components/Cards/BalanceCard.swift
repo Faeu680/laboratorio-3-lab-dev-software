@@ -16,7 +16,7 @@ public struct BalanceCard: View {
     @State private var isMasked: Bool
 
     public init(
-        title: LocalizedStringKey = "Saldo Disponível",
+        title: LocalizedStringKey,
         amount: String,
         initiallyMasked: Bool = false,
         showsEyeButton: Bool = true,
@@ -49,8 +49,8 @@ public struct BalanceCard: View {
 private extension BalanceCard {
     var content: some View {
         HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 8) {
-                HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: .size8) {
+                HStack(spacing: .size8) {
                     Text(title)
                         .obsidianLabel()
                         .foregroundStyle(.gray)
@@ -70,25 +70,21 @@ private extension BalanceCard {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(Text(isMasked ? "Mostrar saldo" : "Ocultar saldo"))
             }
         }
-        .padding(24)
+        .padding(.size16)
     }
 
     var amountView: some View {
         Group {
             if isMasked {
-                Text("R$ ••••••••")
-                    .font(.system(size: 44, weight: .bold, design: .default))
-                    .foregroundStyle(.primary)
+                Text("••••••••")
+                    .obsidianTitle()
             } else {
                 Text(amount)
-                    .font(.system(size: 44, weight: .bold, design: .default))
-                    .foregroundStyle(.primary)
+                    .obsidianTitle()
             }
         }
-        .minimumScaleFactor(0.6)
         .lineLimit(1)
     }
 }

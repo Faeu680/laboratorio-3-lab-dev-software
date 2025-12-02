@@ -12,6 +12,7 @@ struct GetExtractResponse: Decodable {
     let id: String
     let type: TransactionType
     let origin: TransactionOrigin
+    let message: String
     let amount: String
     let createdAt: String
     
@@ -20,6 +21,7 @@ struct GetExtractResponse: Decodable {
             id: id,
             type: type,
             origin: origin,
+            message: message,
             amount: amount,
             createdAt: createdAt
         )

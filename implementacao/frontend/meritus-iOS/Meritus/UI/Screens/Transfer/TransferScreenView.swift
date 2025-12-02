@@ -10,6 +10,7 @@ import AudioToolbox
 import Obsidian
 import Domain
 import Session
+import Commons
 
 struct TransferScreenView: View {
     
@@ -261,11 +262,9 @@ extension TransferScreenView {
         case .success:
             let sucessSoundId: UInt32 = 1519
             feedbaackGenerator.notificationOccurred(.success)
-            AudioServicesPlaySystemSound(sucessSoundId)
         case .error:
             let errorSoundId: UInt32 = 1520
             feedbaackGenerator.notificationOccurred(.error)
-            AudioServicesPlaySystemSound(errorSoundId)
         }
     }
 }

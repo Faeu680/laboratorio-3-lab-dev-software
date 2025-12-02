@@ -55,7 +55,7 @@ extension ExtractScreenView {
 extension ExtractScreenView {
     private func transactionListItemView(_ transaction: TransactionModel) -> some View {
         TransactionListItem(
-            title: "Alguma coisa",
+            title: transaction.message,
             subtitle: "Alguma descrição",
             amount: transaction.amount,
             kind: transaction.origin.toTransactionKind(),

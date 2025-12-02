@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 import Domain
 import Session
+import Commons
 
 @MainActor
 final class TransferScreenViewModel: ObservableObject {
@@ -19,6 +20,7 @@ final class TransferScreenViewModel: ObservableObject {
     private let makeTransferUseCase: MakeTransferUseCaseProtocol
     private let getStudentsOfInstitutionUseCase: GetStudentsOfInstitutionUseCaseProtocol
     private let biometryManager: BiometryManagerProtocol
+    private let soundManager = SoundManager.shared
     
     let storedSession: StoredSession?
     private(set) var balance: String = ""
@@ -116,6 +118,12 @@ final class TransferScreenViewModel: ObservableObject {
         do {
             try await makeTransferUseCase.execute(model)
             transferResult = .success
+            
+            soundManager.play(
+                "apple_pay_sound",
+                ext: "mp3",
+                bundle: .main
+            )
         } catch {
             transferResult = .error
         }
