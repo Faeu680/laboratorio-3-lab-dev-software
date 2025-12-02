@@ -22,6 +22,7 @@ final class BenefitsScreenViewModel: ObservableObject {
     private(set) var selectedBenefit: BenefitModel?
     private(set) var balance: String = ""
     
+    @Published var selectedTab: BenefitsScreenViewType = .redeem
     @Published var isLoading: Bool = false
     @Published var benefits: [BenefitModel] = []
     @Published var showRedeemSheet: Bool = false

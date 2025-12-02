@@ -21,7 +21,13 @@ struct BenefitsScreenView: View {
     }
     
     var body: some View {
-        ScrollView {
+        ObsidianList {
+            if viewModel.userRole == .student {
+                ObsidianSection {
+                    pickerView()
+                }
+            }
+            
             ForEach(viewModel.benefits, id: \.self) { benefit in
                 benefitCardView(benefit)
             }
@@ -32,15 +38,17 @@ struct BenefitsScreenView: View {
             prompt: "Buscar beneficio"
         )
         .if(viewModel.userRole == .student) { view in
-            view
-                .navigationTitle("Resgatar")
-                .navigationSubtitle("Selecione um beneficio para resgatar")
-                .toolbarTitleDisplayMode(.inlineLarge)
-                .fullScreenCover(isPresented: $viewModel.showRedeemSheet) {
-                    NavigationStack {
-                        redeemSheetModalView()
+            VStack {
+                view
+                    .navigationTitle("Resgatar")
+                    .navigationSubtitle("Selecione um beneficio para resgatar")
+                    .toolbarTitleDisplayMode(.inlineLarge)
+                    .fullScreenCover(isPresented: $viewModel.showRedeemSheet) {
+                        NavigationStack {
+                            redeemSheetModalView()
+                        }
                     }
-                }
+            }
         }
         .if(viewModel.userRole == .company) { view in
             ZStack(alignment: .bottomTrailing) {
@@ -68,6 +76,20 @@ extension BenefitsScreenView {
 }
 
 extension BenefitsScreenView {
+    private func pickerView() -> some View {
+        Picker("Tipo", selection: $viewModel.selectedTab) {
+            ForEach(BenefitsScreenViewType.allCases, id: \.self) { type in
+                Text(type.description)
+                    .obsidianBody()
+                    .tag(type)
+            }
+        }
+        .pickerStyle(.segmented)
+        .frame(maxWidth: .infinity)
+    }
+}
+
+extension BenefitsScreenView {
     private func benefitCardView(_ benefit: BenefitModel) -> some View {
         BenefitCard(
             title: benefit.name,
@@ -81,7 +103,6 @@ extension BenefitsScreenView {
                     await viewModel.showRedeemSheet(for: benefit)
                 }
         }
-        .padding(.horizontal, .size16)
     }
 }
 

@@ -19,7 +19,7 @@ struct SettingsScreenView: View {
     }
     
     var body: some View {
-        VStack {
+        ZStack(alignment: .bottom) {
             ScrollView {
                 VStack(spacing: .size32) {
                     avatarView()
@@ -37,7 +37,7 @@ struct SettingsScreenView: View {
                 .padding(.top, .size24)
             }
             .navigationTitle("Ajustes")
-            .toolbarTitleDisplayMode(.inlineLarge)
+            .toolbarTitleDisplayMode(.large)
             
             logoutButtonView()
         }
