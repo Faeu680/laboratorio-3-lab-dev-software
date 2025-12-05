@@ -11,7 +11,7 @@ export class CreateBenefitUseCase {
     @InjectRepository(BenefitEntity)
     private readonly benefitRepository: Repository<BenefitEntity>,
     @InjectRepository(CompanyEntity)
-    private readonly companyRepository: Repository<CompanyEntity>,
+    private readonly companyRepository: Repository<CompanyEntity>
   ) {}
 
   async execute(userId: string, dto: CreateBenefitDto): Promise<BenefitEntity> {
@@ -24,6 +24,7 @@ export class CreateBenefitUseCase {
     const benefit = this.benefitRepository.create({
       ...dto,
       companyId: company.id,
+      cost: parseInt(dto.cost, 10),
     });
 
     return this.benefitRepository.save(benefit);
