@@ -111,7 +111,11 @@ extension SettingsScreenView {
             "Sair do App",
             style: .destructiveOutline
         ) {
-            return
+            Task(priority: .userInitiated) {
+                await viewModel.didTapLogout()
+            }
+            
+            navigator.popTo(AppRoutes.login)
         }
         .padding(.horizontal, .size16)
         .padding(.bottom, .size16)

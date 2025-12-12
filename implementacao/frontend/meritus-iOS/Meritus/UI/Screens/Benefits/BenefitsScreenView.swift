@@ -22,12 +22,6 @@ struct BenefitsScreenView: View {
     
     var body: some View {
         ObsidianList {
-            if viewModel.userRole == .student {
-                ObsidianSection {
-                    pickerView()
-                }
-            }
-            
             ForEach(viewModel.benefits, id: \.self) { benefit in
                 benefitCardView(benefit)
             }
@@ -72,20 +66,6 @@ extension BenefitsScreenView {
         viewModel.redeemBenefitDidSuccess = { benefit in
             navigator.navigate(to: AppRoutes.benefitInfo(benefit: benefit))
         }
-    }
-}
-
-extension BenefitsScreenView {
-    private func pickerView() -> some View {
-        Picker("Tipo", selection: $viewModel.selectedTab) {
-            ForEach(BenefitsScreenViewType.allCases, id: \.self) { type in
-                Text(type.description)
-                    .obsidianBody()
-                    .tag(type)
-            }
-        }
-        .pickerStyle(.segmented)
-        .frame(maxWidth: .infinity)
     }
 }
 
