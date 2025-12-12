@@ -16,4 +16,8 @@ export const env = cleanEnv(process.env, {
   S3_ACCESS_KEY_ID: str({}),
   S3_SECRET_ACCESS_KEY: str({}),
   S3_BUCKET: str({}),
+  RESEND_API_KEY: str({}),
+  MAIL_FROM: str({
+    default: 'onboarding@resend.dev',
+  }),
 });
