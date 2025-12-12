@@ -75,12 +75,30 @@ export class RedeemBenefitUseCase {
         companyName: benefit.company.user.name,
       });
 
-      // biome-ignore lint/suspicious/noTsIgnore: gambs
-      // @ts-ignore
-      delete benefit.company;
-      savedTransaction.benefit = benefit;
-
-      return savedTransaction;
+      // Construir resposta sem a relação company para evitar dados desnecessários
+      return this.buildTransactionResponse(savedTransaction, benefit);
     });
+  }
+
+  private buildTransactionResponse(
+    transaction: TransactionEntity,
+    benefit: BenefitEntity
+  ): TransactionEntity {
+    // Criar uma cópia do benefit sem a relação company para evitar dados desnecessários na resposta
+    const benefitWithoutCompany = {
+      id: benefit.id,
+      name: benefit.name,
+      description: benefit.description,
+      cost: benefit.cost,
+      active: benefit.active,
+      companyId: benefit.companyId,
+      createdAt: benefit.createdAt,
+      updatedAt: benefit.updatedAt,
+    };
+
+    return {
+      ...transaction,
+      benefit: benefitWithoutCompany as BenefitEntity,
+    };
   }
 }
