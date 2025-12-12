@@ -7,13 +7,27 @@ import { TeacherEntity } from '../../teachers/entities/teacher.entity';
 import { TransactionResponseDto } from '../dto/transaction-response.dto';
 import { TransactionEntity, TransactionTypeEnum } from '../entities/transaction.entity';
 
-enum TransactionCalculatedType {
-  INCOME = "INCOME",
-  OUTCOME = "OUTCOME"
+type TransactionOrigin = 'INCOME' | 'OUTCOME';
+
+interface TransactionQueryConfig {
+  where: { studentId?: string; teacherId?: string };
+  relations: string[];
 }
 
 @Injectable()
 export class GetExtractUseCase {
+  private readonly STUDENT_RELATIONS = [
+    'teacher',
+    'teacher.user',
+    'benefit',
+    'benefit.company',
+    'benefit.company.user',
+    'student',
+    'student.user',
+  ];
+
+  private readonly TEACHER_RELATIONS = ['student', 'student.user', 'teacher', 'teacher.user'];
+
   constructor(
     @InjectRepository(TransactionEntity)
     private readonly transactionRepository: Repository<TransactionEntity>,
@@ -24,58 +38,94 @@ export class GetExtractUseCase {
   ) {}
 
   async execute(userId: string, role: RolesEnum): Promise<TransactionResponseDto[]> {
-    let transactions: TransactionEntity[] = [];
-
-    if (role === RolesEnum.STUDENT) {
-      const student = await this.studentRepository.findOne({ where: { userId } });
-      if (student) {
-        transactions = await this.transactionRepository.find({
-          where: { studentId: student.id },
-          relations: ['teacher', 'teacher.user', 'benefit', 'benefit.company', 'benefit.company.user', 'student', 'student.user'],
-          order: { createdAt: 'DESC' },
-        });
-      }
-    } else if (role === RolesEnum.TEACHER) {
-      const teacher = await this.teacherRepository.findOne({ where: { userId } });
-      if (teacher) {
-        transactions = await this.transactionRepository.find({
-          where: { teacherId: teacher.id },
-          relations: ['student', 'student.user', 'teacher', 'teacher.user'],
-          order: { createdAt: 'DESC' },
-        });
-      }
-    }
-
-    return transactions.map((t) => ({
-      id: t.id,
-      type: t.type,
-      amount: t.amount.toString(),
-      message: t.message,
-      voucherCode: t.voucherCode,
-      createdAt: t.createdAt,
-      studentName: t.student?.user?.name,
-      teacherName: t.teacher?.user?.name,
-      benefitName: t.benefit?.name,
-      companyName: t.benefit?.company?.user?.name,
-      origin: this.calculateTransactionType(t, userId),
-    }));
+    const transactions = await this.findTransactionsByRole(userId, role);
+    return this.mapTransactionsToResponseDto(transactions, userId);
   }
 
-  private calculateTransactionType(transaction: TransactionEntity, userId: string): TransactionCalculatedType {
-    if (transaction.type === TransactionTypeEnum.TRANSFER) {
-      if (transaction.teacher.userId === userId) {
-        return TransactionCalculatedType.OUTCOME;
-      }
+  private async findTransactionsByRole(
+    userId: string,
+    role: RolesEnum
+  ): Promise<TransactionEntity[]> {
+    const queryConfig = await this.buildTransactionQuery(userId, role);
 
-      if (transaction.student.userId === userId) {
-        return TransactionCalculatedType.INCOME;
+    if (!queryConfig) {
+      return [];
+    }
+
+    return this.transactionRepository.find({
+      where: queryConfig.where,
+      relations: queryConfig.relations,
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  private async buildTransactionQuery(
+    userId: string,
+    role: RolesEnum
+  ): Promise<TransactionQueryConfig | null> {
+    if (role === RolesEnum.STUDENT) {
+      const student = await this.studentRepository.findOne({ where: { userId } });
+      if (!student) {
+        return null;
       }
+      return {
+        where: { studentId: student.id },
+        relations: this.STUDENT_RELATIONS,
+      };
+    }
+
+    if (role === RolesEnum.TEACHER) {
+      const teacher = await this.teacherRepository.findOne({ where: { userId } });
+      if (!teacher) {
+        return null;
+      }
+      return {
+        where: { teacherId: teacher.id },
+        relations: this.TEACHER_RELATIONS,
+      };
+    }
+
+    return null;
+  }
+
+  private mapTransactionsToResponseDto(
+    transactions: TransactionEntity[],
+    userId: string
+  ): TransactionResponseDto[] {
+    return transactions.map((transaction) => this.mapTransactionToDto(transaction, userId));
+  }
+
+  private mapTransactionToDto(
+    transaction: TransactionEntity,
+    userId: string
+  ): TransactionResponseDto {
+    return {
+      id: transaction.id,
+      type: transaction.type,
+      amount: transaction.amount.toString(),
+      message: transaction.message,
+      voucherCode: transaction.voucherCode,
+      createdAt: transaction.createdAt,
+      studentName: transaction.student?.user?.name,
+      teacherName: transaction.teacher?.user?.name,
+      benefitName: transaction.benefit?.name,
+      companyName: transaction.benefit?.company?.user?.name,
+      origin: this.calculateTransactionOrigin(transaction, userId),
+    };
+  }
+
+  private calculateTransactionOrigin(
+    transaction: TransactionEntity,
+    userId: string
+  ): TransactionOrigin {
+    if (transaction.type === TransactionTypeEnum.TRANSFER) {
+      return transaction.teacher?.userId === userId ? 'OUTCOME' : 'INCOME';
     }
 
     if (transaction.type === TransactionTypeEnum.REDEMPTION) {
-      return TransactionCalculatedType.OUTCOME;
+      return 'OUTCOME';
     }
 
-    return TransactionCalculatedType.INCOME;
+    return 'INCOME';
   }
 }
